@@ -32,3 +32,23 @@ export function getInitials(name: string): string {
 export function isRTL(locale: string): boolean {
   return locale === 'ar';
 }
+
+/**
+ * Convert Western Arabic numerals to Eastern Arabic numerals
+ * Used when displaying numbers in Arabic locale
+ */
+export function toArabicNumerals(input: string | number): string {
+  const arabicNumerals = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+  return String(input).replace(/[0-9]/g, (digit) => arabicNumerals[parseInt(digit)]);
+}
+
+/**
+ * Format a number for display based on locale
+ * Converts to Arabic numerals if locale is 'ar'
+ */
+export function formatNumberForLocale(input: string | number, locale: string): string {
+  if (locale === 'ar') {
+    return toArabicNumerals(input);
+  }
+  return String(input);
+}

@@ -175,8 +175,8 @@ export default function ContactPage() {
                 <Send className="w-6 h-6 text-white" />
               </motion.div>
               <div>
-                <h2 className="text-xl font-bold text-gray-900">Send us a Message</h2>
-                <p className="text-gray-500 text-sm">We'd love to hear from you</p>
+                <h2 className="text-xl font-bold text-gray-900">{contact('formTitle')}</h2>
+                <p className="text-gray-500 text-sm">{contact('formDescription')}</p>
               </div>
             </motion.div>
 
@@ -297,7 +297,7 @@ export default function ContactPage() {
           >
             {/* Quick FAQ */}
             <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Answers</h3>
+              <h3 className="text-lg font-bold text-gray-900 mb-4">{contact('quickAnswers')}</h3>
               <div className="space-y-4">
                 {faqs.map((faq, index) => (
                   <motion.div
@@ -339,26 +339,26 @@ export default function ContactPage() {
                 >
                   <Headphones className="w-8 h-8" />
                   <div>
-                    <h3 className="font-bold text-lg">Live Support</h3>
-                    <p className="text-primary-100 text-sm">Available 24/7</p>
+                    <h3 className="font-bold text-lg">{contact('liveSupport.title')}</h3>
+                    <p className="text-primary-100 text-sm">{contact('liveSupport.available')}</p>
                   </div>
                 </motion.div>
                 <p className="text-primary-100 mb-4">
-                  Need immediate assistance? Our support team is ready to help you with any questions.
+                  {contact('liveSupport.description')}
                 </p>
                 <motion.button
                   className="w-full bg-white text-primary-600 font-semibold py-3 rounded-xl hover:bg-primary-50 transition-colors"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  Start Live Chat
+                  {contact('liveSupport.startChat')}
                 </motion.button>
               </div>
             </motion.div>
 
             {/* Social Links */}
             <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Follow Us</h3>
+              <h3 className="text-lg font-bold text-gray-900 mb-4">{contact('followUs')}</h3>
               <div className="flex gap-4">
                 {['facebook', 'twitter', 'instagram', 'youtube'].map((social, index) => (
                   <motion.a

@@ -1,8 +1,9 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
-import Link from 'next/link';
+import { useTranslations, useLocale } from 'next-intl';
+import { Link } from '@/i18n/routing';
 import { motion } from 'framer-motion';
+import { formatNumberForLocale } from '@/lib/utils';
 import {
   BookOpen,
   Users,
@@ -20,12 +21,20 @@ import {
 export default function AboutPage() {
   const about = useTranslations('about');
   const common = useTranslations('common');
+  const locale = useLocale();
 
   const stats = [
-    { value: '10,000+', label: about('stats.students'), icon: Users },
-    { value: '50+', label: about('stats.teachers'), icon: Award },
-    { value: '15+', label: about('stats.countries'), icon: Globe },
-    { value: '4.9', label: about('stats.rating'), icon: Star },
+    { value: formatNumberForLocale('10,000+', locale), label: about('stats.students'), icon: Users },
+    { value: formatNumberForLocale('50+', locale), label: about('stats.teachers'), icon: Award },
+    { value: formatNumberForLocale('15+', locale), label: about('stats.countries'), icon: Globe },
+    { value: formatNumberForLocale('4.9', locale), label: about('stats.rating'), icon: Star },
+  ];
+
+  const missionFeatures = [
+    about('missionFeatures.ijazah'),
+    about('missionFeatures.paths'),
+    about('missionFeatures.flexible'),
+    about('missionFeatures.support'),
   ];
 
   const values = [
@@ -242,7 +251,7 @@ export default function AboutPage() {
               </p>
 
               <motion.div className="space-y-3">
-                {['Certified Ijazah holders', 'Personalized learning paths', 'Flexible scheduling', '24/7 support'].map((item, index) => (
+                {missionFeatures.map((item, index) => (
                   <motion.div
                     key={index}
                     className="flex items-center gap-3"
@@ -295,11 +304,9 @@ export default function AboutPage() {
                   >
                     📖
                   </motion.div>
-                  <h3 className="text-2xl font-bold mb-4">Our Vision</h3>
+                  <h3 className="text-2xl font-bold mb-4">{about('vision.title')}</h3>
                   <p className="text-primary-100 leading-relaxed">
-                    To become the world's most trusted platform for online Quran education,
-                    nurturing a global community of learners who carry the light of the Quran
-                    in their hearts and lives.
+                    {about('vision.description')}
                   </p>
                 </div>
               </motion.div>
@@ -438,7 +445,7 @@ export default function AboutPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
               >
-                Ready to Begin Your Journey?
+                {about('ctaTitle')}
               </motion.h2>
               <motion.p
                 className="text-primary-100 mb-8 max-w-xl mx-auto"
@@ -447,7 +454,7 @@ export default function AboutPage() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.2 }}
               >
-                Join thousands of students who have transformed their relationship with the Quran through Salam Institute.
+                {about('ctaDescription')}
               </motion.p>
               <motion.div
                 className="flex flex-wrap justify-center gap-4"

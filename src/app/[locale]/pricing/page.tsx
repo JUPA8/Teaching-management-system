@@ -1,22 +1,31 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/routing';
 import { motion } from 'framer-motion';
 import { Check, Star, Sparkles, Shield, Clock, Zap, CreditCard, ChevronDown } from 'lucide-react';
 import { pricingPlans } from '@/lib/data';
 import { useState } from 'react';
+import { formatNumberForLocale } from '@/lib/utils';
 
 // Helper type for dynamic pricing translation keys
 type PricingTranslationKey = Parameters<ReturnType<typeof useTranslations<'pricing'>>>[0];
 
 export default function PricingPage() {
   const t = useTranslations('pricing');
+  const locale = useLocale();
 
   // Helper function for dynamic keys
   const getPricingText = (key: string) => t(key as PricingTranslationKey);
   const common = useTranslations('common');
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  // Features translation keys for each plan
+  const planFeatures: Record<string, string[]> = {
+    basic: ['features.oneOnOne', 'features.qualifiedTeachers', 'features.flexibleSchedule'],
+    standard: ['features.oneOnOne', 'features.qualifiedTeachers', 'features.flexibleSchedule', 'features.progressReports'],
+    premium: ['features.oneOnOne', 'features.qualifiedTeachers', 'features.flexibleSchedule', 'features.progressReports', 'features.recordedLessons', 'features.prioritySupport'],
+  };
 
   const faqs = [
     {
@@ -170,7 +179,7 @@ export default function PricingPage() {
                   transition={{ delay: 0.5 + index * 0.1, type: 'spring' }}
                 >
                   <span className="text-5xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
-                    €{plan.price}
+                    €{formatNumberForLocale(plan.price, locale)}
                   </span>
                   <span className="text-gray-500">/{t('perMonth')}</span>
                 </motion.div>
@@ -185,16 +194,16 @@ export default function PricingPage() {
                     animate={{ scale: [1, 1.1, 1] }}
                     transition={{ duration: 2, repeat: Infinity, delay: index * 0.3 }}
                   >
-                    {plan.lessonsPerWeek}
+                    {formatNumberForLocale(plan.lessonsPerWeek, locale)}
                   </motion.span>
-                  <span className="text-primary-700 text-sm ml-2">
+                  <span className="text-primary-700 text-sm ms-2">
                     {t('lessonsPerWeek')}
                   </span>
                 </motion.div>
 
                 {/* Features */}
                 <ul className="space-y-3 mb-8">
-                  {plan.features.map((feature, featureIndex) => (
+                  {(planFeatures[plan.id] || []).map((featureKey, featureIndex) => (
                     <motion.li
                       key={featureIndex}
                       className="flex items-start gap-3"
@@ -208,7 +217,7 @@ export default function PricingPage() {
                       >
                         <Check className="w-3 h-3 text-primary-600" />
                       </motion.div>
-                      <span className="text-gray-600 text-sm">{feature}</span>
+                      <span className="text-gray-600 text-sm">{getPricingText(featureKey)}</span>
                     </motion.li>
                   ))}
                 </ul>
