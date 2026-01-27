@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build:*)",
+      "Bash(npx vercel:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(gh repo create:*)",
+      "Bash(brew install:*)",
+      "Bash(gh auth status:*)",
+      "Bash(sudo mkdir -p /Users/abdelrahmanahmed/.config/gh)",
+      "Bash(sudo chown -R abdelrahmanahmed:staff /Users/abdelrahmanahmed/.config)",
+      "Bash(for item in about contact courses dashboard faq login page.tsx pricing register teachers videos)",
+      "Bash(do if [ -e \"$item\" ])",
+      "Bash(then mv \"$item\" '\\\\[locale\\\\]/')",
+      "Bash(fi)",
+      "Bash(done)"
+    ]
+  }
+}

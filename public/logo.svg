@@ -1,0 +1,33 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="100" cy="100" r="95" fill="#16a34a"/>
+  <circle cx="100" cy="100" r="85" fill="#22c55e"/>
+
+  <!-- Open Book Shape -->
+  <path d="M100 145 L45 125 L45 65 Q70 55 100 70 Q130 55 155 65 L155 125 Z" fill="white" opacity="0.95"/>
+
+  <!-- Book Center Line -->
+  <path d="M100 70 L100 145" stroke="#16a34a" stroke-width="2"/>
+
+  <!-- Left Page Lines -->
+  <path d="M55 80 L90 88" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M55 92 L90 98" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M55 104 L90 108" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M55 116 L90 118" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round"/>
+
+  <!-- Right Page Lines -->
+  <path d="M110 88 L145 80" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M110 98 L145 92" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M110 108 L145 104" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M110 118 L145 116" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round"/>
+
+  <!-- Decorative Crescent Moon -->
+  <path d="M100 35 Q115 45 115 60 Q115 75 100 85 Q120 75 120 55 Q120 40 100 35" fill="#fbbf24"/>
+
+  <!-- Star -->
+  <polygon points="100,25 103,32 110,32 104,37 107,45 100,40 93,45 96,37 90,32 97,32" fill="#fbbf24"/>
+
+  <!-- Decorative Border -->
+  <circle cx="100" cy="100" r="92" stroke="white" stroke-width="2" fill="none" opacity="0.3"/>
+  <circle cx="100" cy="100" r="88" stroke="white" stroke-width="1" fill="none" opacity="0.2"/>
+</svg>

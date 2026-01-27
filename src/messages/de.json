@@ -1,0 +1,741 @@
+{
+  "staging": {
+    "banner": "TESTVERSION",
+    "message": "Dies ist eine Vorschau nur für Testzwecke. Nicht die endgültige Website."
+  },
+  "common": {
+    "home": "Startseite",
+    "courses": "Kurse",
+    "quranAdults": "Quran für Erwachsene",
+    "quranKids": "Quran für Kinder",
+    "arabic": "Arabisch",
+    "islamicStudies": "Islamische Wissenschaften",
+    "teachers": "Unsere Lehrer",
+    "videos": "Videos",
+    "pricing": "Preise",
+    "register": "Registrieren",
+    "login": "Anmelden",
+    "logout": "Abmelden",
+    "dashboard": "Dashboard",
+    "freeTrial": "Kostenlose Probestunde",
+    "startNow": "Jetzt starten",
+    "learnMore": "Mehr erfahren",
+    "contact": "Kontakt",
+    "about": "Über uns",
+    "faq": "FAQ",
+    "privacy": "Datenschutz",
+    "terms": "AGB",
+    "imprint": "Impressum"
+
+  },
+  "hero": {
+    "title": "Lerne den Quran online",
+    "subtitle": "Mit qualifizierten Lehrern aus der ganzen Welt",
+    "description": "Salam Institute bietet Online-Unterricht für Quran, Arabisch und islamische Wissenschaften für alle Altersgruppen.",
+    "cta": "Kostenlose Probestunde buchen",
+    "students": "Schüler",
+    "teachers": "Lehrer",
+    "countries": "Länder",
+    "bookTrial": "Probestunde buchen"
+  },
+  "features": {
+    "title": "Warum Salam Institute?",
+    "qualified": {
+      "title": "Qualifizierte Lehrer",
+      "description": "Alle unsere Lehrer sind zertifiziert und haben jahrelange Erfahrung im Online-Unterricht."
+    },
+    "flexible": {
+      "title": "Flexible Zeiten",
+      "description": "Wählen Sie die Unterrichtszeiten, die am besten zu Ihrem Zeitplan passen."
+    },
+    "personalized": {
+      "title": "Individueller Unterricht",
+      "description": "Jeder Schüler erhält einen personalisierten Lehrplan basierend auf seinem Niveau."
+    },
+    "progress": {
+      "title": "Fortschrittsverfolgung",
+      "description": "Verfolgen Sie Ihren Lernfortschritt mit detaillierten Berichten und Statistiken."
+    }
+  },
+  "courses": {
+    "title": "Unsere Kurse",
+    "subtitle": "Entdecken Sie unser vielfältiges Kursangebot",
+    "quranAdults": {
+      "title": "Quran für Erwachsene",
+      "description": "Lernen Sie Quran-Rezitation, Tajweed und Hifz mit erfahrenen Lehrern.",
+      "features": {
+        "tajweed": {
+          "title": "Tajweed-Meisterung",
+          "description": "Lernen Sie die richtige Aussprache und Rezitationsregeln"
+        },
+        "hifz": {
+          "title": "Hifz-Programm",
+          "description": "Strukturiertes Auswendiglernen mit Wiederholungsplänen"
+        },
+        "ijazah": {
+          "title": "Ijazah-Pfad",
+          "description": "Weg zur zertifizierten Quran-Rezitationsberechtigung"
+        }
+      }
+    },
+    "quranKids": {
+      "title": "Quran für Kinder",
+      "description": "Altersgerechter Quran-Unterricht mit spielerischen Methoden.",
+      "features": {
+        "interactive": {
+          "title": "Interaktives Lernen",
+          "description": "Spiele, Animationen und lustige Aktivitäten"
+        },
+        "rewards": {
+          "title": "Belohnungssystem",
+          "description": "Abzeichen und Zertifikate zur Motivation"
+        },
+        "reports": {
+          "title": "Elternberichte",
+          "description": "Regelmäßige Updates über den Fortschritt Ihres Kindes"
+        }
+      },
+      "agePrograms": {
+        "title": "Programme für jedes Alter",
+        "ages46": {
+          "title": "Alter 4-6",
+          "description": "Einführung in arabische Buchstaben und kurze Suren"
+        },
+        "ages710": {
+          "title": "Alter 7-10",
+          "description": "Leseflüssigkeit und Juz Amma Auswendiglernen"
+        },
+        "ages1114": {
+          "title": "Alter 11-14",
+          "description": "Fortgeschrittenes Tajweed und erweitertes Auswendiglernen"
+        }
+      }
+    },
+    "arabic": {
+      "title": "Arabische Sprache",
+      "description": "Von den Grundlagen bis zur Konversation - Arabisch für alle Niveaus.",
+      "features": {
+        "alphabet": "Alphabet",
+        "alphabetDesc": "Beherrsche arabische Buchstaben und Laute",
+        "grammar": "Grammatik",
+        "grammarDesc": "Lerne Nahw- und Sarf-Regeln",
+        "conversation": "Konversation",
+        "conversationDesc": "Übe das Sprechen mit Muttersprachlern",
+        "quranic": "Qur'anisches Arabisch",
+        "quranicDesc": "Verstehe den Quran direkt"
+      },
+      "learningPath": "Dein Lernpfad",
+      "levels": {
+        "1": "Anfänger",
+        "2": "Elementar",
+        "3": "Mittelstufe",
+        "4": "Fortgeschritten"
+      }
+    },
+    "islamic": {
+      "title": "Islamische Wissenschaften",
+      "description": "Fiqh, Aqidah, Seerah und mehr von qualifizierten Gelehrten.",
+      "subjects": {
+        "fiqh": {
+          "title": "Fiqh",
+          "description": "Islamische Rechtsprechung und Urteile"
+        },
+        "aqidah": {
+          "title": "Aqidah",
+          "description": "Islamische Glaubenslehre und Theologie"
+        },
+        "seerah": {
+          "title": "Seerah",
+          "description": "Das Leben des Propheten Muhammad (PBUH)"
+        },
+        "hadith": {
+          "title": "Hadith",
+          "description": "Prophetische Überlieferungen und Aussprüche"
+        }
+      },
+      "deepenTitle": "Vertiefen Sie Ihr Verständnis des Islam",
+      "benefits": {
+        "practical": {
+          "title": "Praktisches Wissen",
+          "description": "Lernen Sie, islamische Lehren im Alltag anzuwenden"
+        },
+        "authentic": {
+          "title": "Authentische Quellen",
+          "description": "Studieren Sie bei qualifizierten Gelehrten mit korrekten Überlieferungsketten"
+        },
+        "community": {
+          "title": "Globale Gemeinschaft",
+          "description": "Verbinden Sie sich mit Mitstudenten aus der ganzen Welt"
+        }
+      }
+    },
+    "viewCourse": "Kurs ansehen",
+    "viewAll": "Alle Kurse ansehen",
+    "enrollNow": "Jetzt anmelden",
+    "bookFreeTrial": "Kostenlose Probestunde buchen",
+    "courseIncludes": "Dieser Kurs beinhaltet:",
+    "flexibleScheduling": "Flexible Zeitplanung",
+    "liveOneOnOne": "Live-1-zu-1-Sitzungen",
+    "downloadableResources": "Herunterladbare Ressourcen",
+    "certificateCompletion": "Abschlusszertifikat",
+    "studentCount": "Schüler angemeldet",
+    "perMonth": "/Monat",
+    "duration": "Dauer",
+    "level": "Niveau",
+    "lessons": "Lektionen",
+    "students": "Schüler",
+    "beginner": "Anfänger",
+    "intermediate": "Mittelstufe",
+    "advanced": "Fortgeschritten",
+    "month": "/mo",
+    "quranReadingBasics": {
+  "title": "Grundlagen des Koranlesens",
+  "description": "Lerne, den Koran von Grund auf mit richtiger Aussprache und grundlegenden Tadschwid-Regeln zu lesen.",
+  "duration": "3 Monate",
+  "lessons": "36 Lektionen",
+  "students": "1250 Teilnehmer",
+  "rating": "4.9",
+  "price": "49"
+},
+"tajweedMastery": {
+  "title": "Tadschwid meistern",
+  "description": "Beherrsche die Regeln des Tadschwid und verbessere deine Koranrezitation mit fortgeschrittenen Techniken.",
+  "duration": "6 Monate",
+  "lessons": "72 Lektionen",
+  "students": "890 Teilnehmer",
+  "rating": "4.8",
+  "price": "79"
+},
+"hifzProgram": {
+  "title": "Koran-Auswendiglernprogramm (Hifz)",
+  "description": "Strukturiertes Hifz-Programm mit persönlichen Lernplänen und regelmäßigen Wiederholungen.",
+  "duration": "24 Monate",
+  "lessons": "288 Lektionen",
+  "students": "456 Teilnehmer",
+  "rating": "4.9",
+  "price": "99"
+},
+"kidsQuranFun": {
+  "title": "Spielerischer Koran für Kinder",
+  "description": "Interaktive und spannende Koranlektionen speziell für Kinder von 5–10 Jahren.",
+  "duration": "6 Monate",
+  "lessons": "48 Lektionen",
+  "students": "2100 Teilnehmer",
+  "rating": "4.9",
+  "price": "39"
+},
+"juniorHifz": {
+  "title": "Junior-Hifz-Programm",
+  "description": "Altersgerechtes Auswendiglernprogramm für Kinder mit Spielen und Belohnungssystem.",
+  "duration": "12 Monate",
+  "lessons": "96 Lektionen",
+  "students": "780 Teilnehmer",
+  "rating": "4.8",
+  "price": "59"
+},
+"arabicBeginners": {
+  "title": "Arabisch für Anfänger",
+  "description": "Beginne deine Arabischreise mit Alphabet, Grundwortschatz und einfachen Gesprächen.",
+  "duration": "4 Monate",
+  "lessons": "48 Lektionen",
+  "students": "1560 Teilnehmer",
+  "rating": "4.7",
+  "price": "49"
+},
+"quranicArabic": {
+  "title": "Koranisches Arabisch",
+  "description": "Verstehe die Sprache des Korans durch gezielten Wortschatz und Grammatikunterricht.",
+  "duration": "6 Monate",
+  "lessons": "72 Lektionen",
+  "students": "920 Teilnehmer",
+  "rating": "4.8",
+  "price": "69"
+},
+"islamicFoundations": {
+  "title": "Islamische Grundlagen",
+  "description": "Grundlegendes Wissen über den islamischen Glauben, Praktiken und das Leben des Propheten Muhammad (ﷺ).",
+  "duration": "4 Monate",
+  "lessons": "32 Lektionen",
+  "students": "1340 Teilnehmer",
+  "rating": "4.9",
+  "price": "39"
+}
+
+
+  },
+  "teachers": {
+    "title": "Unsere Lehrer",
+    "subtitle": "Lernen Sie von den Besten",
+    "badgeLabel": "Unser Team",
+    "specializations": "Spezialgebiete:",
+    "languages": "Sprachen:",
+    "stats": {
+      "qualified": "Qualifizierte Lehrer",
+      "countries": "Länder",
+      "languages": "Sprachen",
+      "rating": "Durchschnittliche Bewertung",
+      "students": "Gesamte Schüler"
+    },
+    "experience": "Jahre Erfahrung",
+    "students": "Schüler",
+    "rating": "Bewertung",
+    "viewProfile": "Profil ansehen",
+    "bookLesson": "Stunde buchen",
+    "list": {
+      "ahmad": {
+        "name": "Sheikh Ahmad Hassan",
+        "title": "Quran & Tajweed Experte",
+        "bio": "Hafiz des Qurans mit Ijazah in den zehn Qira'at. 15 Jahre Erfahrung im weltweiten Quran-Unterricht.",
+        "languages": ["Arabisch", "Englisch", "Deutsch"],
+        "specializations": ["Tajweed", "Hifz", "Qira'at"]
+      },
+      "fatima": {
+        "name": "Ustadha Fatima Ali",
+        "title": "Tajweed-Spezialistin",
+        "bio": "Absolventin der Al-Azhar Universität mit Spezialisierung in Tajweed-Wissenschaften. Zertifizierte Quran-Lehrerin.",
+        "languages": ["Arabisch", "Englisch"],
+        "specializations": ["Tajweed", "Frauenklassen"]
+      },
+      "mariam": {
+        "name": "Ustadha Mariam Khan",
+        "title": "Kinder-Quran-Pädagogin",
+        "bio": "Spezialistin für Kinderbildung mit kreativen Lehrmethoden. Macht das Lernen für Kinder unterhaltsam.",
+        "languages": ["Arabisch", "Englisch", "Urdu"],
+        "specializations": ["Kinderbildung", "Interaktives Lernen"]
+      },
+      "omar": {
+        "name": "Dr. Omar Rashid",
+        "title": "Arabisch-Professor",
+        "bio": "Promotion in Arabischer Linguistik. Autor mehrerer Bücher über Arabischunterricht für Nicht-Muttersprachler.",
+        "languages": ["Arabisch", "Englisch", "Französisch"],
+        "specializations": ["Modernes Hocharabisch", "Koranisches Arabisch", "Grammatik"]
+      },
+      "ibrahim": {
+        "name": "Sheikh Ibrahim Yusuf",
+        "title": "Islamwissenschaftler",
+        "bio": "Absolvent der Universität Medina mit Expertise in Fiqh und Seerah. Engagierender Unterrichtsstil.",
+        "languages": ["Arabisch", "Englisch", "Deutsch"],
+        "specializations": ["Fiqh", "Seerah", "Aqidah"]
+      }
+    }
+  },
+  "testimonials": {
+    "title": "Was unsere Schüler sagen",
+    "subtitle": "Erfahrungen von unseren zufriedenen Lernenden",
+    "items": {
+      "sarah": {
+        "name": "Sarah M.",
+        "role": "Schülerin - Deutschland",
+        "content": "Salam Institute hat mein Quran-Lernen transformiert. Die Lehrer sind geduldig und der flexible Zeitplan passt perfekt zu meinem Berufsleben."
+      },
+      "ahmed": {
+        "name": "Ahmed K.",
+        "role": "Elternteil - Österreich",
+        "content": "Meine Kinder lieben ihren Quran-Unterricht! Die Lehrer machen das Lernen unterhaltsam und ansprechend. Wir haben in nur wenigen Monaten erstaunliche Fortschritte gesehen."
+      },
+      "fatima": {
+        "name": "Fatima R.",
+        "role": "Schülerin - Schweiz",
+        "content": "Der Arabischkurs hat meine Erwartungen übertroffen. Von null Wissen zum Lesen und Verstehen grundlegender Texte in nur 4 Monaten!"
+      },
+      "muhammad": {
+        "name": "Muhammad H.",
+        "role": "Schüler - USA",
+        "content": "Das Hifz-Programm ist gut strukturiert mit regelmäßiger Wiederholung. Mein Lehrer hält mich motiviert und verfolgt meinen Fortschritt sorgfältig."
+      }
+    }
+  },
+  "pricing": {
+    "title": "Unsere Preise",
+    "subtitle": "Transparente Preise ohne versteckte Kosten",
+    "badgeLabel": "Flexible Pläne",
+    "perMonth": "pro Monat",
+    "perLesson": "pro Stunde",
+    "lessonsPerWeek": "Stunden pro Woche",
+    "popular": "Beliebt",
+    "choosePlan": "Plan wählen",
+    "faqTitle": "Häufig gestellte Fragen",
+    "faq": {
+      "trial": {
+        "question": "Gibt es eine kostenlose Testversion?",
+        "answer": "Ja! Wir bieten eine kostenlose 30-minütige Probestunde an, damit Sie unsere Unterrichtsmethode kennenlernen können, bevor Sie sich für einen Plan entscheiden."
+      },
+      "change": {
+        "question": "Kann ich meinen Plan später ändern?",
+        "answer": "Absolut. Sie können Ihren Plan jederzeit upgraden oder downgraden. Die Änderungen treten ab Ihrem nächsten Abrechnungszyklus in Kraft."
+      },
+      "payment": {
+        "question": "Welche Zahlungsmethoden akzeptieren Sie?",
+        "answer": "Wir akzeptieren alle gängigen Kreditkarten, PayPal und Überweisungen. Alle Zahlungen werden sicher verarbeitet."
+      },
+      "lessonLength": {
+        "question": "Wie lange dauert jede Lektion?",
+        "answer": "Jede Lektion dauert 30 Minuten, was die optimale Dauer für effektives Lernen und Wissensbewahrung ist."
+      },
+      "reschedule": {
+        "question": "Kann ich eine Lektion verschieben?",
+        "answer": "Ja, Sie können Lektionen bis zu 12 Stunden vor dem geplanten Zeitpunkt kostenlos verschieben."
+      }
+    },
+    "ctaTitle": "Bereit, deine Reise zu beginnen?",
+    "ctaDescription": "Schließe dich Tausenden von Schülern an, die Quran und Arabisch mit unseren Experten-Lehrern lernen.",
+    "basic": {
+      "title": "Basis",
+      "description": "Perfekt für den Einstieg"
+    },
+    "standard": {
+      "title": "Standard",
+      "description": "Für regelmäßiges Lernen"
+    },
+    "premium": {
+      "title": "Premium",
+      "description": "Intensives Lernen"
+    },
+    "features": {
+      "oneOnOne": "1-zu-1 Unterricht",
+      "qualifiedTeachers": "Qualifizierte Lehrer",
+      "flexibleSchedule": "Flexible Zeiten",
+      "progressReports": "Fortschrittsberichte",
+      "recordedLessons": "Aufgezeichnete Stunden",
+      "prioritySupport": "Prioritäts-Support"
+    }
+  },
+  "register": {
+    "title": "Registrieren",
+    "subtitle": "Erstellen Sie Ihr kostenloses Konto",    "community": "Treten Sie unserer Community bei",
+    "startJourney": "Beginnen Sie heute Ihre Quran-Reise",
+    "joinThousands": "Treten Sie Tausenden von Schülern bei, die Quran, Arabisch und islamische Wissenschaften mit qualifizierten Lehrern aus der ganzen Welt lernen.",
+    "benefits": {
+      "trial": "Kostenlose 30-minütige Probestunde",
+      "library": "Zugriff auf Videobibliothek",
+      "personalized": "Personalisierter Lernpfad",
+      "tracking": "Dashboard zur Fortschrittsverfolgung"
+    },
+    "testimonial": {
+      "text": "Salam Institute hat mein Quran-Lernen transformiert. Die Lehrer sind geduldig und der Zeitplan passt perfekt zu meinem beruflichen Leben.",
+      "author": "Sarah M.",
+      "role": "Schülerin - Deutschland"
+    },    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "confirmPassword": "Passwort bestätigen",
+    "phone": "Telefonnummer",
+    "country": "Land",
+    "timezone": "Zeitzone",
+    "submit": "Registrieren",
+    "haveAccount": "Bereits ein Konto?",
+    "loginHere": "Hier anmelden"
+  },
+  "login": {
+    "title": "Anmelden",
+    "subtitle": "Willkommen zurück!",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "remember": "Angemeldet bleiben",
+    "forgot": "Passwort vergessen?",
+    "submit": "Anmelden",
+    "noAccount": "Noch kein Konto?",
+    "registerHere": "Hier registrieren"
+  },
+  "dashboard": {
+    "welcome": "Willkommen zurück",
+    "myCourses": "Meine Kurse",
+    "upcomingLessons": "Anstehende Stunden",
+    "progress": "Mein Fortschritt",
+    "messages": "Nachrichten",
+    "settings": "Einstellungen",
+    "noLessons": "Keine anstehenden Stunden",
+    "bookLesson": "Stunde buchen",
+    "viewAll": "Alle ansehen",
+    "completed": "Abgeschlossen",
+    "inProgress": "In Bearbeitung",
+    "notStarted": "Nicht begonnen"
+  },
+  "footer": {
+    "description": "Salam Institute - Ihre Online-Plattform für Quran, Arabisch und islamische Wissenschaften.",
+    "quickLinks": "Schnelllinks",
+    "courses": "Kurse",
+    "support": "Support",
+    "legal": "Rechtliches",
+    "newsletter": "Newsletter",
+    "newsletterText": "Abonnieren Sie unseren Newsletter für Updates und Angebote.",
+    "subscribe": "Abonnieren",
+    "emailPlaceholder": "Ihre E-Mail",
+    "copyright": "© 2025 Salam Institute. Alle Rechte vorbehalten."
+  },
+  "videos": {
+    "title": "Video-Bibliothek",
+    "subtitle": "Lernen Sie mit unseren kostenlosen Lehrvideos",
+    "badgeLabel": "Videobibliothek",
+    "filter": "Filtern",
+    "all": "Alle",
+    "quran": "Quran",
+    "tajweed": "Tajweed",
+    "arabic": "Arabisch",
+    "islamic": "Islamische Studien",
+    "duration": "Dauer",
+    "views": "Aufrufe",
+    "watchNow": "Jetzt ansehen",
+    "noVideos": "Keine Videos in dieser Kategorie gefunden.",
+    "list": {
+      "tajweedIntro": {
+        "title": "Einführung in Tajweed",
+        "description": "Lernen Sie die grundlegenden Konzepte des Tajweed und warum es für die Quran-Rezitation wichtig ist."
+      },
+      "arabicAlphabet": {
+        "title": "Arabisches Alphabet für Anfänger",
+        "description": "Vollständiger Leitfaden zu arabischen Buchstaben mit Aussprache und Schreibübungen."
+      },
+      "fatiha": {
+        "title": "Surah Al-Fatiha - Wort für Wort",
+        "description": "Detaillierte Erklärung der Surah Al-Fatiha mit Bedeutung und Tajweed-Regeln."
+      },
+      "seerah": {
+        "title": "Das Leben des Propheten Muhammad (PBUH)",
+        "description": "Folge 1: Frühes Leben und die erste Offenbarung."
+      },
+      "makharij": {
+        "title": "Makharij Al-Huroof",
+        "description": "Lernen Sie die korrekten Aussprachepunkte für arabische Buchstaben."
+      },
+      "kidsShortSurahs": {
+        "title": "Kurze Suren für Kinder",
+        "description": "Unterhaltsame und einfache Art, kurze Suren für Kinder zu lernen."
+      }
+    }
+  },
+  "header": {
+    "about": "Über uns",
+    "contact": "Kontakt"
+  },
+  "cta": {
+    "title": "Beginnen Sie heute Ihre Quran-Reise",
+    "description": "Treten Sie Tausenden von Schülern weltweit bei, die Quran, Arabisch und islamische Wissenschaften mit unseren Experten-Lehrern lernen.",
+    "benefits": {
+      "teachers": "Qualifizierte & zertifizierte Lehrer",
+      "schedule": "Flexible Zeiten - Lernen Sie jederzeit",
+      "personalized": "1-zu-1 personalisierte Unterrichtsstunden",
+      "progress": "Fortschritts-Tracking & Berichte"
+    },
+    "freeTrialCard": {
+      "title": "Kostenlose Probestunde",
+      "description": "Erleben Sie unsere Unterrichtsmethode mit einer kostenlosen 30-minütigen Sitzung",
+      "noCreditCard": "Keine Kreditkarte erforderlich",
+      "chooseTime": "Wählen Sie Ihre bevorzugte Zeit",
+      "meetTeacher": "Lernen Sie zuerst Ihren Lehrer kennen",
+      "bookNow": "Jetzt buchen"
+    }
+  },
+  "about": {
+    "story": "Unsere Geschichte",
+    "title": "Über Salam Institute",
+    "subtitle": "Wir ermöglichen Muslimen weltweit, sich mit dem Quran durch persönlichen, hochwertigen Online-Unterricht seit 2018 zu verbinden.",
+    "startLearning": "Jetzt anfangen",
+    "contactUs": "Kontaktieren Sie uns",
+    "stats": {
+      "students": "Schüler weltweit",
+      "teachers": "Qualifizierte Lehrer",
+      "countries": "Länder erreicht",
+      "rating": "Durchschnittliche Bewertung"
+    },
+    "mission": "Unsere Mission",
+    "missionTitle": "Quran-Unterricht für alle zugänglich machen",
+    "missionDesc1": "Bei Salam Institute glauben wir, dass qualitativ hochwertige islamische Bildung für jeden Muslim zugänglich sein sollte, unabhängig von Ort und Zeit. Unsere Mission ist es, die Lücke zwischen traditioneller islamischer Gelehrsamkeit und moderner Technologie zu schließen.",
+    "missionDesc2": "Seit 2018 sind wir von einem kleinen Team leidenschaftlicher Pädagogen zu einer globalen Plattform gewachsen, die Tausende von Schülern in über 15 Ländern bedient.",
+    "missionFeatures": {
+      "ijazah": "Zertifizierte Ijazah-Inhaber",
+      "paths": "Personalisierte Lernpfade",
+      "flexible": "Flexible Terminplanung",
+      "support": "24/7 Unterstützung"
+    },
+    "vision": {
+      "title": "Unsere Vision",
+      "description": "Die weltweit vertrauenswürdigste Plattform für Online-Quran-Unterricht zu werden und eine globale Gemeinschaft von Lernenden zu fördern, die das Licht des Qurans in ihren Herzen und Leben tragen."
+    },
+    "ctaTitle": "Bereit, Ihre Reise zu beginnen?",
+    "ctaDescription": "Schließen Sie sich Tausenden von Schülern an, die ihre Beziehung zum Quran durch das Salam Institute verändert haben.",
+    "valuesTitle": "Wofür wir stehen",
+    "coreValues": "Unsere Grundwerte",
+    "coreValuesDesc": "Diese Prinzipien leiten alles, was wir bei Salam Institute tun.",
+    "values": {
+      "excellence": {
+        "title": "Exzellenz im Unterricht",
+        "description": "Wir halten höchste Standards in der Quran- und islamischen Bildung ein und stellen sicher, dass jeder Schüler hochwertigen Unterricht erhält."
+      },
+      "compassion": {
+        "title": "Einfühlsames Lernen",
+        "description": "Unsere Lehrer nähern sich jedem Schüler mit Geduld, Verständnis und echtem Mitgefühl für sein spirituelles Wachstum."
+      },
+      "personalized": {
+        "title": "Personalisierter Ansatz",
+        "description": "Jeder Schüler ist einzigartig. Wir passen unsere Unterrichtsmethoden an individuelle Lernstile und Ziele an."
+      },
+      "integrity": {
+        "title": "Vertrauen & Integrität",
+        "description": "Wir arbeiten mit vollständiger Transparenz und Integrität und bauen Vertrauen mit Schülern und Familien weltweit auf."
+      }
+    },
+    "team": {
+      "title": "Lernen Sie unser Team kennen",
+      "subtitle": "Engagierte Pädagogen, die sich Ihrem Erfolg widmen",
+      "leadershipTeam": "Führungsteam",
+      "meetLeaders": "Treffen Sie unsere Führungskräfte",
+      "meetLeadersDesc": "Unser engagiertes Team von Gelehrten und Pädagogen, die das Salam Institute leiten.",
+      "members": {
+        "ahmad": {
+          "name": "Sheikh Ahmad Hassan",
+          "role": "Gründer & Hauptdozent"
+        },
+        "fatima": {
+          "name": "Dr. Fatima Al-Rashid",
+          "role": "Leiterin des Lehrplans"
+        },
+        "omar": {
+          "name": "Ustaz Omar Abdullah",
+          "role": "Senior Quran Lehrer"
+        },
+        "maryam": {
+          "name": "Ustaza Maryam Hassan",
+          "role": "Leiter der Kinderbildung"
+        }
+      }
+    }
+  },
+  "faq": {
+    "title": "Häufig gestellte Fragen",
+    "subtitle": "Finden Sie Antworten auf häufig gestellte Fragen zu unseren Kursen, Preisen und mehr",
+    "search": "Suche nach Antworten...",
+    "noMatching": "Keine passenden Fragen gefunden.",
+    "stillQuestions": "Haben Sie noch Fragen?",
+    "stillQuestionsDesc": "Unser Support-Team ist immer bereit, Ihnen zu helfen. Kontaktieren Sie uns und wir antworten innerhalb von 24 Stunden.",
+    "contactSupport": "Kontaktieren Sie den Support",
+    "categories": {
+      "general": "Allgemein",
+      "courses": "Kurse",
+      "pricing": "Preise",
+      "schedule": "Planung",
+      "teachers": "Lehrer",
+      "technical": "Technisch"
+    },
+    "general": {
+      "q1": "Was ist Salam Institute?",
+      "a1": "Salam Institute ist eine Online-Plattform zum Unterrichten von Quran, Arabisch und islamischen Wissenschaften. Wir verbinden Schüler mit qualifizierten Lehrern aus aller Welt für persönliche Einzelstunden per Videoanruf.",
+      "q2": "Wer kann sich bei Salam Institute anmelden?",
+      "a2": "Jeder kann sich anmelden! Wir begrüßen Schüler jeden Alters, von Kindern ab 5 Jahren bis zu Erwachsenen. Ob Sie Anfänger sind oder Ihr vorhandenes Wissen verbessern möchten, wir haben Kurse für Sie.",
+      "q3": "In welchen Sprachen unterrichten Sie?",
+      "a3": "Unsere Hauptunterrichtssprachen sind Arabisch, Englisch und Deutsch. Viele unserer Lehrer sind mehrsprachig und können Schüler, die andere Sprachen sprechen, unterstützen.",
+      "q4": "Gibt es eine kostenlose Testlektion?",
+      "a4": "Ja! Wir bieten eine kostenlose 30-minütige Probestunde an, damit Sie unsere Unterrichtsmethode kennenlernen und Ihren Lehrer treffen können, bevor Sie sich für ein Abonnement verpflichten."
+    },
+    "courses": {
+      "q1": "Welche Kurse bieten Sie an?",
+      "a1": "Wir bieten eine breite Palette von Kursen an, darunter Quran-Lesen und Auswendiglernen, Tajweed (richtige Aussprache), Arabische Sprache (klassisch und modernes Arabisch), islamische Studien und spezialisierte Kurse für Kinder.",
+      "q2": "Wie sind die Kurse strukturiert?",
+      "a2": "Jeder Kurs folgt einem strukturierten Lehrplan, der von islamischen Gelehrten und Pädagogen entworfen wurde. Kurse sind in Stufen unterteilt, und Schüler machen Fortschritte in ihrem eigenen Tempo mit regelmäßigen Bewertungen.",
+      "q3": "Kann ich mehrere Kurse gleichzeitig belegen?",
+      "a3": "Ja, Sie können sich gleichzeitig in mehreren Kursen anmelden. Viele Schüler kombinieren Quran-Lesen mit Arabisch-Sprachstudien für umfassenderes Lernen.",
+      "q4": "Bieten Sie Ijazah-Zertifizierung an?",
+      "a4": "Ja, wir bieten Ijazah-Zertifizierung für Schüler an, die fortgeschrittene Quran-Memorierungs- und Rezitationsprogramme absolvieren. Unsere zertifizierten Lehrer sind berechtigt, Ijazah in den Quranic-Wissenschaften zu vergeben."
+    },
+    "pricing": {
+      "q1": "Welche Preispläne gibt es?",
+      "a1": "Wir bieten flexible Preispläne: Basis (2 Stunden/Woche zu €59/Monat), Standard (3 Stunden/Woche zu €79/Monat) und Premium (5 Stunden/Woche zu €119/Monat). Jede Stunde dauert 30 Minuten.",
+      "q2": "Welche Zahlungsmethoden werden akzeptiert?",
+      "a2": "Wir akzeptieren alle gängigen Kreditkarten (Visa, MasterCard, American Express), PayPal und Banküberweisung. Alle Zahlungen werden sicher verarbeitet.",
+      "q3": "Kann ich mein Abonnement kündigen?",
+      "a3": "Ja, Sie können Ihr Abonnement jederzeit kündigen. Es gibt keine langfristigen Verpflichtungen. Nach Kündigung haben Sie bis zum Ende des aktuellen Abrechnungszeitraums Zugriff.",
+      "q4": "Bieten Sie Familienrabatte an?",
+      "a4": "Ja! Wir bieten spezielle Familienpakete mit Rabatten an, wenn sich mehrere Familienmitglieder anmelden. Kontaktieren Sie unser Support-Team für mehr Informationen zu Familienpreisen."
+    },
+    "schedule": {
+      "q1": "Wie plane ich meine Lektionen?",
+      "a1": "Sie können Lektionen über Ihr Schüler-Dashboard planen. Wählen Sie einfach Ihr bevorzugtes Datum und Ihre Uhrzeit aus den verfügbaren Uhrzeiten Ihres Lehrers. Sie können Lektionen bis zu 4 Wochen im Voraus buchen.",
+      "q2": "Kann ich eine Lektion verschieben?",
+      "a2": "Ja, Sie können eine Lektion bis 12 Stunden vor der geplanten Zeit kostenlos verschieben. Änderungen innerhalb von 12 Stunden können dazu führen, dass die Lektion als absolviert gilt.",
+      "q3": "Welche Zeitzonen werden unterstützt?",
+      "a3": "Wir unterstützen alle wichtigen Zeitzonen weltweit. Unsere Lehrer arbeiten 24/7 in verschiedenen Regionen, um Schüler weltweit zu unterstützen."
+    },
+    "teachers": {
+      "q1": "Wie sind Lehrer qualifiziert?",
+      "a1": "Alle unsere Lehrer haben Hintergründe in formaler islamischer Bildung und sind in Quranic-Wissenschaften zertifiziert. Sie durchlaufen eine strenge Überprüfung und Schulung, bevor sie unsere Plattform beitreten."
+    },
+    "technical": {
+      "q1": "Welche Plattformen kann ich verwenden?",
+      "a1": "Sie können Salam Institute über Ihren Webbrowser auf jedem Gerät aufrufen. Wir bieten auch mobile Apps für iOS und Android für bequemes Lernen unterwegs."
+    }
+  },
+  "contact": {
+    "title": "Kontaktieren Sie uns",
+    "heading": "Kontaktieren Sie uns",
+    "subtitle": "Haben Sie Fragen zu unseren Kursen oder benötigen Sie Hilfe? Wir sind hier, um Ihnen bei Ihrer Quran-Reise zu helfen.",
+    "form": {
+      "name": "Ihr Name",
+      "email": "E-Mail-Adresse",
+      "subject": "Betreff",
+      "message": "Ihre Nachricht",
+      "submit": "Nachricht senden",
+      "placeholder": {
+        "name": "Max Mustermann",
+        "email": "max@example.com",
+        "subject": "Wählen Sie ein Thema...",
+        "message": "Sagen Sie uns, wie wir Ihnen helfen können..."
+      },
+      "options": {
+        "courses": "Kursinformationen",
+        "pricing": "Preise & Pläne",
+        "technical": "Technische Unterstützung",
+        "teachers": "Lehreranfrage",
+        "partnership": "Partnerschaft",
+        "other": "Sonstiges"
+      }
+    },
+    "success": {
+      "title": "Nachricht gesendet!",
+      "description": "Wir antworten Ihnen innerhalb von 24 Stunden."
+    },
+    "info": {
+      "email": {
+        "title": "Senden Sie uns eine E-Mail",
+        "text": "info@salaminstitute.com",
+        "description": "Wir antworten innerhalb von 24 Stunden"
+      },
+      "phone": {
+        "title": "Rufen Sie uns an",
+        "text": "+49 123 456 789",
+        "description": "Mo-Fr, 9:00-18:00 Uhr CET"
+      },
+      "location": {
+        "title": "Besuchen Sie uns",
+        "text": "Berlin, Deutschland",
+        "description": "Nach Vereinbarung"
+      },
+      "hours": {
+        "title": "Öffnungszeiten",
+        "text": "24/7 Online-Support",
+        "description": "Immer für Sie da"
+      }
+    },
+    "faq": {
+      "q1": "Wie schnell antworten Sie?",
+      "a1": "Wir antworten normalerweise innerhalb von 24 Stunden an Geschäftstagen.",
+      "q2": "Bieten Sie Telefonunterstützung an?",
+      "a2": "Ja, Telefonunterstützung ist verfügbar, Mo-Fr, 9:00-18:00 Uhr CET.",
+      "q3": "Kann ich eine Demo planen?",
+      "a3": "Absolut! Fordern Sie eine Demo über das Kontaktformular an oder rufen Sie uns an."
+    },
+    "formTitle": "Senden Sie uns eine Nachricht",
+    "formDescription": "Wir freuen uns von Ihnen zu hören",
+    "quickAnswers": "Schnelle Antworten",
+    "liveSupport": {
+      "title": "Live-Support",
+      "available": "24/7 verfügbar",
+      "description": "Brauchen Sie sofortige Hilfe? Unser Support-Team ist bereit, Ihnen bei allen Fragen zu helfen.",
+      "startChat": "Live-Chat starten"
+    },
+    "followUs": "Folgen Sie uns"
+  },
+  "courseCard": {
+    "featured": "Empfohlen"
+  }
+}
