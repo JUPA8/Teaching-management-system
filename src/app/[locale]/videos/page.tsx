@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Clock, Eye, Filter, PlayCircle, Sparkles } from 'lucide-react';
+import { Play, Clock, Filter, PlayCircle, Sparkles, Calendar } from 'lucide-react';
+import { Link } from '@/i18n/routing';
 
 // Video data with translation keys
 const videoData = [
@@ -256,14 +257,16 @@ function VideoCard({ video, t, index, translationKey }: { video: VideoItem; t: a
           {description}
         </motion.p>
 
-        {/* Stats */}
-        <div className="flex items-center justify-between text-sm">
-          <motion.div
-            className="flex items-center gap-1.5 text-gray-500"
-            whileHover={{ scale: 1.05 }}
-          >
-            <Eye className="w-4 h-4" />
-            <span>{video.views.toLocaleString()} {t('views')}</span>
+        {/* Actions */}
+        <div className="flex items-center gap-3 text-sm">
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="flex-1">
+            <Link
+              href="/register"
+              className="w-full bg-gradient-to-r from-primary-600 to-secondary-600 text-white font-medium py-2 px-4 rounded-lg transition-all hover:shadow-lg flex items-center justify-center gap-2 text-xs"
+            >
+              <Calendar className="w-3.5 h-3.5" />
+              {t('bookFreeTrial')}
+            </Link>
           </motion.div>
           <motion.button
             className="text-primary-600 font-medium hover:text-primary-700 transition-colors flex items-center gap-1"

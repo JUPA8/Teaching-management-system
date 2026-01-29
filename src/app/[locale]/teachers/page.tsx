@@ -217,7 +217,7 @@ export default function TeachersPage() {
                   </div>
 
                   {/* Specializations */}
-                  <div className="mb-5">
+                  <div>
                     <p className="text-sm text-gray-500 mb-2">{t('specializations')}</p>
                     <div className="flex flex-wrap gap-2">
                       {specializations.map((spec, idx) => (
@@ -235,23 +235,6 @@ export default function TeachersPage() {
                     </div>
                   </div>
 
-                  {/* Actions */}
-                  <div className="flex gap-3 pt-4 border-t">
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="flex-1 py-2.5 px-4 border-2 border-primary-600 text-primary-600 rounded-xl font-medium text-sm hover:bg-primary-50 transition-colors"
-                    >
-                      {t('viewProfile')}
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="flex-1 py-2.5 px-4 bg-gradient-to-r from-primary-600 to-secondary-600 text-white rounded-xl font-medium text-sm hover:shadow-lg transition-shadow"
-                    >
-                      {t('bookLesson')}
-                    </motion.button>
-                  </div>
                 </div>
               </motion.div>
             );

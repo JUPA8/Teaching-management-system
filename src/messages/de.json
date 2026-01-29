@@ -8,7 +8,7 @@
     "courses": "Kurse",
     "quranAdults": "Quran für Erwachsene",
     "quranKids": "Quran für Kinder",
-    "arabic": "Arabisch",
+    "arabic": "Arabisch Lernen",
     "islamicStudies": "Islamische Wissenschaften",
     "teachers": "Unsere Lehrer",
     "videos": "Videos",
@@ -75,6 +75,10 @@
         "ijazah": {
           "title": "Ijazah-Pfad",
           "description": "Weg zur zertifizierten Quran-Rezitationsberechtigung"
+        },
+        "tafseer": {
+          "title": "Tafseer-Studien",
+          "description": "Verstehen Sie die tieferen Bedeutungen des Quran"
         }
       }
     },
@@ -170,7 +174,9 @@
       }
     },
     "viewCourse": "Kurs ansehen",
+    "freeTrialLesson": "Probestunde",
     "viewAll": "Alle Kurse ansehen",
+    "allCourses": "Alle Kurse",
     "enrollNow": "Jetzt anmelden",
     "bookFreeTrial": "Kostenlose Probestunde buchen",
     "courseIncludes": "Dieser Kurs beinhaltet:",
@@ -188,29 +194,51 @@
     "intermediate": "Mittelstufe",
     "advanced": "Fortgeschritten",
     "month": "/mo",
+    "whatYouLearn": "Was Sie lernen werden",
+    "features": {
+      "liveSession": "Live 1-zu-1 Sitzungen mit Ihrem Lehrer",
+      "personalizedPace": "Lernen Sie in Ihrem eigenen Tempo",
+      "recordedLessons": "Zugang zu aufgezeichneten Lektionen",
+      "progressTracking": "Detaillierte Fortschrittsverfolgung und Berichte",
+      "certificate": "Zertifikat nach Abschluss",
+      "lifetimeAccess": "Lebenslanger Zugang zu Kursmaterialien"
+    },
+    "courseCurriculum": "Kursinhalt",
+    "curriculum": {
+      "intro": "Einführung & Bewertung",
+      "introDetails": "Erste Bewertung und personalisierter Lernplan",
+      "fundamentals": "Grundlagen",
+      "fundamentalsDetails": "Aufbau starker Grundlagen und Schlüsselkonzepte",
+      "practice": "Geführte Praxis",
+      "practiceDetails": "Praktische Übung mit Lehrer-Feedback",
+      "advanced": "Fortgeschrittene Anwendung",
+      "advancedDetails": "Meisterstufe und Zertifizierungsvorbereitung"
+    },
+    "yourInstructor": "Ihr Lehrer",
+    "yearsExperience": "Jahre Erfahrung",
     "quranReadingBasics": {
-  "title": "Grundlagen des Koranlesens",
-  "description": "Lerne, den Koran von Grund auf mit richtiger Aussprache und grundlegenden Tadschwid-Regeln zu lesen.",
-  "duration": "3 Monate",
-  "lessons": "36 Lektionen",
-  "students": "1250 Teilnehmer",
-  "rating": "4.9",
-  "price": "49"
-},
-"tajweedMastery": {
-  "title": "Tadschwid meistern",
-  "description": "Beherrsche die Regeln des Tadschwid und verbessere deine Koranrezitation mit fortgeschrittenen Techniken.",
-  "duration": "6 Monate",
-  "lessons": "72 Lektionen",
-  "students": "890 Teilnehmer",
-  "rating": "4.8",
-  "price": "79"
-},
-"hifzProgram": {
-  "title": "Koran-Auswendiglernprogramm (Hifz)",
-  "description": "Strukturiertes Hifz-Programm mit persönlichen Lernplänen und regelmäßigen Wiederholungen.",
-  "duration": "24 Monate",
-  "lessons": "288 Lektionen",
+      "title": "Grundlagen des Koranlesens",
+      "description": "Lerne, den Koran von Grund auf mit richtiger Aussprache und grundlegenden Tadschwid-Regeln zu lesen.",
+      "duration": "3 Monate",
+      "lessons": "36 Lektionen",
+      "students": "1250 Teilnehmer",
+      "rating": "4.9",
+      "price": "49"
+    },
+    "tajweedMastery": {
+      "title": "Tadschwid meistern",
+      "description": "Beherrsche die Regeln des Tadschwid und verbessere deine Koranrezitation mit fortgeschrittenen Techniken.",
+      "duration": "6 Monate",
+      "lessons": "72 Lektionen",
+      "students": "890 Teilnehmer",
+      "rating": "4.8",
+      "price": "79"
+    },
+    "hifzProgram": {
+      "title": "Koran-Auswendiglernprogramm (Hifz)",
+      "description": "Strukturiertes Hifz-Programm mit persönlichen Lernplänen und regelmäßigen Wiederholungen.",
+      "duration": "24 Monate",
+      "lessons": "288 Lektionen",
   "students": "456 Teilnehmer",
   "rating": "4.9",
   "price": "99"
@@ -259,8 +287,38 @@
   "students": "1340 Teilnehmer",
   "rating": "4.9",
   "price": "39"
+},
+"tafseerCourse": {
+  "title": "Quran Tafseer",
+  "description": "Vertiefte Einblicke in die Bedeutungen und Interpretationen des Quran mit wissenschaftlichen Erklärungen.",
+  "duration": "8 Monate",
+  "lessons": "64 Lektionen",
+  "students": "680 Teilnehmer",
+  "rating": "4.9",
+  "price": "79"
+},
+"whatYouLearn": "Was Sie lernen werden",
+"courseCurriculum": "Kursinhalt",
+"yourInstructor": "Ihr Lehrer",
+"yearsExperience": "Jahre Erfahrung",
+"features": {
+  "liveSession": "Live 1-zu-1 Sitzungen mit Ihrem Lehrer",
+  "personalizedPace": "Lernen Sie in Ihrem eigenen Tempo",
+  "recordedLessons": "Zugang zu aufgezeichneten Lektionen",
+  "progressTracking": "Detaillierte Fortschrittsverfolgung und Berichte",
+  "certificate": "Zertifikat nach Abschluss",
+  "lifetimeAccess": "Lebenslanger Zugang zu Kursmaterialien"
+},
+"curriculum": {
+  "intro": "Einführung & Bewertung",
+  "introDetails": "Erste Bewertung und personalisierter Lernplan",
+  "fundamentals": "Grundlagen",
+  "fundamentalsDetails": "Aufbau starker Grundlagen und Schlüsselkonzepte",
+  "practice": "Geführte Praxis",
+  "practiceDetails": "Praktische Übung mit Lehrer-Feedback",
+  "advanced": "Fortgeschrittene Anwendung",
+  "advancedDetails": "Meisterstufe und Zertifizierungsvorbereitung"
 }
-
 
   },
   "teachers": {
@@ -462,7 +520,7 @@
     "newsletterText": "Abonnieren Sie unseren Newsletter für Updates und Angebote.",
     "subscribe": "Abonnieren",
     "emailPlaceholder": "Ihre E-Mail",
-    "copyright": "© 2025 Salam Institute. Alle Rechte vorbehalten."
+    "copyright": "© 2026 Salam Institute. Alle Rechte vorbehalten."
   },
   "videos": {
     "title": "Video-Bibliothek",
@@ -477,6 +535,7 @@
     "duration": "Dauer",
     "views": "Aufrufe",
     "watchNow": "Jetzt ansehen",
+    "bookFreeTrial": "Kostenlose Probestunde buchen",
     "noVideos": "Keine Videos in dieser Kategorie gefunden.",
     "list": {
       "tajweedIntro": {

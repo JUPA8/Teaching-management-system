@@ -8,7 +8,7 @@
     "courses": "الدورات",
     "quranAdults": "القرآن للكبار",
     "quranKids": "القرآن للأطفال",
-    "arabic": "اللغة العربية",
+    "arabic": "تعلم العربية",
     "islamicStudies": "العلوم الإسلامية",
     "teachers": "معلمونا",
     "videos": "الفيديوهات",
@@ -75,6 +75,10 @@
         "ijazah": {
           "title": "مسار الإجازة",
           "description": "طريق للحصول على شهادة القراءة المعتمدة"
+        },
+        "tafseer": {
+          "title": "دراسات التفسير",
+          "description": "فهم المعاني العميقة للقرآن الكريم"
         }
       }
     },
@@ -170,6 +174,8 @@
       }
     },
     "viewCourse": "عرض الدورة",
+    "freeTrialLesson": "حصة تجريبية",
+    "allCourses": "جميع الدورات",
     "enrollNow": "سجل الآن",
     "bookFreeTrial": "احجز حصة تجريبية مجانية",
     "courseIncludes": "تشمل هذه الدورة:",
@@ -187,80 +193,109 @@
     "intermediate": "متوسط",
     "advanced": "متقدم",
     "month": "/شهر",
-"quranReadingBasics": {
-  "title": "أساسيات قراءة القرآن",
-  "description": "تعلم قراءة القرآن من الصفر مع النطق الصحيح وقواعد التجويد الأساسية.",
-  "duration": "٣ أشهر",
-  "lessons": "٣٦ درس",
-  "students": "١٢٥٠ طالب",
-  "rating": "٤٫٩",
-  "price": "٤٩"
-},
-"tajweedMastery": {
-  "title": "إتقان التجويد",
-  "description": "أتقن قواعد التجويد وحسّن تلاوتك للقرآن باستخدام تقنيات متقدمة.",
-  "duration": "٦ أشهر",
-  "lessons": "٧٢ درس",
-  "students": "٨٩٠ طالب",
-  "rating": "٤٫٨",
-  "price": "٧٩"
-},
-"hifzProgram": {
-  "title": "برنامج حفظ القرآن",
-  "description": "برنامج حفظ منظم مع خطط مخصصة للحفظ وجداول مراجعة منتظمة.",
-  "duration": "٢٤ شهر",
-  "lessons": "٢٨٨ درس",
-  "students": "٤٥٦ طالب",
-  "rating": "٤٫٩",
-  "price": "٩٩"
-},
-"kidsQuranFun": {
-  "title": "قرآن ممتع للأطفال",
-  "description": "دروس قرآن تفاعلية وممتعة مصممة خصيصًا للأطفال من عمر ٥ إلى ١٠ سنوات.",
-  "duration": "٦ أشهر",
-  "lessons": "٤٨ درس",
-  "students": "٢١٠٠ طالب",
-  "rating": "٤٫٩",
-  "price": "٣٩"
-},
-"juniorHifz": {
-  "title": "برنامج الحفظ للصغار",
-  "description": "برنامج حفظ مناسب لأعمار الأطفال مع ألعاب وأنظمة مكافآت تشجيعية.",
-  "duration": "١٢ شهر",
-  "lessons": "٩٦ درس",
-  "students": "٧٨٠ طالب",
-  "rating": "٤٫٨",
-  "price": "٥٩"
-},
-"arabicBeginners": {
-  "title": "العربية للمبتدئين",
-  "description": "ابدأ رحلتك في تعلم العربية مع الحروف والمفردات الأساسية ومحادثات بسيطة.",
-  "duration": "٤ أشهر",
-  "lessons": "٤٨ درس",
-  "students": "١٥٦٠ طالب",
-  "rating": "٤٫٧",
-  "price": "٤٩"
-},
-"quranicArabic": {
-  "title": "العربية القرآنية",
-  "description": "افهم لغة القرآن من خلال مفردات وقواعد مركزة ومبسطة.",
-  "duration": "٦ أشهر",
-  "lessons": "٧٢ درس",
-  "students": "٩٢٠ طالب",
-  "rating": "٤٫٨",
-  "price": "٦٩"
-},
-"islamicFoundations": {
-  "title": "أساسيات الإسلام",
-  "description": "معرفة أساسية بالعقيدة الإسلامية والعبادات وسيرة النبي محمد ﷺ.",
-  "duration": "٤ أشهر",
-  "lessons": "٣٢ درس",
-  "students": "١٣٤٠ طالب",
-  "rating": "٤٫٩",
-  "price": "٣٩"
-}
-
-
+    "whatYouLearn": "ما ستتعلمه",
+    "features": {
+      "liveSession": "جلسات مباشرة 1 على 1 مع معلم مؤهل",
+      "personalizedPace": "وتيرة تعلم شخصية",
+      "recordedLessons": "دروس مسجلة للمراجعة",
+      "progressTracking": "لوحة تتبع التقدم",
+      "certificate": "شهادة عند الإنجاز",
+      "lifetimeAccess": "وصول مدى الحياة للمواد"
+    },
+    "courseCurriculum": "منهج الدورة",
+    "curriculum": {
+      "intro": "المقدمة والتقييم",
+      "introDetails": "درسان • ساعة واحدة",
+      "fundamentals": "أساسيات الحروف العربية",
+      "fundamentalsDetails": "٦ دروس • ٣ ساعات",
+      "practice": "تدريب السور القصيرة",
+      "practiceDetails": "١٠ دروس • ٥ ساعات",
+      "advanced": "التلاوة المتقدمة",
+      "advancedDetails": "١٠ دروس • ٥ ساعات"
+    },
+    "yourInstructor": "معلمك",
+    "yearsExperience": "سنوات خبرة",
+    "quranReadingBasics": {
+      "title": "أساسيات قراءة القرآن",
+      "description": "تعلم قراءة القرآن من الصفر مع النطق الصحيح وقواعد التجويد الأساسية.",
+      "duration": "٣ أشهر",
+      "lessons": "٣٦ درس",
+      "students": "١٢٥٠ طالب",
+      "rating": "٤٫٩",
+      "price": "٤٩"
+    },
+    "tajweedMastery": {
+      "title": "إتقان التجويد",
+      "description": "أتقن قواعد التجويد وحسّن تلاوتك للقرآن باستخدام تقنيات متقدمة.",
+      "duration": "٦ أشهر",
+      "lessons": "٧٢ درس",
+      "students": "٨٩٠ طالب",
+      "rating": "٤٫٨",
+      "price": "٧٩"
+    },
+    "hifzProgram": {
+      "title": "برنامج حفظ القرآن",
+      "description": "برنامج حفظ منظم مع خطط مخصصة للحفظ وجداول مراجعة منتظمة.",
+      "duration": "٢٤ شهر",
+      "lessons": "٢٨٨ درس",
+      "students": "٤٥٦ طالب",
+      "rating": "٤٫٩",
+      "price": "٩٩"
+    },
+    "kidsQuranFun": {
+      "title": "قرآن ممتع للأطفال",
+      "description": "دروس قرآن تفاعلية وممتعة مصممة خصيصًا للأطفال من عمر ٥ إلى ١٠ سنوات.",
+      "duration": "٦ أشهر",
+      "lessons": "٤٨ درس",
+      "students": "٢١٠٠ طالب",
+      "rating": "٤٫٩",
+      "price": "٣٩"
+    },
+    "juniorHifz": {
+      "title": "برنامج الحفظ للصغار",
+      "description": "برنامج حفظ مناسب لأعمار الأطفال مع ألعاب وأنظمة مكافآت تشجيعية.",
+      "duration": "١٢ شهر",
+      "lessons": "٩٦ درس",
+      "students": "٧٨٠ طالب",
+      "rating": "٤٫٨",
+      "price": "٥٩"
+    },
+    "arabicBeginners": {
+      "title": "العربية للمبتدئين",
+      "description": "ابدأ رحلتك في تعلم العربية مع الحروف والمفردات الأساسية ومحادثات بسيطة.",
+      "duration": "٤ أشهر",
+      "lessons": "٤٨ درس",
+      "students": "١٥٦٠ طالب",
+      "rating": "٤٫٧",
+      "price": "٤٩"
+    },
+    "quranicArabic": {
+      "title": "العربية القرآنية",
+      "description": "افهم لغة القرآن من خلال مفردات وقواعد مركزة ومبسطة.",
+      "duration": "٦ أشهر",
+      "lessons": "٧٢ درس",
+      "students": "٩٢٠ طالب",
+      "rating": "٤٫٨",
+      "price": "٦٩"
+    },
+    "islamicFoundations": {
+      "title": "أساسيات الإسلام",
+      "description": "معرفة أساسية بالعقيدة الإسلامية والعبادات وسيرة النبي محمد ﷺ.",
+      "duration": "٤ أشهر",
+      "lessons": "٣٢ درس",
+      "students": "١٣٤٠ طالب",
+      "rating": "٤٫٩",
+      "price": "٣٩"
+    },
+    "tafseerCourse": {
+      "title": "تفسير القرآن",
+      "description": "دراسة معمقة لمعاني وتفسيرات القرآن الكريم مع شروحات علمية.",
+      "duration": "٨ أشهر",
+      "lessons": "٦٤ درس",
+      "students": "٦٨٠ طالب",
+      "rating": "٤٫٩",
+      "price": "٧٩"
+    }
 
   },
   "teachers": {
@@ -462,7 +497,7 @@
     "newsletterText": "اشترك في نشرتنا الإخبارية للحصول على التحديثات والعروض.",
     "subscribe": "اشترك",
     "emailPlaceholder": "بريدك الإلكتروني",
-    "copyright": "© 2025 معهد سلام. جميع الحقوق محفوظة."
+    "copyright": "© 2026 معهد سلام. جميع الحقوق محفوظة."
   },
   "videos": {
     "title": "مكتبة الفيديو",
@@ -477,6 +512,7 @@
     "duration": "المدة",
     "views": "المشاهدات",
     "watchNow": "شاهد الآن",
+    "bookFreeTrial": "احجز حصة تجريبية مجانية",
     "noVideos": "لا توجد فيديوهات في هذه الفئة.",
     "list": {
       "tajweedIntro": {

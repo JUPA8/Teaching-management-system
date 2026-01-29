@@ -8,7 +8,7 @@
     "courses": "Courses",
     "quranAdults": "Quran for Adults",
     "quranKids": "Quran for Kids",
-    "arabic": "Arabic Language",
+    "arabic": "Arabic Learning",
     "islamicStudies": "Islamic Studies",
     "teachers": "Our Teachers",
     "videos": "Videos",
@@ -75,6 +75,10 @@
         "ijazah": {
           "title": "Ijazah Track",
           "description": "Path to certified Quran recitation credentials"
+        },
+        "tafseer": {
+          "title": "Tafseer Studies",
+          "description": "Understand the deeper meanings of the Quran"
         }
       }
     },
@@ -170,7 +174,9 @@
       }
     },
     "viewAll": "View All Courses",
+    "allCourses": "All Courses",
     "viewCourse": "View Course",
+    "freeTrialLesson": "Free Trial",
     "enrollNow": "Enroll Now",
     "bookFreeTrial": "Book Free Trial",
     "courseIncludes": "This course includes:",
@@ -188,29 +194,51 @@
     "intermediate": "Intermediate",
     "advanced": "Advanced",
     "month": "/mo",
-"quranReadingBasics": {
-  "title": "Quran Reading Basics",
-  "description": "Learn to read the Quran from scratch with proper pronunciation and basic Tajweed rules.",
-  "duration": "3 months",
-  "lessons": "36 lessons",
-  "students": "1250 students",
-  "rating": "4.9",
-  "price": "49"
-},
-"tajweedMastery": {
-  "title": "Tajweed Mastery",
-  "description": "Master the rules of Tajweed and perfect your Quran recitation with advanced techniques.",
-  "duration": "6 months",
-  "lessons": "72 lessons",
-  "students": "890 students",
-  "rating": "4.8",
-  "price": "79"
-},
-"hifzProgram": {
-  "title": "Quran Memorization (Hifz)",
-  "description": "Structured Hifz program with personalized memorization plans and revision schedules.",
-  "duration": "24 months",
-  "lessons": "288 lessons",
+    "whatYouLearn": "What You'll Learn",
+    "features": {
+      "liveSession": "Live 1-on-1 sessions with your teacher",
+      "personalizedPace": "Learn at your own personalized pace",
+      "recordedLessons": "Access to recorded lesson replays",
+      "progressTracking": "Detailed progress tracking and reports",
+      "certificate": "Certificate upon completion",
+      "lifetimeAccess": "Lifetime access to course materials"
+    },
+    "courseCurriculum": "Course Curriculum",
+    "curriculum": {
+      "intro": "Introduction & Assessment",
+      "introDetails": "Initial assessment and personalized learning plan",
+      "fundamentals": "Core Fundamentals",
+      "fundamentalsDetails": "Building strong foundations and key concepts",
+      "practice": "Guided Practice",
+      "practiceDetails": "Hands-on practice with teacher feedback",
+      "advanced": "Advanced Application",
+      "advancedDetails": "Mastery level skills and certification prep"
+    },
+    "yourInstructor": "Your Instructor",
+    "yearsExperience": "Years Experience",
+    "quranReadingBasics": {
+      "title": "Quran Reading Basics",
+      "description": "Learn to read the Quran from scratch with proper pronunciation and basic Tajweed rules.",
+      "duration": "3 months",
+      "lessons": "36 lessons",
+      "students": "1250 students",
+      "rating": "4.9",
+      "price": "49"
+    },
+    "tajweedMastery": {
+      "title": "Tajweed Mastery",
+      "description": "Master the rules of Tajweed and perfect your Quran recitation with advanced techniques.",
+      "duration": "6 months",
+      "lessons": "72 lessons",
+      "students": "890 students",
+      "rating": "4.8",
+      "price": "79"
+    },
+    "hifzProgram": {
+      "title": "Quran Memorization (Hifz)",
+      "description": "Structured Hifz program with personalized memorization plans and revision schedules.",
+      "duration": "24 months",
+      "lessons": "288 lessons",
   "students": "456 students",
   "rating": "4.9",
   "price": "99"
@@ -259,6 +287,37 @@
   "students": "1340 students",
   "rating": "4.9",
   "price": "39"
+},
+"tafseerCourse": {
+  "title": "Quran Tafseer",
+  "description": "Deep dive into the meanings and interpretations of the Quran with scholarly explanations.",
+  "duration": "8 months",
+  "lessons": "64 lessons",
+  "students": "680 students",
+  "rating": "4.9",
+  "price": "79"
+},
+"whatYouLearn": "What You'll Learn",
+"courseCurriculum": "Course Curriculum",
+"yourInstructor": "Your Instructor",
+"yearsExperience": "Years Experience",
+"features": {
+  "liveSession": "Live 1-on-1 sessions with your teacher",
+  "personalizedPace": "Learn at your own personalized pace",
+  "recordedLessons": "Access to recorded lesson replays",
+  "progressTracking": "Detailed progress tracking and reports",
+  "certificate": "Certificate upon completion",
+  "lifetimeAccess": "Lifetime access to course materials"
+},
+"curriculum": {
+  "intro": "Introduction & Assessment",
+  "introDetails": "Initial assessment and personalized learning plan",
+  "fundamentals": "Core Fundamentals",
+  "fundamentalsDetails": "Building strong foundations and key concepts",
+  "practice": "Guided Practice",
+  "practiceDetails": "Hands-on practice with teacher feedback",
+  "advanced": "Advanced Application",
+  "advancedDetails": "Mastery level skills and certification prep"
 }
 
   },
@@ -466,7 +525,7 @@
     "newsletterText": "Subscribe to our newsletter for updates and offers.",
     "subscribe": "Subscribe",
     "emailPlaceholder": "Your email",
-    "copyright": "© 2025 Salam Institute. All rights reserved."
+    "copyright": "© 2026 Salam Institute. All rights reserved."
   },
   "videos": {
     "title": "Video Library",
@@ -481,6 +540,7 @@
     "duration": "Duration",
     "views": "Views",
     "watchNow": "Watch Now",
+    "bookFreeTrial": "Book Free Trial",
     "noVideos": "No videos found in this category.",
     "list": {
       "tajweedIntro": {

@@ -4,7 +4,13 @@ import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
 import { Quote } from 'lucide-react';
 
-const testimonialKeys = ['sarah', 'ahmed', 'fatima', 'muhammad'] as const;
+// Testimonial data with Islamic-style avatars and country flags
+const testimonialData = [
+  { key: 'sarah', avatar: '🧕', flag: '🇩🇪', bgColor: 'bg-primary-100', initial: 'س' },
+  { key: 'ahmed', avatar: '🧔', flag: '🇦🇹', bgColor: 'bg-secondary-100', initial: 'أ' },
+  { key: 'fatima', avatar: '🧕🏽', flag: '🇨🇭', bgColor: 'bg-primary-50', initial: 'ف' },
+  { key: 'muhammad', avatar: '👳', flag: '🇺🇸', bgColor: 'bg-secondary-50', initial: 'م' },
+] as const;
 
 export default function Testimonials() {
   const t = useTranslations('testimonials');
@@ -34,7 +40,7 @@ export default function Testimonials() {
   };
 
   return (
-    <section className="py-16 md:py-24 bg-white overflow-hidden">
+    <section className="py-16 md:py-24 bg-cream-100 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           className="text-center mb-12"
@@ -70,18 +76,18 @@ export default function Testimonials() {
           whileInView="visible"
           viewport={{ once: true, margin: '-50px' }}
         >
-          {testimonialKeys.map((key, index) => {
-            const name = t(`items.${key}.name`);
-            const role = t(`items.${key}.role`);
-            const content = t(`items.${key}.content`);
+          {testimonialData.map((item, index) => {
+            const name = t(`items.${item.key}.name`);
+            const role = t(`items.${item.key}.role`);
+            const content = t(`items.${item.key}.content`);
 
             return (
               <motion.div
-                key={key}
+                key={item.key}
                 variants={itemVariants}
                 whileHover={{
                   y: -10,
-                  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
+                  boxShadow: '0 25px 50px -12px rgba(177, 140, 93, 0.2)',
                 }}
                 className="card p-6 cursor-pointer"
               >
@@ -93,18 +99,18 @@ export default function Testimonials() {
                   viewport={{ once: true }}
                   transition={{ delay: 0.1 * index, duration: 0.5 }}
                 >
-                  <Quote className="w-8 h-8 text-primary-200" />
+                  <Quote className="w-8 h-8 text-secondary-300" />
                 </motion.div>
 
                 {/* Content */}
                 <motion.p
-                  className="text-gray-600 mb-6 text-sm leading-relaxed"
+                  className="text-charcoal-light mb-6 text-sm leading-relaxed"
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.15 * index, duration: 0.5 }}
                 >
-                  "{content}"
+                  &quot;{content}&quot;
                 </motion.p>
 
                 {/* Author */}
@@ -116,18 +122,35 @@ export default function Testimonials() {
                   transition={{ delay: 0.2 * index, duration: 0.5 }}
                 >
                   <motion.div
-                    className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center"
-                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    className={`w-12 h-12 rounded-full ${item.bgColor} flex items-center justify-center`}
+                    whileHover={{ scale: 1.15, rotate: 10 }}
+                    animate={{
+                      y: [0, -3, 0],
+                    }}
+                    transition={{
+                      y: {
+                        duration: 2,
+                        repeat: Infinity,
+                        delay: index * 0.3,
+                      }
+                    }}
                   >
-                    <span className="text-primary-600 font-semibold text-sm">
-                      {name.charAt(0)}
+                    <span className="text-2xl">
+                      {item.avatar}
                     </span>
                   </motion.div>
                   <div>
-                    <p className="font-semibold text-gray-900 text-sm">
+                    <p className="font-semibold text-charcoal text-sm flex items-center gap-2">
                       {name}
+                      <motion.span
+                        className="text-base"
+                        animate={{ scale: [1, 1.1, 1] }}
+                        transition={{ duration: 2, repeat: Infinity, delay: index * 0.2 }}
+                      >
+                        {item.flag}
+                      </motion.span>
                     </p>
-                    <p className="text-gray-500 text-xs">{role}</p>
+                    <p className="text-charcoal-light text-xs">{role}</p>
                   </div>
                 </motion.div>
               </motion.div>

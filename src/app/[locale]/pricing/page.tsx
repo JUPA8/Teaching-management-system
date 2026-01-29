@@ -222,19 +222,29 @@ export default function PricingPage() {
                   ))}
                 </ul>
 
-                {/* CTA Button */}
-                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                  <Link
-                    href="/register"
-                    className={`block w-full text-center py-3.5 rounded-xl font-semibold transition-all ${
-                      plan.popular
-                        ? 'bg-gradient-to-r from-primary-600 to-secondary-600 text-white hover:shadow-lg hover:shadow-primary-500/30'
-                        : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-                    }`}
-                  >
-                    {t('choosePlan')}
-                  </Link>
-                </motion.div>
+                {/* CTA Buttons */}
+                <div className="flex flex-col gap-3">
+                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                    <Link
+                      href="/register"
+                      className={`block w-full text-center py-3.5 rounded-xl font-semibold transition-all ${
+                        plan.popular
+                          ? 'bg-gradient-to-r from-primary-600 to-secondary-600 text-white hover:shadow-lg hover:shadow-primary-500/30'
+                          : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+                      }`}
+                    >
+                      {t('choosePlan')}
+                    </Link>
+                  </motion.div>
+                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                    <Link
+                      href="/register"
+                      className="block w-full text-center py-3.5 rounded-xl font-semibold transition-all border-2 border-primary-600 text-primary-600 hover:bg-primary-50"
+                    >
+                      {common('freeTrial')}
+                    </Link>
+                  </motion.div>
+                </div>
               </div>
             </motion.div>
           ))}

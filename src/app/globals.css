@@ -5,19 +5,27 @@
 @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 255, 255, 255;
-  --background-end-rgb: 255, 255, 255;
+  /* Light Academic Theme Colors */
+  --cream-bg: #FDF8F1;
+  --cream-surface: #F9F3EA;
+  --forest-teal: #3D6B65;
+  --forest-teal-light: #4A8079;
+  --golden-bronze: #B18C5D;
+  --golden-bronze-light: #CFAB74;
+  --charcoal: #433E37;
+  --charcoal-light: #6B645C;
+
+  --foreground-rgb: 67, 62, 55;
+  --background-start-rgb: 253, 248, 241;
+  --background-end-rgb: 249, 243, 234;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: var(--cream-bg);
+  background-image:
+    radial-gradient(ellipse at top, rgba(177, 140, 93, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(61, 107, 101, 0.05) 0%, transparent 40%);
 }
 
 /* RTL Support */
@@ -35,16 +43,16 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--cream-surface);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #3d8a8a;
+  background: var(--forest-teal);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #2f7a7a;
+  background: var(--forest-teal-light);
 }
 
 /* Animation classes */
@@ -108,22 +116,44 @@ body {
   }
 }
 
-/* Button styles */
+/* Button styles - Matte finish with Forest Teal */
 @layer components {
   .btn-primary {
-    @apply bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
+    @apply bg-primary-600 hover:bg-primary-500 text-white font-medium py-3 px-6 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5;
+    background-image: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 50%);
   }
 
   .btn-secondary {
-    @apply bg-white hover:bg-gray-50 text-primary-600 font-semibold py-3 px-6 rounded-lg border-2 border-primary-600 transition-all duration-300;
+    @apply bg-cream-100 hover:bg-cream-200 text-primary-600 font-medium py-3 px-6 rounded-xl border-2 border-primary-600 transition-all duration-300;
   }
 
   .btn-outline {
-    @apply bg-transparent hover:bg-primary-50 text-primary-600 font-semibold py-2 px-4 rounded-lg border border-primary-600 transition-all duration-300;
+    @apply bg-transparent hover:bg-primary-50 text-primary-600 font-medium py-2 px-4 rounded-xl border border-primary-600 transition-all duration-300;
   }
 
+  .btn-gold {
+    @apply bg-secondary-500 hover:bg-secondary-400 text-white font-medium py-3 px-6 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg;
+    background-image: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 50%);
+  }
+
+  /* Framed Card Style with bronze/gold accent borders */
   .card {
-    @apply bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300;
+    @apply bg-cream-100 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300;
+    border: 1px solid rgba(177, 140, 93, 0.2);
+    box-shadow: 0 4px 6px -1px rgba(67, 62, 55, 0.08), 0 2px 4px -2px rgba(67, 62, 55, 0.05);
+  }
+
+  .card:hover {
+    border-color: rgba(177, 140, 93, 0.4);
+    box-shadow: 0 10px 15px -3px rgba(67, 62, 55, 0.1), 0 4px 6px -4px rgba(67, 62, 55, 0.1);
+  }
+
+  .card-framed {
+    @apply bg-cream-100 rounded-2xl transition-all duration-300;
+    border: 2px solid rgba(177, 140, 93, 0.3);
+    box-shadow:
+      0 4px 6px -1px rgba(67, 62, 55, 0.05),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5);
   }
 
   .card-hover {
@@ -131,32 +161,78 @@ body {
   }
 
   .section-title {
-    @apply text-3xl md:text-4xl font-bold text-gray-900 mb-4;
+    @apply text-3xl md:text-4xl font-bold mb-4;
+    color: var(--charcoal);
   }
 
   .section-subtitle {
-    @apply text-lg text-gray-600 mb-8;
+    @apply text-lg mb-8;
+    color: var(--charcoal-light);
   }
 
   .input-field {
-    @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all duration-200;
+    @apply w-full px-4 py-3 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all duration-200;
+    background: var(--cream-surface);
+    border: 1px solid rgba(177, 140, 93, 0.2);
+  }
+
+  .input-field:focus {
+    border-color: var(--forest-teal);
+    background: var(--cream-bg);
   }
 
   .label {
-    @apply block text-sm font-medium text-gray-700 mb-1;
+    @apply block text-sm font-medium mb-1;
+    color: var(--charcoal);
   }
 }
 
-/* Islamic pattern background */
+/* Islamic pattern background - Golden Bronze watermark */
 .islamic-pattern {
-  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%233d8a8a' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  position: relative;
 }
 
-/* Gradient backgrounds */
+.islamic-pattern::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23B18C5D' fill-opacity='0.06'%3E%3Cpath d='M40 40L20 20h40L40 40zm0 0L60 60H20l20-20zm0-40L20 20V0h20l-0-20zm0 0L60 20V0H40v0zM0 40l20-20v40L0 40zm80 0L60 20v40l20-20zM40 80L20 60h40L40 80zm0 0L60 60v20H40v0zM40 0L60 20V0H40zm0 0L20 20V0h20z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Gradient backgrounds - Golden Hour lighting */
 .gradient-primary {
-  background: linear-gradient(135deg, #3d8a8a 0%, #2f7a7a 100%);
+  background: linear-gradient(135deg, var(--forest-teal) 0%, #4A8079 100%);
 }
 
 .gradient-hero {
-  background: linear-gradient(135deg, #f0f9f9 0%, #d9efef 50%, #b3dfdf 100%);
+  background:
+    radial-gradient(ellipse at top left, rgba(177, 140, 93, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(61, 107, 101, 0.1) 0%, transparent 40%),
+    linear-gradient(180deg, var(--cream-bg) 0%, var(--cream-surface) 100%);
+}
+
+.gradient-golden-hour {
+  background:
+    radial-gradient(ellipse at center top, rgba(207, 171, 116, 0.2) 0%, transparent 60%),
+    linear-gradient(180deg, var(--cream-bg) 0%, var(--cream-surface) 100%);
+}
+
+/* Golden glow effect for hero circle */
+.glow-gold {
+  box-shadow: 0 0 30px rgba(177, 140, 93, 0.3);
+}
+
+.glow-gold:hover {
+  box-shadow: 0 0 50px rgba(177, 140, 93, 0.5);
+}
+
+/* Section background variants */
+.bg-cream {
+  background: var(--cream-bg);
+}
+
+.bg-cream-surface {
+  background: var(--cream-surface);
 }

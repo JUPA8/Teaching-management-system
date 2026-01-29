@@ -2,7 +2,7 @@
 
 import { Link } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
-import { Clock, Users, BookOpen } from 'lucide-react';
+import { BookOpen } from 'lucide-react';
 import { Course } from '@/types';
 import { cn } from '@/lib/utils';
 
@@ -22,13 +22,12 @@ export default function CourseCard({ course, featured = false }: CourseCardProps
   const getCourseText = (key: string) => t(key as CourseTranslationKey);
 
   const levelColors = {
-    beginner: 'bg-green-100 text-green-700',
-    intermediate: 'bg-amber-100 text-amber-700',
-    advanced: 'bg-red-100 text-red-700',
+    beginner: 'bg-primary-100 text-primary-700',
+    intermediate: 'bg-secondary-100 text-secondary-700',
+    advanced: 'bg-secondary-200 text-secondary-800',
   };
 
   const levelLabels = {
-    month: t('month'),
     beginner: t('beginner'),
     intermediate: t('intermediate'),
     advanced: t('advanced'),
@@ -37,19 +36,25 @@ export default function CourseCard({ course, featured = false }: CourseCardProps
   return (
     <div
       className={cn(
-        'card card-hover overflow-hidden',
+        'card-framed card-hover overflow-hidden rounded-2xl',
         featured && 'lg:flex lg:flex-row'
       )}
+      style={{
+        boxShadow: '0 4px 20px rgba(177, 140, 93, 0.1)',
+      }}
     >
       {/* Image */}
       <div
         className={cn(
-          'relative h-48 bg-gradient-to-br from-primary-400 to-primary-600',
+          'relative h-48',
           featured && 'lg:h-auto lg:w-2/5'
         )}
+        style={{
+          background: 'linear-gradient(135deg, #3D6B65 0%, #4A8079 50%, #B18C5D 100%)',
+        }}
       >
         <div className="absolute inset-0 flex items-center justify-center">
-          <BookOpen className="w-16 h-16 text-white/30" />
+          <BookOpen className="w-16 h-16 text-white/40" />
         </div>
         <div className="absolute top-4 start-4">
           <span
@@ -63,18 +68,18 @@ export default function CourseCard({ course, featured = false }: CourseCardProps
         </div>
         {featured && (
           <div className="absolute top-4 end-4">
-            <span className="px-3 py-1 rounded-full text-xs font-medium bg-amber-400 text-amber-900">
+            <span className="px-3 py-1 rounded-full text-xs font-medium bg-secondary-400 text-white">
               {courseCard('featured')}
             </span>
           </div>
         )}
       </div>
 
-      {/* Content */}
-      <div className={cn('p-6', featured && 'lg:flex-1 lg:p-8')}>
+      {/* Content - Only course name and description */}
+      <div className={cn('p-6 bg-cream-100', featured && 'lg:flex-1 lg:p-8')}>
         <h3
           className={cn(
-            'font-bold text-gray-900 mb-2',
+            'font-bold text-charcoal mb-2',
             featured ? 'text-2xl' : 'text-lg'
           )}
         >
@@ -82,46 +87,26 @@ export default function CourseCard({ course, featured = false }: CourseCardProps
         </h3>
         <p
           className={cn(
-            'text-gray-600 mb-4',
+            'text-charcoal-light mb-4',
             featured ? 'text-base' : 'text-sm line-clamp-2'
           )}
         >
           {getCourseText(course.descriptionKey)}
         </p>
 
-        {/* Stats */}
-        <div className="flex flex-wrap gap-4 mb-4 text-sm text-gray-500">
-          <div className="flex items-center gap-1">
-            <Clock className="w-4 h-4" />
-            <span>{getCourseText(course.durationKey)}</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <BookOpen className="w-4 h-4" />
-            <span>
-              {getCourseText(course.lessonsCountKey)} {t('lessons')}
-            </span>
-          </div>
-          <div className="flex items-center gap-1">
-            <Users className="w-4 h-4" />
-            <span>
-              {getCourseText(course.studentsCountKey)} {t('students')}
-            </span>
-          </div>
-        </div>
-
-        {/* Price and CTA */}
-        <div className="flex items-center justify-between pt-4 border-t">
-          <div>
-            <span className="text-2xl font-bold text-primary-600">
-              €{getCourseText(course.priceKey)}
-            </span>
-            <span className="text-gray-500 text-sm">{t('month')}</span>
-          </div>
+        {/* CTA Buttons */}
+        <div className="pt-4 border-t border-secondary-200 flex flex-wrap gap-2">
           <Link
             href={`/courses/${course.slug}`}
-            className="btn-primary text-sm py-2 px-4"
+            className="btn-primary text-sm py-2 px-4 inline-block"
           >
             {t('viewCourse')}
+          </Link>
+          <Link
+            href="/register"
+            className="btn-outline text-sm py-2 px-4 inline-block"
+          >
+            {t('freeTrialLesson')}
           </Link>
         </div>
       </div>

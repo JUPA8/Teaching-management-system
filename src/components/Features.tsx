@@ -62,7 +62,7 @@ export default function Features() {
   };
 
   return (
-    <section className="py-16 md:py-24 bg-white overflow-hidden">
+    <section className="py-16 md:py-24 bg-cream-200 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           className="text-center mb-12 md:mb-16"
@@ -95,9 +95,9 @@ export default function Features() {
               variants={itemVariants}
               whileHover={{
                 y: -10,
-                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
+                boxShadow: '0 25px 50px -12px rgba(177, 140, 93, 0.2)',
               }}
-              className="group p-6 rounded-2xl bg-gray-50 hover:bg-white transition-all duration-300 cursor-pointer"
+              className="group p-6 rounded-2xl bg-cream-100 hover:bg-white transition-all duration-300 cursor-pointer border border-secondary-100 hover:border-secondary-300"
             >
               <motion.div
                 className={`w-14 h-14 rounded-xl ${feature.color} ${feature.hoverColor} flex items-center justify-center mb-5 transition-all duration-300`}
@@ -107,7 +107,7 @@ export default function Features() {
                 <feature.icon className="w-7 h-7" />
               </motion.div>
               <motion.h3
-                className="text-xl font-semibold text-gray-900 mb-3"
+                className="text-xl font-semibold text-charcoal mb-3"
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
@@ -115,7 +115,7 @@ export default function Features() {
               >
                 {feature.title}
               </motion.h3>
-              <p className="text-gray-600">{feature.description}</p>
+              <p className="text-charcoal-light">{feature.description}</p>
             </motion.div>
           ))}
         </motion.div>

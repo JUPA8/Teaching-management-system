@@ -3,7 +3,7 @@
 import { Link } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
-import { Mail, Phone, MapPin, Facebook, Instagram, Youtube, Twitter, Heart, Send } from 'lucide-react';
+import { Mail, Phone, MapPin, Facebook, Instagram, Youtube, Heart, Send } from 'lucide-react';
 
 export default function Footer() {
   const t = useTranslations('footer');
@@ -11,8 +11,8 @@ export default function Footer() {
 
   const quickLinks = [
     { href: '/', label: common('home') },
-    { href: '/courses/quran-adults', label: common('quranAdults') },
     { href: '/courses/quran-kids', label: common('quranKids') },
+    { href: '/courses/quran-adults', label: common('quranAdults') },
     { href: '/teachers', label: common('teachers') },
     { href: '/videos', label: common('videos') },
     { href: '/pricing', label: common('pricing') },
@@ -30,11 +30,18 @@ export default function Footer() {
     { href: '/imprint', label: common('imprint') },
   ];
 
+  // Custom X (Twitter) icon component
+  const XIcon = ({ className }: { className?: string }) => (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  );
+
   const socialLinks = [
     { href: '#', icon: Facebook, label: 'Facebook' },
     { href: '#', icon: Instagram, label: 'Instagram' },
     { href: '#', icon: Youtube, label: 'YouTube' },
-    { href: '#', icon: Twitter, label: 'Twitter' },
+    { href: '#', icon: XIcon, label: 'X' },
   ];
 
   const containerVariants = {
@@ -275,7 +282,7 @@ export default function Footer() {
             >
               <Heart className="w-4 h-4 text-red-500 fill-red-500 inline" />
             </motion.span>{' '}
-            for the Ummah
+            by Abdelrahman Ahmed
           </motion.p>
         </div>
       </motion.div>

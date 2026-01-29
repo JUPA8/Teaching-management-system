@@ -73,7 +73,7 @@ export default function CoursesSection() {
   };
 
   return (
-    <section className="py-16 md:py-24 bg-gray-50 overflow-hidden">
+    <section className="py-16 md:py-24 gradient-golden-hour overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           className="text-center mb-12"
@@ -114,10 +114,10 @@ export default function CoursesSection() {
             <motion.div key={category.href} variants={itemVariants}>
               <Link href={category.href}>
                 <motion.div
-                  className="group p-6 bg-white rounded-xl shadow-md transition-all cursor-pointer h-full"
+                  className="group p-6 bg-cream-100 rounded-xl shadow-md transition-all cursor-pointer h-full border border-secondary-100 hover:border-secondary-300"
                   whileHover={{
                     y: -8,
-                    boxShadow: '0 20px 40px -12px rgba(0, 0, 0, 0.15)',
+                    boxShadow: '0 20px 40px -12px rgba(177, 140, 93, 0.2)',
                   }}
                   whileTap={{ scale: 0.98 }}
                 >
@@ -137,10 +137,10 @@ export default function CoursesSection() {
                       {category.icon}
                     </motion.span>
                   </motion.div>
-                  <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">
+                  <h3 className="font-semibold text-charcoal mb-2 group-hover:text-primary-600 transition-colors">
                     {category.title}
                   </h3>
-                  <p className="text-sm text-gray-600 mb-3">
+                  <p className="text-sm text-charcoal-light mb-3">
                     {category.description}
                   </p>
                   <motion.span

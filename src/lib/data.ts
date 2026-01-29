@@ -120,7 +120,22 @@ export const courses: Course[] = [
     level: 'beginner',
     category: 'islamic',
     teacherId: '5',
-  }  
+  },
+  {
+    id: '9',
+    slug: 'tafseer-course',
+    titleKey: 'tafseerCourse.title',
+    descriptionKey: 'tafseerCourse.description',
+    durationKey: 'tafseerCourse.duration',
+    lessonsCountKey: 'tafseerCourse.lessons',
+    studentsCountKey: 'tafseerCourse.students',
+    ratingKey: 'tafseerCourse.rating',
+    priceKey: 'tafseerCourse.price',
+    image: '/images/courses/tafseer.jpg',
+    level: 'intermediate',
+    category: 'quran-adults',
+    teacherId: '5',
+  }
 ];
 
 export const teachers: Teacher[] = [

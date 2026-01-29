@@ -9,46 +9,60 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Teal - Main color (from Salam Institute logo)
+        // Light Academic Theme - Cream Background
+        cream: {
+          50: '#FEFCF9',
+          100: '#FDF8F1',  // Primary Background
+          200: '#F9F3EA',  // Surface/Card Color
+          300: '#F5EDE0',
+          400: '#EDE3D3',
+          500: '#E5D9C6',
+        },
+        // Forest Teal - Primary Accent
         primary: {
-          50: '#f0f9f9',
-          100: '#d9efef',
-          200: '#b3dfdf',
-          300: '#8dcfcf',
-          400: '#5fb3b3',
-          500: '#3d8a8a',
-          600: '#2f7a7a',
-          700: '#256565',
-          800: '#1c5050',
-          900: '#143b3b',
+          50: '#F0F5F4',
+          100: '#D9E8E6',
+          200: '#B3D1CD',
+          300: '#8DBAB4',
+          400: '#5A9A91',
+          500: '#4A8079',
+          600: '#3D6B65',  // Main Forest Teal
+          700: '#325954',
+          800: '#274743',
+          900: '#1C3532',
         },
-        // Secondary Teal - Darker variant
+        // Golden Bronze - Secondary Accent
         secondary: {
-          50: '#f0f7f7',
-          100: '#d9ebeb',
-          200: '#b3d7d7',
-          300: '#8dc3c3',
-          400: '#5fa3a3',
-          500: '#3d7a7a',
-          600: '#2f6666',
-          700: '#255252',
-          800: '#1c3e3e',
-          900: '#142a2a',
+          50: '#FBF7F1',
+          100: '#F5EBDB',
+          200: '#EBD7B7',
+          300: '#DFC393',
+          400: '#CFAB74',
+          500: '#B18C5D',  // Main Golden Bronze
+          600: '#9A7A4F',
+          700: '#836841',
+          800: '#6C5633',
+          900: '#554425',
         },
-        // Gold - Accent color (from Salam Institute logo - Arabic text)
+        // Gold - Accent color (keeping for compatibility)
         gold: {
-          50: '#fdfaf3',
-          100: '#faf2de',
-          200: '#f5e4bd',
-          300: '#efd69c',
-          400: '#e5c270',
-          500: '#c4a35a',
-          600: '#a88945',
-          700: '#8c6f35',
-          800: '#705525',
-          900: '#543b15',
+          50: '#FBF7F1',
+          100: '#F5EBDB',
+          200: '#EBD7B7',
+          300: '#DFC393',
+          400: '#CFAB74',
+          500: '#B18C5D',
+          600: '#9A7A4F',
+          700: '#836841',
+          800: '#6C5633',
+          900: '#554425',
         },
-        // Deep Navy - For trust and professionalism
+        // Text Colors
+        charcoal: {
+          DEFAULT: '#433E37',  // Deep Charcoal-Brown for titles
+          light: '#6B645C',    // Muted Grey-Brown for body
+        },
+        // Navy - For trust and professionalism
         navy: {
           50: '#f5f7fa',
           100: '#e4e9f0',
@@ -78,6 +92,7 @@ const config: Config = {
         'bounce-slow': 'bounce 3s infinite',
         'shimmer': 'shimmer 2s linear infinite',
         'glow': 'glow 2s ease-in-out infinite alternate',
+        'glow-teal': 'glow-teal 2s ease-in-out infinite alternate',
       },
       keyframes: {
         float: {
@@ -89,8 +104,12 @@ const config: Config = {
           '100%': { backgroundPosition: '200% 0' },
         },
         glow: {
-          '0%': { boxShadow: '0 0 5px rgb(61 138 138 / 0.5)' },
-          '100%': { boxShadow: '0 0 20px rgb(61 138 138 / 0.8)' },
+          '0%': { boxShadow: '0 0 15px rgba(177, 140, 93, 0.3)' },
+          '100%': { boxShadow: '0 0 30px rgba(177, 140, 93, 0.5)' },
+        },
+        'glow-teal': {
+          '0%': { boxShadow: '0 0 15px rgba(61, 107, 101, 0.3)' },
+          '100%': { boxShadow: '0 0 30px rgba(61, 107, 101, 0.5)' },
         },
       },
     },
