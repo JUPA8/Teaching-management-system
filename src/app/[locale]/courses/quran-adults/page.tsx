@@ -8,32 +8,32 @@ export default async function QuranAdultsPage() {
   const courses = getCoursesByCategory('quran-adults');
 
   return (
-    <div className="py-12 md:py-20 bg-cream-100">
+    <div className="py-12 md:py-20" style={{ background: 'linear-gradient(135deg, #FAF6F1 0%, #F5EFE7 100%)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="w-16 h-16 bg-primary-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+          <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 border-2" style={{ background: 'rgba(59, 111, 95, 0.1)', borderColor: '#3B6F5F' }}>
             <span className="text-3xl">📖</span>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-charcoal mb-4">
+          <h1 className="text-3xl md:text-4xl font-bold text-charcoal mb-4 font-serif">
             {t('quranAdults.title')}
           </h1>
-          <p className="text-lg text-charcoal-light max-w-2xl mx-auto">
+          <p className="text-lg text-charcoal-light max-w-2xl mx-auto leading-relaxed">
             {t('quranAdults.description')}
           </p>
         </div>
 
         {/* Course Features */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <div className="bg-cream-200 rounded-xl p-6 text-center border border-secondary-100 hover:border-secondary-300 transition-colors">
+          <div className="rounded-xl p-6 text-center border-2 transition-all hover:shadow-lg" style={{ background: 'linear-gradient(135deg, #FAF6F1 0%, #F5EFE7 100%)', borderColor: '#C19A6B' }}>
             <div className="text-3xl mb-3">🎯</div>
-            <h3 className="font-semibold text-charcoal mb-2">{t('quranAdults.features.tajweed.title')}</h3>
-            <p className="text-sm text-charcoal-light mb-4">
+            <h3 className="font-semibold text-charcoal mb-2 font-serif">{t('quranAdults.features.tajweed.title')}</h3>
+            <p className="text-sm text-charcoal-light mb-4 leading-relaxed">
               {t('quranAdults.features.tajweed.description')}
             </p>
             <div className="flex flex-col gap-2">
-              <Link href="/courses/tajweed-mastery" className="btn-primary text-xs py-2 px-3 inline-block">{t('viewCourse')}</Link>
-              <Link href="/register" className="btn-outline text-xs py-2 px-3 inline-block">{t('freeTrialLesson')}</Link>
+              <Link href="/courses/tajweed-mastery" className="text-xs py-2 px-3 inline-block rounded-xl text-white font-medium" style={{ background: '#3B6F5F' }}>{t('viewCourse')}</Link>
+              <Link href="/register" className="text-xs py-2 px-3 inline-block rounded-xl border-2 font-medium" style={{ color: '#3B6F5F', borderColor: '#3B6F5F' }}>{t('freeTrialLesson')}</Link>
             </div>
           </div>
           <div className="bg-cream-200 rounded-xl p-6 text-center border border-secondary-100 hover:border-secondary-300 transition-colors">

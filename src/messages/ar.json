@@ -384,6 +384,15 @@
     "title": "أسعارنا",
     "subtitle": "أسعار شفافة بدون تكاليف خفية",
     "badgeLabel": "خطط مرنة",
+    "membershipTypes": {
+      "private": "خاص (١-١)",
+      "group": "مجموعة",
+      "groupSave": "وفر ٣٠٪",
+      "privateTitle": "دروس خاصة ١ إلى ١",
+      "privateDescription": "جلسات فردية مخصصة مع معلمك الخاص. اهتمام كامل ووتيرة تعلم مخصصة.",
+      "groupTitle": "دروس جماعية",
+      "groupDescription": "تعلم مع ٣-٥ طلاب في بيئة جماعية تفاعلية. أكثر توفيراً مع الحفاظ على الجودة."
+    },
     "perMonth": "شهريًا",
     "perLesson": "للحصة",
     "lessonsPerWeek": "حصص أسبوعيًا",

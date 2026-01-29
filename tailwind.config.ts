@@ -9,58 +9,58 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Light Academic Theme - Cream Background
+        // Warm Traditional Theme - Beige/Cream Background
         cream: {
-          50: '#FEFCF9',
-          100: '#FDF8F1',  // Primary Background
-          200: '#F9F3EA',  // Surface/Card Color
-          300: '#F5EDE0',
-          400: '#EDE3D3',
-          500: '#E5D9C6',
+          50: '#FEFDFB',
+          100: '#FAF6F1',  // Primary Background - Warmer beige
+          200: '#F5EFE7',  // Surface/Card Color
+          300: '#F0E8DD',
+          400: '#E8DFD0',
+          500: '#E0D6C3',
         },
-        // Forest Teal - Primary Accent
+        // Deep Teal/Emerald - Primary Accent (More saturated)
         primary: {
           50: '#F0F5F4',
           100: '#D9E8E6',
           200: '#B3D1CD',
           300: '#8DBAB4',
           400: '#5A9A91',
-          500: '#4A8079',
-          600: '#3D6B65',  // Main Forest Teal
-          700: '#325954',
-          800: '#274743',
-          900: '#1C3532',
+          500: '#3B6F5F',  // Main Deep Teal - More saturated
+          600: '#2F5F54',  // Darker teal for depth
+          700: '#254B43',
+          800: '#1C3932',
+          900: '#132721',
         },
-        // Golden Bronze - Secondary Accent
+        // Golden Bronze - Secondary Accent (Richer gold)
         secondary: {
-          50: '#FBF7F1',
-          100: '#F5EBDB',
-          200: '#EBD7B7',
-          300: '#DFC393',
-          400: '#CFAB74',
-          500: '#B18C5D',  // Main Golden Bronze
-          600: '#9A7A4F',
-          700: '#836841',
-          800: '#6C5633',
-          900: '#554425',
+          50: '#FBF8F3',
+          100: '#F6EDDC',
+          200: '#EDDBBA',
+          300: '#E3C897',
+          400: '#D4AF6B',  // Richer gold
+          500: '#C19A6B',  // Main Golden Bronze - warmer
+          600: '#A88456',
+          700: '#8E6E45',
+          800: '#745834',
+          900: '#5A4223',
         },
-        // Gold - Accent color (keeping for compatibility)
+        // Gold Leaf - Decorative accent
         gold: {
-          50: '#FBF7F1',
-          100: '#F5EBDB',
-          200: '#EBD7B7',
-          300: '#DFC393',
-          400: '#CFAB74',
-          500: '#B18C5D',
-          600: '#9A7A4F',
-          700: '#836841',
-          800: '#6C5633',
-          900: '#554425',
+          50: '#FBF8F0',
+          100: '#F7EFDB',
+          200: '#EEDFB7',
+          300: '#E5CF93',
+          400: '#DCBF6F',
+          500: '#D4AF37',  // Pure gold for decorations
+          600: '#C19A2D',
+          700: '#A68223',
+          800: '#8B6A19',
+          900: '#70520F',
         },
-        // Text Colors
+        // Text Colors - Warmer tones
         charcoal: {
-          DEFAULT: '#433E37',  // Deep Charcoal-Brown for titles
-          light: '#6B645C',    // Muted Grey-Brown for body
+          DEFAULT: '#2C3E50',  // Deep charcoal for titles
+          light: '#6B5D54',    // Warm brown for body text
         },
         // Navy - For trust and professionalism
         navy: {
@@ -79,6 +79,7 @@ const config: Config = {
       fontFamily: {
         arabic: ['Amiri', 'Noto Naskh Arabic', 'serif'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        serif: ['Playfair Display', 'Georgia', 'serif'],
         quran: ['Scheherazade New', 'Amiri', 'serif'],
       },
       backgroundImage: {

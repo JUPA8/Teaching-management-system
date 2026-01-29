@@ -41,11 +41,36 @@ export default function CTASection() {
   };
 
   return (
-    <section className="py-16 md:py-24 gradient-primary relative overflow-hidden">
+    <section className="py-16 md:py-24 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #C19A6B 0%, #D4AF6B 50%, #B8956A 100%)' }}>
       {/* Animated Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute inset-0 islamic-pattern" />
       </div>
+      
+      {/* Animated Islamic stars */}
+      {[...Array(12)].map((_, i) => (
+        <motion.div
+          key={`star-${i}`}
+          className="absolute text-white/10 text-2xl"
+          style={{
+            left: `${10 + (i * 7)}%`,
+            top: `${15 + (i % 4) * 20}%`,
+          }}
+          animate={{
+            scale: [1, 1.3, 1],
+            rotate: [0, 180, 360],
+            opacity: [0.1, 0.3, 0.1],
+          }}
+          transition={{
+            duration: 6 + (i % 3),
+            repeat: Infinity,
+            ease: 'easeInOut',
+            delay: i * 0.4,
+          }}
+        >
+          ✦
+        </motion.div>
+      ))}
 
       {/* Floating particles */}
       {[...Array(6)].map((_, i) => (
@@ -131,10 +156,18 @@ export default function CTASection() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <motion.div 
+                whileHover={{ scale: 1.05, y: -3 }} 
+                whileTap={{ scale: 0.95 }}
+                animate={{ y: [0, -5, 0] }}
+                transition={{ 
+                  y: { duration: 2, repeat: Infinity, ease: 'easeInOut' }
+                }}
+              >
                 <Link
                   href="/register"
-                  className="bg-white text-primary-600 hover:bg-gray-100 font-semibold py-3 px-6 rounded-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                  className="bg-white hover:bg-gray-100 font-semibold py-3 px-6 rounded-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                  style={{ color: '#3B6F5F' }}
                 >
                   {common('freeTrial')}
                   <motion.div

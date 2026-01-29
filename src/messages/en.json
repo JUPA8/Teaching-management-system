@@ -407,6 +407,15 @@
     "title": "Our Pricing",
     "subtitle": "Transparent pricing with no hidden costs",
     "badgeLabel": "Flexible Plans",
+    "membershipTypes": {
+      "private": "Private (1-on-1)",
+      "group": "Group Class",
+      "groupSave": "Save 30%",
+      "privateTitle": "Private 1-on-1 Lessons",
+      "privateDescription": "Personalized one-on-one sessions with your dedicated teacher. Full attention and customized learning pace.",
+      "groupTitle": "Group Classes",
+      "groupDescription": "Learn together with 3-5 students in an interactive group setting. More affordable while maintaining quality."
+    },
     "perMonth": "per month",
     "perLesson": "per lesson",
     "lessonsPerWeek": "lessons per week",

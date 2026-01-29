@@ -6,10 +6,10 @@ import { Quote } from 'lucide-react';
 
 // Testimonial data with Islamic-style avatars and country flags
 const testimonialData = [
-  { key: 'sarah', avatar: '🧕', flag: '🇩🇪', bgColor: 'bg-primary-100', initial: 'س' },
-  { key: 'ahmed', avatar: '🧔', flag: '🇦🇹', bgColor: 'bg-secondary-100', initial: 'أ' },
-  { key: 'fatima', avatar: '🧕🏽', flag: '🇨🇭', bgColor: 'bg-primary-50', initial: 'ف' },
-  { key: 'muhammad', avatar: '👳', flag: '🇺🇸', bgColor: 'bg-secondary-50', initial: 'م' },
+  { key: 'sarah', avatar: '🧕', flag: '🇩🇪', bgColor: '#3B6F5F', initial: 'س' },
+  { key: 'ahmed', avatar: '🧔', flag: '🇦🇹', bgColor: '#C19A6B', initial: 'أ' },
+  { key: 'fatima', avatar: '🧕🏽', flag: '🇨🇭', bgColor: '#D4AF37', initial: 'ف' },
+  { key: 'muhammad', avatar: '👳', flag: '🇺🇸', bgColor: '#2F5F54', initial: 'م' },
 ] as const;
 
 export default function Testimonials() {
@@ -40,7 +40,7 @@ export default function Testimonials() {
   };
 
   return (
-    <section className="py-16 md:py-24 bg-cream-100 overflow-hidden">
+    <section className="py-16 md:py-24 overflow-hidden" style={{ background: 'linear-gradient(135deg, #FAF6F1 0%, #F5EFE7 100%)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           className="text-center mb-12"
@@ -50,7 +50,7 @@ export default function Testimonials() {
           transition={{ duration: 0.6 }}
         >
           <motion.h2
-            className="section-title"
+            className="text-3xl md:text-4xl font-bold text-charcoal mb-4 font-serif"
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
@@ -59,7 +59,7 @@ export default function Testimonials() {
             {t('title')}
           </motion.h2>
           <motion.p
-            className="section-subtitle max-w-2xl mx-auto"
+            className="text-lg text-charcoal-light max-w-2xl mx-auto"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
@@ -87,10 +87,21 @@ export default function Testimonials() {
                 variants={itemVariants}
                 whileHover={{
                   y: -10,
-                  boxShadow: '0 25px 50px -12px rgba(177, 140, 93, 0.2)',
+                  borderColor: item.bgColor,
                 }}
-                className="card p-6 cursor-pointer"
+                className="p-6 cursor-pointer rounded-2xl border-2 relative"
+                style={{
+                  background: 'linear-gradient(135deg, #FAF6F1 0%, #F5EFE7 100%)',
+                  borderColor: '#C19A6B',
+                  boxShadow: '0 8px 25px rgba(193, 154, 107, 0.15)',
+                }}
               >
+                {/* Decorative corner ornaments */}
+                <div className="absolute top-2 left-2 w-3 h-3 border-t-2 border-l-2 opacity-30" style={{ borderColor: item.bgColor }}></div>
+                <div className="absolute top-2 right-2 w-3 h-3 border-t-2 border-r-2 opacity-30" style={{ borderColor: item.bgColor }}></div>
+                <div className="absolute bottom-2 left-2 w-3 h-3 border-b-2 border-l-2 opacity-30" style={{ borderColor: item.bgColor }}></div>
+                <div className="absolute bottom-2 right-2 w-3 h-3 border-b-2 border-r-2 opacity-30" style={{ borderColor: item.bgColor }}></div>
+                
                 {/* Quote Icon */}
                 <motion.div
                   className="mb-4"
@@ -99,7 +110,7 @@ export default function Testimonials() {
                   viewport={{ once: true }}
                   transition={{ delay: 0.1 * index, duration: 0.5 }}
                 >
-                  <Quote className="w-8 h-8 text-secondary-300" />
+                  <Quote className="w-8 h-8" style={{ color: item.bgColor, opacity: 0.5 }} />
                 </motion.div>
 
                 {/* Content */}
@@ -122,7 +133,11 @@ export default function Testimonials() {
                   transition={{ delay: 0.2 * index, duration: 0.5 }}
                 >
                   <motion.div
-                    className={`w-12 h-12 rounded-full ${item.bgColor} flex items-center justify-center`}
+                    className="w-12 h-12 rounded-full flex items-center justify-center border-2"
+                    style={{ 
+                      background: `${item.bgColor}20`,
+                      borderColor: item.bgColor
+                    }}
                     whileHover={{ scale: 1.15, rotate: 10 }}
                     animate={{
                       y: [0, -3, 0],
@@ -140,7 +155,7 @@ export default function Testimonials() {
                     </span>
                   </motion.div>
                   <div>
-                    <p className="font-semibold text-charcoal text-sm flex items-center gap-2">
+                    <p className="font-semibold text-charcoal text-sm flex items-center gap-2 font-serif">
                       {name}
                       <motion.span
                         className="text-base"

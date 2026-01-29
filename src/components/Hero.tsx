@@ -4,6 +4,7 @@ import { Link } from '@/i18n/routing';
 import { useTranslations, useLocale } from 'next-intl';
 import { motion } from 'framer-motion';
 import { Users, Award, Globe } from 'lucide-react';
+import { IslamicArch, IslamicLantern, GoldLeaf } from './decorative';
 
 // Helper function to convert numbers to Arabic numerals
 const toArabicNumerals = (num: string): string => {
@@ -146,33 +147,51 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative overflow-hidden gradient-hero islamic-pattern min-h-[90vh] flex items-center">
+    <section className="relative overflow-hidden min-h-[90vh] flex items-center" style={{ background: 'linear-gradient(135deg, #FAF6F1 0%, #F5EFE7 100%)' }}>
+      {/* Decorative lanterns */}
+      <motion.div
+        className="absolute top-10 left-10 opacity-60"
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 0.6 }}
+        transition={{ duration: 1, delay: 0.5 }}
+      >
+        <IslamicLantern className="w-16 h-24" />
+      </motion.div>
+      <motion.div
+        className="absolute top-10 right-10 opacity-60"
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 0.6 }}
+        transition={{ duration: 1, delay: 0.7 }}
+      >
+        <IslamicLantern className="w-16 h-24" />
+      </motion.div>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 lg:py-32 w-full">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Content */}
           <motion.div
-            className="text-center lg:text-start"
+            className="text-center lg:text-start relative z-10"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
           >
             <motion.h1
               variants={itemVariants}
-              className="text-4xl md:text-5xl lg:text-6xl font-bold text-charcoal mb-6 leading-tight"
+              className="text-4xl md:text-5xl lg:text-6xl font-bold text-charcoal mb-6 leading-tight font-serif"
             >
               {t('title')}
             </motion.h1>
 
             <motion.p
               variants={itemVariants}
-              className="text-xl md:text-2xl text-secondary-500 font-medium mb-4"
+              className="text-xl md:text-2xl text-secondary-500 font-medium mb-4 font-serif"
             >
               {t('subtitle')}
             </motion.p>
 
             <motion.p
               variants={itemVariants}
-              className="text-lg text-charcoal-light mb-8 max-w-xl mx-auto lg:mx-0"
+              className="text-lg text-charcoal-light mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed"
             >
               {t('description')}
             </motion.p>
@@ -199,11 +218,14 @@ export default function Hero() {
               </motion.div>
             </motion.div>
 
-            {/* Stats */}
+            {/* Stats with gold leaf decorations */}
             <motion.div
               variants={containerVariants}
-              className="grid grid-cols-3 gap-6 mt-12"
+              className="grid grid-cols-3 gap-6 mt-12 relative"
             >
+              <GoldLeaf className="absolute -left-8 top-1/2 -translate-y-1/2 w-12 h-12 opacity-30" side="left" />
+              <GoldLeaf className="absolute -right-8 top-1/2 -translate-y-1/2 w-12 h-12 opacity-30" side="right" />
+              
               {stats.map((stat, index) => (
                 <motion.div
                   key={index}
@@ -228,7 +250,7 @@ export default function Hero() {
             </motion.div>
           </motion.div>
 
-          {/* Interactive Circle Section - Enlarged */}
+          {/* Interactive Circle Section with Islamic Arch Frame */}
           <motion.div
             className="relative hidden lg:flex justify-center items-center"
             initial={{ opacity: 0, scale: 0.8 }}
@@ -236,8 +258,18 @@ export default function Hero() {
             transition={{ duration: 1, delay: 0.3, type: 'spring' }}
           >
             <div className="relative">
+              {/* Islamic Arch Frame - Decorative */}
+              <motion.div
+                className="absolute -inset-16 z-0"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1.2, delay: 0.5 }}
+              >
+                <IslamicArch className="w-full h-full" strokeColor="#3B6F5F" />
+              </motion.div>
+
               {/* Main Course Circle - Expanded to 520px */}
-              <div className="relative w-[520px] h-[520px]">
+              <div className="relative w-[520px] h-[520px] z-10">
                 {/* Outer rotating ring */}
                 <motion.div
                   className="absolute inset-0 rounded-full border-4 border-dashed border-secondary-300 opacity-50"
@@ -292,13 +324,17 @@ export default function Hero() {
                   transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
                 />
 
-                {/* Main content circle with Quranic verse - Cream background */}
+                {/* Main content circle with Quranic verse - Warmer background */}
                 <motion.div
-                  className="absolute inset-36 bg-cream-100 rounded-full shadow-2xl flex items-center justify-center border-2 border-secondary-200"
+                  className="absolute inset-36 rounded-full shadow-2xl flex items-center justify-center border-3"
+                  style={{ 
+                    background: 'linear-gradient(135deg, #FAF6F1 0%, #F5EFE7 100%)',
+                    borderColor: '#C19A6B',
+                    boxShadow: '0 0 50px rgba(193, 154, 107, 0.4), inset 0 2px 4px rgba(255,255,255,0.5)'
+                  }}
                   initial={{ scale: 0, rotate: -180 }}
                   animate={{ scale: 1, rotate: 0 }}
                   transition={{ duration: 0.8, delay: 0.5, type: 'spring', stiffness: 100 }}
-                  style={{ boxShadow: '0 0 40px rgba(177, 140, 93, 0.4)' }}
                 >
                   <div className="text-center p-6" dir="rtl">
                     <motion.div
@@ -334,7 +370,7 @@ export default function Hero() {
                   </div>
                 </motion.div>
 
-                {/* Orbiting Course Icons with Names - Always visible */}
+                {/* Orbiting Course Icons with Names - Traditional styling */}
                 {courseIcons.map((course, index) => (
                   <motion.div
                     key={course.href}
@@ -353,11 +389,16 @@ export default function Hero() {
                   >
                     <Link href={course.href}>
                       <motion.div
-                        className="bg-cream-100 rounded-2xl shadow-xl p-3 cursor-pointer group border-2 border-secondary-200 hover:border-secondary-400 flex flex-col items-center min-w-[100px]"
+                        className="rounded-2xl shadow-xl p-3 cursor-pointer group border-2 flex flex-col items-center min-w-[100px]"
+                        style={{
+                          background: 'linear-gradient(135deg, #FAF6F1 0%, #F5EFE7 100%)',
+                          borderColor: '#C19A6B',
+                          boxShadow: '0 8px 25px rgba(193, 154, 107, 0.3)'
+                        }}
                         whileHover={{
                           scale: 1.15,
                           y: -5,
-                          boxShadow: '0 15px 40px rgba(177, 140, 93, 0.3)',
+                          boxShadow: '0 15px 40px rgba(193, 154, 107, 0.5)',
                         }}
                         whileTap={{ scale: 0.95 }}
                         animate={{
@@ -371,7 +412,6 @@ export default function Hero() {
                             ease: 'easeInOut',
                           }
                         }}
-                        style={{ boxShadow: '0 8px 25px rgba(177, 140, 93, 0.2)' }}
                       >
                         <motion.span
                           className="text-3xl block mb-1"
@@ -380,7 +420,7 @@ export default function Hero() {
                         >
                           {course.emoji}
                         </motion.span>
-                        <span className="text-xs font-semibold text-charcoal text-center leading-tight group-hover:text-primary-600 transition-colors">
+                        <span className="text-xs font-semibold text-charcoal text-center leading-tight group-hover:text-primary-500 transition-colors">
                           {course.label}
                         </span>
                       </motion.div>

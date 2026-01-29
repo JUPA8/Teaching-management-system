@@ -4,6 +4,7 @@ import { Link } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Facebook, Instagram, Youtube, Heart, Send } from 'lucide-react';
+import { IslamicBorder } from './decorative';
 
 export default function Footer() {
   const t = useTranslations('footer');
@@ -62,21 +63,28 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-gradient-to-b from-gray-900 to-gray-950 text-gray-300 relative overflow-hidden">
+    <footer className="relative overflow-hidden" style={{ background: 'linear-gradient(180deg, #2C3E50 0%, #1a252f 100%)' }}>
+      {/* Decorative Islamic Border at top */}
+      <div className="absolute top-0 left-0 right-0">
+        <IslamicBorder className="w-full h-8" color="#C19A6B" />
+      </div>
+      
       {/* Background Decorations */}
       <motion.div
-        className="absolute top-0 start-1/4 w-96 h-96 bg-primary-600/5 rounded-full blur-3xl"
+        className="absolute top-0 start-1/4 w-96 h-96 rounded-full blur-3xl"
+        style={{ background: 'rgba(59, 111, 95, 0.08)' }}
         animate={{ scale: [1, 1.2, 1], opacity: [0.05, 0.1, 0.05] }}
         transition={{ duration: 8, repeat: Infinity }}
       />
       <motion.div
-        className="absolute bottom-0 end-1/4 w-72 h-72 bg-secondary-600/5 rounded-full blur-3xl"
+        className="absolute bottom-0 end-1/4 w-72 h-72 rounded-full blur-3xl"
+        style={{ background: 'rgba(193, 154, 107, 0.08)' }}
         animate={{ scale: [1, 1.1, 1], opacity: [0.05, 0.08, 0.05] }}
         transition={{ duration: 6, repeat: Infinity, delay: 1 }}
       />
 
       {/* Main Footer */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20 relative z-10 text-gray-300">
         <motion.div
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12"
           variants={containerVariants}
@@ -89,17 +97,17 @@ export default function Footer() {
             <motion.div whileHover={{ scale: 1.02 }}>
               <Link href="/" className="flex items-center gap-3 mb-4">
                 <motion.img
-                  src="/salam-institute-logo.png"
+                  src="/salam-logo-new.png"
                   alt="Salam Institute"
-                  className="w-12 h-12 object-contain"
+                  className="w-14 h-14 object-contain"
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.3 }}
                 />
                 <div className="flex flex-col">
-                  <span className="text-lg font-bold bg-gradient-to-r from-primary-400 to-gold-400 bg-clip-text text-transparent">
+                  <span className="text-lg font-bold font-serif" style={{ color: '#C19A6B' }}>
                     Salam Institute
                   </span>
-                  <span className="text-xs text-gold-400 font-arabic">معهد سلام</span>
+                  <span className="text-xs font-arabic" style={{ color: '#D4AF37' }}>معهد سلام</span>
                 </div>
               </Link>
             </motion.div>
@@ -115,12 +123,14 @@ export default function Footer() {
                 <motion.a
                   key={index}
                   href={item.href}
-                  className="flex items-center gap-2 text-sm hover:text-primary-400 transition-colors group"
-                  whileHover={{ x: 5 }}
+                  className="flex items-center gap-2 text-sm transition-colors group"
+                  style={{ color: '#9CA3AF' }}
+                  whileHover={{ x: 5, color: '#C19A6B' }}
                 >
                   <motion.div
-                    className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center group-hover:bg-primary-600/20 transition-colors"
-                    whileHover={{ scale: 1.1 }}
+                    className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors"
+                    style={{ background: 'rgba(59, 111, 95, 0.2)' }}
+                    whileHover={{ scale: 1.1, background: 'rgba(193, 154, 107, 0.3)' }}
                   >
                     <item.icon className="w-4 h-4" />
                   </motion.div>
@@ -132,8 +142,8 @@ export default function Footer() {
 
           {/* Quick Links */}
           <motion.div variants={itemVariants}>
-            <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
-              <span className="w-8 h-0.5 bg-gradient-to-r from-primary-500 to-secondary-500"></span>
+            <h3 className="text-white font-semibold mb-4 flex items-center gap-2 font-serif">
+              <span className="w-8 h-0.5" style={{ background: 'linear-gradient(to right, #3B6F5F, #C19A6B)' }}></span>
               {t('quickLinks')}
             </h3>
             <ul className="space-y-2">
@@ -148,10 +158,15 @@ export default function Footer() {
                   <motion.div whileHover={{ x: 5 }}>
                     <Link
                       href={link.href}
-                      className="text-sm hover:text-primary-400 transition-colors flex items-center gap-2"
+                      className="text-sm transition-colors flex items-center gap-2"
+                      style={{ color: '#9CA3AF' }}
                     >
-                      <span className="w-1.5 h-1.5 bg-gray-600 rounded-full group-hover:bg-primary-500"></span>
-                      {link.label}
+                      <motion.span 
+                        className="w-1.5 h-1.5 rounded-full" 
+                        style={{ background: '#4B5563' }}
+                        whileHover={{ background: '#C19A6B' }}
+                      ></motion.span>
+                      <motion.span whileHover={{ color: '#C19A6B' }}>{link.label}</motion.span>
                     </Link>
                   </motion.div>
                 </motion.li>
@@ -161,8 +176,8 @@ export default function Footer() {
 
           {/* Support & Legal */}
           <motion.div variants={itemVariants}>
-            <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
-              <span className="w-8 h-0.5 bg-gradient-to-r from-primary-500 to-secondary-500"></span>
+            <h3 className="text-white font-semibold mb-4 flex items-center gap-2 font-serif">
+              <span className="w-8 h-0.5" style={{ background: 'linear-gradient(to right, #3B6F5F, #C19A6B)' }}></span>
               {t('support')}
             </h3>
             <ul className="space-y-2 mb-6">
@@ -186,8 +201,8 @@ export default function Footer() {
               ))}
             </ul>
 
-            <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
-              <span className="w-8 h-0.5 bg-gradient-to-r from-primary-500 to-secondary-500"></span>
+            <h3 className="text-white font-semibold mb-4 flex items-center gap-2 font-serif">
+              <span className="w-8 h-0.5" style={{ background: 'linear-gradient(to right, #3B6F5F, #C19A6B)' }}></span>
               {t('legal')}
             </h3>
             <ul className="space-y-2">
@@ -214,8 +229,8 @@ export default function Footer() {
 
           {/* Newsletter */}
           <motion.div variants={itemVariants}>
-            <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
-              <span className="w-8 h-0.5 bg-gradient-to-r from-primary-500 to-secondary-500"></span>
+            <h3 className="text-white font-semibold mb-4 flex items-center gap-2 font-serif">
+              <span className="w-8 h-0.5" style={{ background: 'linear-gradient(to right, #3B6F5F, #C19A6B)' }}></span>
               {t('newsletter')}
             </h3>
             <p className="text-sm text-gray-400 mb-4">{t('newsletterText')}</p>
@@ -229,8 +244,9 @@ export default function Footer() {
               </motion.div>
               <motion.button
                 type="submit"
-                className="w-full bg-gradient-to-r from-primary-600 to-secondary-600 hover:shadow-lg hover:shadow-primary-500/30 text-white font-medium py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-2"
-                whileHover={{ scale: 1.02 }}
+                className="w-full text-white font-medium py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-2"
+                style={{ background: 'linear-gradient(to right, #3B6F5F, #2F5F54)' }}
+                whileHover={{ scale: 1.02, boxShadow: '0 10px 25px rgba(193, 154, 107, 0.3)' }}
                 whileTap={{ scale: 0.98 }}
               >
                 <Send className="w-4 h-4" />
@@ -244,8 +260,13 @@ export default function Footer() {
                 <motion.a
                   key={social.label}
                   href={social.href}
-                  className="w-10 h-10 bg-gray-800 rounded-xl flex items-center justify-center hover:bg-gradient-to-br hover:from-primary-600 hover:to-secondary-600 transition-all"
-                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  className="w-10 h-10 rounded-xl flex items-center justify-center transition-all"
+                  style={{ background: 'rgba(59, 111, 95, 0.3)' }}
+                  whileHover={{ 
+                    scale: 1.1, 
+                    rotate: 5,
+                    background: 'linear-gradient(135deg, #3B6F5F, #C19A6B)'
+                  }}
                   whileTap={{ scale: 0.95 }}
                   initial={{ opacity: 0, scale: 0 }}
                   whileInView={{ opacity: 1, scale: 1 }}

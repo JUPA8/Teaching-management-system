@@ -19,6 +19,7 @@ export default function PricingPage() {
   const getPricingText = (key: string) => t(key as PricingTranslationKey);
   const common = useTranslations('common');
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [membershipType, setMembershipType] = useState<'private' | 'group'>('private');
 
   // Features translation keys for each plan
   const planFeatures: Record<string, string[]> = {
@@ -112,12 +113,113 @@ export default function PricingPage() {
           </motion.p>
         </motion.div>
 
+        {/* Membership Type Selector */}
+        <motion.div
+          className="flex justify-center mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
+          <div className="inline-flex rounded-xl p-1 border-2" style={{ background: 'linear-gradient(135deg, #FAF6F1 0%, #F5EFE7 100%)', borderColor: '#C19A6B' }}>
+            <motion.button
+              onClick={() => setMembershipType('private')}
+              className="px-6 py-3 rounded-lg font-semibold text-sm transition-all relative"
+              style={{
+                background: membershipType === 'private' ? 'linear-gradient(to right, #3B6F5F, #2F5F54)' : 'transparent',
+                color: membershipType === 'private' ? 'white' : '#3B6F5F',
+              }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <span className="flex items-center gap-2">
+                👤 {t('membershipTypes.private')}
+                {membershipType === 'private' && (
+                  <motion.span
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="ml-1"
+                  >
+                    ✓
+                  </motion.span>
+                )}
+              </span>
+              {membershipType === 'private' && (
+                <motion.div
+                  className="absolute -top-2 -right-2 text-xs px-2 py-0.5 rounded-full text-white shadow-lg"
+                  style={{ background: '#D4AF37' }}
+                  initial={{ scale: 0, rotate: -10 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                >
+                  1-on-1
+                </motion.div>
+              )}
+            </motion.button>
+            <motion.button
+              onClick={() => setMembershipType('group')}
+              className="px-6 py-3 rounded-lg font-semibold text-sm transition-all relative"
+              style={{
+                background: membershipType === 'group' ? 'linear-gradient(to right, #C19A6B, #B8956A)' : 'transparent',
+                color: membershipType === 'group' ? 'white' : '#C19A6B',
+              }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <span className="flex items-center gap-2">
+                👥 {t('membershipTypes.group')}
+                {membershipType === 'group' && (
+                  <motion.span
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="ml-1"
+                  >
+                    ✓
+                  </motion.span>
+                )}
+              </span>
+              {membershipType === 'group' && (
+                <motion.div
+                  className="absolute -top-2 -right-2 text-xs px-2 py-0.5 rounded-full text-white shadow-lg"
+                  style={{ background: '#3B6F5F' }}
+                  initial={{ scale: 0, rotate: -10 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                >
+                  {t('membershipTypes.groupSave')}
+                </motion.div>
+              )}
+            </motion.button>
+          </div>
+        </motion.div>
+
+        {/* Info Banner */}
+        <motion.div
+          className="max-w-3xl mx-auto mb-8 p-4 rounded-xl border-2"
+          style={{ background: membershipType === 'private' ? 'rgba(59, 111, 95, 0.05)' : 'rgba(193, 154, 107, 0.05)', borderColor: membershipType === 'private' ? '#3B6F5F' : '#C19A6B' }}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          <div className="flex items-start gap-3">
+            <span className="text-2xl mt-0.5">
+              {membershipType === 'private' ? '🎯' : '🌟'}
+            </span>
+            <div>
+              <h3 className="font-bold text-charcoal mb-1 font-serif">
+                {t(`membershipTypes.${membershipType}Title`)}
+              </h3>
+              <p className="text-sm text-charcoal-light">
+                {t(`membershipTypes.${membershipType}Description`)}
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
         {/* Pricing Cards */}
         <motion.div
           className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
+          key={membershipType}
         >
           {pricingPlans.map((plan, index) => (
             <motion.div

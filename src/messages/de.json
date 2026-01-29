@@ -407,6 +407,15 @@
     "title": "Unsere Preise",
     "subtitle": "Transparente Preise ohne versteckte Kosten",
     "badgeLabel": "Flexible Pläne",
+    "membershipTypes": {
+      "private": "Privat (1-zu-1)",
+      "group": "Gruppenkurs",
+      "groupSave": "30% sparen",
+      "privateTitle": "Private 1-zu-1 Unterrichtsstunden",
+      "privateDescription": "Personalisierte Einzelsitzungen mit Ihrem persönlichen Lehrer. Volle Aufmerksamkeit und individuelles Lerntempo.",
+      "groupTitle": "Gruppenkurse",
+      "groupDescription": "Lernen Sie gemeinsam mit 3-5 Schülern in einer interaktiven Gruppenumgebung. Günstiger bei gleichbleibender Qualität."
+    },
     "perMonth": "pro Monat",
     "perLesson": "pro Stunde",
     "lessonsPerWeek": "Stunden pro Woche",

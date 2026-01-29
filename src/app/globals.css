@@ -2,30 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800&display=swap');
 
 :root {
-  /* Light Academic Theme Colors */
-  --cream-bg: #FDF8F1;
-  --cream-surface: #F9F3EA;
-  --forest-teal: #3D6B65;
-  --forest-teal-light: #4A8079;
-  --golden-bronze: #B18C5D;
-  --golden-bronze-light: #CFAB74;
-  --charcoal: #433E37;
-  --charcoal-light: #6B645C;
+  /* Warm Traditional Theme Colors */
+  --cream-bg: #FAF6F1;
+  --cream-surface: #F5EFE7;
+  --deep-teal: #3B6F5F;
+  --deep-teal-dark: #2F5F54;
+  --golden-bronze: #C19A6B;
+  --golden-bronze-light: #D4AF6B;
+  --gold-leaf: #D4AF37;
+  --charcoal: #2C3E50;
+  --charcoal-light: #6B5D54;
 
-  --foreground-rgb: 67, 62, 55;
-  --background-start-rgb: 253, 248, 241;
-  --background-end-rgb: 249, 243, 234;
+  --foreground-rgb: 44, 62, 80;
+  --background-start-rgb: 250, 246, 241;
+  --background-end-rgb: 245, 239, 231;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
   background: var(--cream-bg);
   background-image:
-    radial-gradient(ellipse at top, rgba(177, 140, 93, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse at bottom right, rgba(61, 107, 101, 0.05) 0%, transparent 40%);
+    radial-gradient(ellipse at top, rgba(193, 154, 107, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(59, 111, 95, 0.08) 0%, transparent 40%);
+  position: relative;
+}
+
+/* Subtle paper texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
 /* RTL Support */
@@ -47,12 +63,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--forest-teal);
+  background: var(--deep-teal);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--forest-teal-light);
+  background: var(--golden-bronze);
 }
 
 /* Animation classes */
@@ -119,7 +135,7 @@ body {
 /* Button styles - Matte finish with Forest Teal */
 @layer components {
   .btn-primary {
-    @apply bg-primary-600 hover:bg-primary-500 text-white font-medium py-3 px-6 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5;
+    @apply bg-primary-500 hover:bg-primary-600 text-white font-medium py-3 px-6 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5;
     background-image: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 50%);
   }
 

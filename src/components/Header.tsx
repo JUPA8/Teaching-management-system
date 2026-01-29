@@ -80,9 +80,14 @@ export default function Header() {
       className={cn(
         'sticky top-0 z-50 transition-all duration-300',
         isScrolled
-          ? 'bg-white/95 backdrop-blur-md shadow-lg'
-          : 'bg-white shadow-sm'
+          ? 'backdrop-blur-md shadow-lg border-b border-secondary-200'
+          : 'shadow-sm border-b border-secondary-100'
       )}
+      style={{
+        background: isScrolled
+          ? 'rgba(250, 246, 241, 0.95)'
+          : 'rgba(250, 246, 241, 1)'
+      }}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ type: 'spring', stiffness: 100, damping: 20 }}
@@ -96,9 +101,9 @@ export default function Header() {
           >
             <Link href="/" className="flex items-center gap-3">
               <motion.img
-                src="/salam-institute-logo.png"
+                src="/salam-logo-new.png"
                 alt="Salam Institute"
-                className="w-12 h-12 object-contain"
+                className="w-14 h-14 object-contain"
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.3 }}
               />
@@ -108,14 +113,14 @@ export default function Header() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.2 }}
               >
-                <span className="text-lg font-bold text-primary-700">Salam Institute</span>
-                <span className="text-xs text-gold-600 font-arabic">معهد سلام</span>
+                <span className="text-lg font-bold text-primary-500 font-serif">Salam Institute</span>
+                <span className="text-xs text-secondary-500 font-arabic">معهد سلام</span>
               </motion.div>
             </Link>
           </motion.div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-6">
+          <nav className="hidden lg:flex items-center gap-4">
             {navLinks.slice(0, 1).map((link, index) => (
               <motion.div
                 key={link.href}
@@ -125,11 +130,11 @@ export default function Header() {
               >
                 <Link
                   href={link.href}
-                  className="text-gray-700 hover:text-primary-600 font-medium transition-colors relative group"
+                  className="text-charcoal hover:text-primary-500 font-medium transition-colors relative group px-2 whitespace-nowrap"
                 >
                   {link.label}
                   <motion.span
-                    className="absolute -bottom-1 start-0 w-0 h-0.5 bg-primary-600 group-hover:w-full transition-all duration-300"
+                    className="absolute -bottom-1 start-0 w-0 h-0.5 bg-secondary-500 group-hover:w-full transition-all duration-300"
                     layoutId="underline"
                   />
                 </Link>
@@ -140,7 +145,7 @@ export default function Header() {
             <div className="relative">
               <motion.button
                 onClick={() => setIsCoursesOpen(!isCoursesOpen)}
-                className="flex items-center gap-1 text-gray-700 hover:text-primary-600 font-medium transition-colors"
+                className="flex items-center gap-1 text-charcoal hover:text-primary-500 font-medium transition-colors px-2 whitespace-nowrap"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -156,7 +161,8 @@ export default function Header() {
               <AnimatePresence>
                 {isCoursesOpen && (
                   <motion.div
-                    className="absolute top-full start-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-100 py-2 overflow-hidden"
+                    className="absolute top-full start-0 mt-2 w-64 rounded-xl shadow-xl border-2 border-secondary-200 py-2 overflow-hidden"
+                    style={{ background: 'linear-gradient(135deg, #FAF6F1 0%, #F5EFE7 100%)' }}
                     variants={dropdownVariants}
                     initial="hidden"
                     animate="visible"
@@ -171,7 +177,7 @@ export default function Header() {
                       >
                         <Link
                           href={link.href}
-                          className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-primary-50 hover:to-secondary-50 hover:text-primary-600 transition-colors"
+                          className="flex items-center gap-3 px-4 py-3 text-charcoal hover:bg-secondary-50 hover:text-primary-500 transition-colors rounded-lg mx-1"
                           onClick={() => setIsCoursesOpen(false)}
                         >
                           <span className="text-xl">{link.icon}</span>
@@ -193,10 +199,10 @@ export default function Header() {
               >
                 <Link
                   href={link.href}
-                  className="text-gray-700 hover:text-primary-600 font-medium transition-colors relative group"
+                  className="text-charcoal hover:text-primary-500 font-medium transition-colors relative group px-2 whitespace-nowrap"
                 >
                   {link.label}
-                  <span className="absolute -bottom-1 start-0 w-0 h-0.5 bg-primary-600 group-hover:w-full transition-all duration-300" />
+                  <span className="absolute -bottom-1 start-0 w-0 h-0.5 bg-secondary-500 group-hover:w-full transition-all duration-300" />
                 </Link>
               </motion.div>
             ))}
@@ -215,7 +221,7 @@ export default function Header() {
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Link
                   href="/login"
-                  className="text-gray-700 hover:text-primary-600 font-medium transition-colors"
+                  className="text-charcoal hover:text-primary-500 font-medium transition-colors whitespace-nowrap px-2"
                 >
                   {t('login')}
                 </Link>
@@ -223,7 +229,7 @@ export default function Header() {
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Link
                   href="/register"
-                  className="bg-gradient-to-r from-primary-600 to-secondary-600 text-white font-medium text-sm py-2.5 px-5 rounded-xl hover:shadow-lg hover:shadow-primary-500/30 transition-shadow"
+                  className="bg-primary-500 hover:bg-primary-600 text-white font-medium text-sm py-2.5 px-5 rounded-xl shadow-md hover:shadow-lg transition-all whitespace-nowrap inline-flex items-center justify-center"
                 >
                   {t('freeTrial')}
                 </Link>
@@ -233,7 +239,7 @@ export default function Header() {
             {/* Mobile menu button */}
             <motion.button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden p-2 text-gray-700 hover:text-primary-600 rounded-lg hover:bg-gray-100"
+              className="lg:hidden p-2 text-charcoal hover:text-primary-500 rounded-lg hover:bg-secondary-50"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
             >
