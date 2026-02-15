@@ -213,8 +213,8 @@ export default function QuranKidsPage() {
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
                     <div>
-                      <h4 className="font-bold text-charcoal mb-1">{t(`quranKids.environment.${item.key}.title`)}</h4>
-                      <p className="text-charcoal-light text-sm">{t(`quranKids.environment.${item.key}.description`)}</p>
+                      <h4 className="font-bold text-charcoal mb-1">{t(`quranKids.environment.${item.key}.title` as any)}</h4>
+                      <p className="text-charcoal-light text-sm">{t(`quranKids.environment.${item.key}.description` as any)}</p>
                     </div>
                   </motion.div>
                 ))}
@@ -280,10 +280,10 @@ export default function QuranKidsPage() {
                   </svg>
                 </div>
                 <h3 className="text-2xl font-bold text-charcoal mb-4 text-center font-serif">
-                  {t(`quranKids.agePrograms.${program.key}.title`)}
+                  {t(`quranKids.agePrograms.${program.key}.title` as any)}
                 </h3>
                 <p className="text-charcoal-light text-center mb-6 leading-relaxed">
-                  {t(`quranKids.agePrograms.${program.key}.description`)}
+                  {t(`quranKids.agePrograms.${program.key}.description` as any)}
                 </p>
                 <Link
                   href="/register"

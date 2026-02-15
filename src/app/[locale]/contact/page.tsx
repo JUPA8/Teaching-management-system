@@ -91,7 +91,7 @@ export default function ContactPage() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { type: 'spring', stiffness: 100, damping: 15 },
+      transition: { type: 'spring' as const, stiffness: 100, damping: 15 },
     },
   };
 
@@ -222,7 +222,7 @@ export default function ContactPage() {
               initial={{ scale: 0 }}
               whileInView={{ scale: 1 }}
               viewport={{ once: true }}
-              transition={{ type: 'spring', stiffness: 200 }}
+              transition={{ type: 'spring' as const, stiffness: 200 }}
             >
               <Globe className="w-5 h-5 text-[#2B7A78]" />
               <span className="text-sm font-bold text-gray-700">{contact('sectionBadge')}</span>
@@ -464,7 +464,7 @@ export default function ContactPage() {
                       initial={{ scale: 0, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       exit={{ scale: 0, opacity: 0 }}
-                      transition={{ type: 'spring', stiffness: 200 }}
+                      transition={{ type: 'spring' as const, stiffness: 200 }}
                     >
                       <motion.div
                         className="w-24 h-24 rounded-full bg-gradient-to-br from-green-400 to-green-600 mx-auto mb-6 flex items-center justify-center"

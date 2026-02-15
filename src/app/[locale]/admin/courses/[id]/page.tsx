@@ -12,6 +12,7 @@ export default function EditCoursePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
   const [error, setError] = useState('');
+  const [courseData, setCourseData] = useState<any>(null);
   const [formData, setFormData] = useState({
     name: '',
     nameAr: '',
@@ -39,6 +40,7 @@ export default function EditCoursePage() {
       
       if (result.success) {
         const course = result.data;
+        setCourseData(course);
         setFormData({
           name: course.name,
           nameAr: course.nameAr || '',
@@ -263,15 +265,15 @@ export default function EditCoursePage() {
         <div className="grid grid-cols-3 gap-4">
           <div className="text-center p-4 bg-green-50 rounded-lg">
             <p className="text-sm text-gray-600">Students</p>
-            <p className="text-3xl font-bold text-green-600">{course._count.enrollments}</p>
+            <p className="text-3xl font-bold text-green-600">{courseData?._count?.enrollments || 0}</p>
           </div>
           <div className="text-center p-4 bg-blue-50 rounded-lg">
             <p className="text-sm text-gray-600">Bookings</p>
-            <p className="text-3xl font-bold text-blue-600">{course._count.bookings}</p>
+            <p className="text-3xl font-bold text-blue-600">{courseData?._count?.bookings || 0}</p>
           </div>
           <div className="text-center p-4 bg-purple-50 rounded-lg">
             <p className="text-sm text-gray-600">Teachers</p>
-            <p className="text-3xl font-bold text-purple-600">{course.teachers.length}</p>
+            <p className="text-3xl font-bold text-purple-600">{courseData?.teachers?.length || 0}</p>
           </div>
         </div>
       </div>

@@ -21,7 +21,7 @@ export default function FloatingActions() {
       <motion.div
         initial={{ opacity: 0, scale: 0, x: 100 }}
         animate={{ opacity: 1, scale: 1, x: 0 }}
-        transition={{ delay: 1, type: 'spring', stiffness: 200 }}
+        transition={{ delay: 1, type: 'spring' as const, stiffness: 200 }}
         onHoverStart={() => setShowTooltip(true)}
         onHoverEnd={() => setShowTooltip(false)}
       >
@@ -140,7 +140,7 @@ export default function FloatingActions() {
       <motion.div
         initial={{ opacity: 0, scale: 0, x: 100 }}
         animate={{ opacity: 1, scale: 1, x: 0 }}
-        transition={{ delay: 1.2, type: 'spring', stiffness: 200 }}
+        transition={{ delay: 1.2, type: 'spring' as const, stiffness: 200 }}
       >
         <a
           href={whatsappLink}

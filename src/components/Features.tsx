@@ -46,7 +46,7 @@ export default function Features() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { type: 'spring', stiffness: 100, damping: 12 },
+      transition: { type: 'spring' as const, stiffness: 100, damping: 12 },
     },
   };
 
@@ -104,7 +104,7 @@ export default function Features() {
               <motion.div
                 className="relative w-full max-w-[280px] h-[280px] mx-auto mb-6 rounded-3xl overflow-hidden shadow-2xl"
                 whileHover={{ scale: 1.08, rotate: 2 }}
-                transition={{ type: 'spring', stiffness: 200 }}
+                transition={{ type: 'spring' as const, stiffness: 200 }}
               >
                 <Image
                   src={feature.imageSrc}

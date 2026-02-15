@@ -118,7 +118,7 @@ export default function Footer() {
               <motion.div
                 className="flex items-center gap-3"
                 whileHover={{ scale: 1.02 }}
-                transition={{ type: 'spring', stiffness: 300 }}
+                transition={{ type: 'spring' as const, stiffness: 300 }}
               >
                 <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#2B7A78] to-[#236260] flex items-center justify-center shadow-lg">
                   <Image

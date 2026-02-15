@@ -145,7 +145,7 @@ export default function CoursesSection() {
       opacity: 1,
       y: 0,
       scale: 1,
-      transition: { type: 'spring', stiffness: 100, damping: 15 },
+      transition: { type: 'spring' as const, stiffness: 100, damping: 15 },
     },
   };
 
@@ -221,7 +221,7 @@ export default function CoursesSection() {
                 <motion.div
                   className="relative w-full h-52 mb-6 rounded-2xl overflow-hidden"
                   whileHover={{ scale: 1.05 }}
-                  transition={{ type: 'spring', stiffness: 200 }}
+                  transition={{ type: 'spring' as const, stiffness: 200 }}
                 >
                   <Image
                     src={category.imageSrc}

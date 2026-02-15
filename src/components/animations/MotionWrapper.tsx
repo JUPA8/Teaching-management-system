@@ -47,7 +47,7 @@ const variants: Record<string, Variants> = {
       opacity: 1,
       y: 0,
       transition: {
-        type: 'spring',
+        type: 'spring' as const,
         stiffness: 300,
         damping: 15,
       },
@@ -59,7 +59,7 @@ const variants: Record<string, Variants> = {
       opacity: 1,
       y: 0,
       transition: {
-        type: 'spring',
+        type: 'spring' as const,
         stiffness: 100,
         damping: 10,
       },
@@ -139,7 +139,7 @@ export function StaggerItem({
           opacity: 1,
           y: 0,
           transition: {
-            type: 'spring',
+            type: 'spring' as const,
             stiffness: 100,
             damping: 12,
           },
@@ -166,7 +166,7 @@ export function HoverScale({
       className={className}
       whileHover={{ scale }}
       whileTap={{ scale: 0.98 }}
-      transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+      transition={{ type: 'spring' as const, stiffness: 400, damping: 17 }}
     >
       {children}
     </motion.div>

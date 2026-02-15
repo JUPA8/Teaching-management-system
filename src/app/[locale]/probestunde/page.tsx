@@ -281,7 +281,7 @@ export default function ProbestundePage() {
               initial={{ scale: 0 }}
               whileInView={{ scale: 1 }}
               viewport={{ once: true }}
-              transition={{ type: 'spring', stiffness: 200 }}
+              transition={{ type: 'spring' as const, stiffness: 200 }}
             >
               <Sparkles className="w-5 h-5 text-[#2B7A78]" />
               <span className="text-sm font-bold text-[#2B7A78]">{t('badge')}</span>
@@ -308,7 +308,7 @@ export default function ProbestundePage() {
               className="text-center py-12"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              transition={{ type: 'spring', stiffness: 200 }}
+              transition={{ type: 'spring' as const, stiffness: 200 }}
             >
               <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-6" />
               <h3 className="text-2xl font-bold text-gray-900 mb-2">{t('success')}</h3>

@@ -191,7 +191,7 @@ export default function LoginPage() {
               className="inline-flex items-center gap-2 px-4 py-2 bg-[#2B7A78]/10 rounded-full mb-4"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              transition={{ type: 'spring', stiffness: 200 }}
+              transition={{ type: 'spring' as const, stiffness: 200 }}
             >
               <Sparkles className="w-4 h-4 text-[#2B7A78]" />
               <span className="text-sm font-bold text-[#2B7A78]">{t('heroBadge')}</span>

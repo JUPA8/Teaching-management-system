@@ -138,7 +138,7 @@ export default function DashboardPage() {
                 <motion.div
                   className={`w-14 h-14 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center shadow-lg`}
                   whileHover={{ scale: 1.1, rotate: 5 }}
-                  transition={{ type: 'spring', stiffness: 300 }}
+                  transition={{ type: 'spring' as const, stiffness: 300 }}
                 >
                   <stat.icon className="w-7 h-7 text-white" />
                 </motion.div>
@@ -147,7 +147,7 @@ export default function DashboardPage() {
                     className="text-3xl font-bold text-gray-900"
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    transition={{ delay: 0.3 + index * 0.1, type: 'spring' }}
+                    transition={{ delay: 0.3 + index * 0.1, type: 'spring' as const }}
                   >
                     {stat.value}
                   </motion.p>

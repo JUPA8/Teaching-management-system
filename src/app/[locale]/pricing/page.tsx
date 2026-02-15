@@ -81,7 +81,7 @@ export default function PricingPage() {
       opacity: 1,
       y: 0,
       scale: 1,
-      transition: { type: 'spring', stiffness: 100, damping: 15 },
+      transition: { type: 'spring' as const, stiffness: 100, damping: 15 },
     },
   };
 
@@ -165,7 +165,7 @@ export default function PricingPage() {
               className="inline-flex items-center gap-3 px-8 py-4 bg-white/80 backdrop-blur-md rounded-full mb-8 shadow-2xl border-2 border-[#D9B574]/30"
               initial={{ scale: 0, rotate: -180 }}
               animate={{ scale: 1, rotate: 0 }}
-              transition={{ type: 'spring', stiffness: 150, delay: 0.2 }}
+              transition={{ type: 'spring' as const, stiffness: 150, delay: 0.2 }}
             >
               <Crown className="w-6 h-6 text-[#D9B574]" />
               <span className="text-lg font-bold text-[#8B4513]">

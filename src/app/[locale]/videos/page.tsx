@@ -173,7 +173,7 @@ export default function VideosPage() {
               className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/15 backdrop-blur-md rounded-full mb-8 border border-white/20"
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
+              transition={{ type: 'spring' as const, stiffness: 200, delay: 0.2 }}
             >
               <PlayCircle className="w-5 h-5 text-[#D9B574]" fill="#D9B574" />
               <span className="text-sm font-semibold tracking-wide">{t('badgeLabel')}</span>
@@ -285,7 +285,7 @@ export default function VideosPage() {
                 onClick={() => setSelectedCategory(category.id)}
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.1 + index * 0.05, type: 'spring', stiffness: 200 }}
+                transition={{ delay: 0.1 + index * 0.05, type: 'spring' as const, stiffness: 200 }}
                 whileHover={{ scale: 1.08, y: -3 }}
                 whileTap={{ scale: 0.95 }}
                 className={`px-8 py-4 rounded-2xl text-base font-bold transition-all duration-300 ${
@@ -417,7 +417,7 @@ function VideoCard({ video, t, index, translationKey, formatViews }: { video: ty
             initial={{ opacity: 0, scale: 0 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.3 + index * 0.1, type: 'spring' }}
+            transition={{ delay: 0.3 + index * 0.1, type: 'spring' as const }}
           >
             <div className="bg-gradient-to-br from-[#D9B574] to-[#C9A551] text-white p-2.5 rounded-xl shadow-xl">
               <Star className="w-5 h-5" fill="currentColor" />

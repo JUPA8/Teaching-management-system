@@ -44,7 +44,7 @@ export default function CTASection() {
     visible: {
       opacity: 1,
       x: 0,
-      transition: { type: 'spring', stiffness: 100, damping: 15 },
+      transition: { type: 'spring' as const, stiffness: 100, damping: 15 },
     },
   };
 
@@ -193,12 +193,12 @@ export default function CTASection() {
             initial={{ opacity: 0, x: 100, rotateY: 15 }}
             whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, type: 'spring' }}
+            transition={{ duration: 0.8, type: 'spring' as const }}
           >
             <motion.div
               className="relative"
               whileHover={{ scale: 1.02, rotateY: 5 }}
-              transition={{ type: 'spring', stiffness: 200 }}
+              transition={{ type: 'spring' as const, stiffness: 200 }}
               style={{ transformStyle: 'preserve-3d' }}
             >
               {/* Decorative circles */}

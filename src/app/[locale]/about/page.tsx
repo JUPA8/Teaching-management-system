@@ -78,7 +78,7 @@ export default function AboutPage() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { type: 'spring', stiffness: 100, damping: 15 },
+      transition: { type: 'spring' as const, stiffness: 100, damping: 15 },
     },
   };
 
@@ -428,7 +428,7 @@ export default function AboutPage() {
               initial={{ scale: 0 }}
               whileInView={{ scale: 1 }}
               viewport={{ once: true }}
-              transition={{ type: 'spring', stiffness: 200 }}
+              transition={{ type: 'spring' as const, stiffness: 200 }}
             >
               <Gem className="w-5 h-5 text-[#D9B574]" />
               <span className="text-sm font-bold text-gray-700">{about('coreValuesBadge')}</span>

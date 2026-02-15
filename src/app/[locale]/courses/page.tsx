@@ -88,7 +88,7 @@ export default function CoursesPage() {
       opacity: 1,
       y: 0,
       scale: 1,
-      transition: { type: 'spring', stiffness: 100, damping: 15 },
+      transition: { type: 'spring' as const, stiffness: 100, damping: 15 },
     },
   };
 
@@ -132,7 +132,7 @@ export default function CoursesPage() {
               className="inline-block mb-6"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
+              transition={{ type: 'spring' as const, stiffness: 200, delay: 0.2 }}
             >
               <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center shadow-xl mx-auto">
                 <BookOpen className="w-10 h-10 text-white" />

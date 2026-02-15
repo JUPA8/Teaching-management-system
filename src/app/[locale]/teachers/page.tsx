@@ -228,7 +228,7 @@ export default function TeachersPage() {
               initial={{ scale: 0 }}
               whileInView={{ scale: 1 }}
               viewport={{ once: true }}
-              transition={{ type: 'spring', stiffness: 200 }}
+              transition={{ type: 'spring' as const, stiffness: 200 }}
             >
               <Award className="w-5 h-5 text-[#2B7A78]" />
               <span className="text-sm font-bold text-gray-700">{t('expertTeam')}</span>
@@ -467,7 +467,7 @@ export default function TeachersPage() {
               initial={{ scale: 0, rotate: -180 }}
               whileInView={{ scale: 1, rotate: 0 }}
               viewport={{ once: true }}
-              transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
+              transition={{ type: 'spring' as const, stiffness: 200, delay: 0.2 }}
               className="inline-flex items-center justify-center w-20 h-20 mb-8 bg-[#D9B574] rounded-2xl shadow-xl"
             >
               <GraduationCap className="w-10 h-10 text-white" strokeWidth={2} />

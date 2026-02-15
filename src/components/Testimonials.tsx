@@ -62,7 +62,7 @@ export default function Testimonials() {
       opacity: 1,
       scale: 1,
       rotateY: 0,
-      transition: { type: 'spring', stiffness: 100, damping: 15 },
+      transition: { type: 'spring' as const, stiffness: 100, damping: 15 },
     },
   };
 
@@ -112,7 +112,7 @@ export default function Testimonials() {
             initial={{ scale: 0 }}
             whileInView={{ scale: 1 }}
             viewport={{ once: true }}
-            transition={{ type: 'spring', stiffness: 200 }}
+            transition={{ type: 'spring' as const, stiffness: 200 }}
           >
             <Award className="w-5 h-5 text-[#D9B574]" />
             <span className="text-sm font-bold text-gray-700">{t('badge')}</span>
@@ -204,7 +204,7 @@ export default function Testimonials() {
                         viewport={{ once: true }}
                         transition={{ 
                           delay: 0.1 * i, 
-                          type: 'spring',
+                          type: 'spring' as const,
                           stiffness: 200 
                         }}
                         whileHover={{ scale: 1.3, rotate: 360 }}
@@ -227,7 +227,7 @@ export default function Testimonials() {
                     <motion.div
                       className="relative"
                       whileHover={{ scale: 1.1 }}
-                      transition={{ type: 'spring', stiffness: 300 }}
+                      transition={{ type: 'spring' as const, stiffness: 300 }}
                     >
                       <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${testimonial.bgGradient} p-1 shadow-xl`}>
                         <div className="w-full h-full bg-white rounded-full flex items-center justify-center">

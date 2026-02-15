@@ -155,7 +155,7 @@ export default function FAQPage() {
             className="inline-block mb-4"
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
+            transition={{ type: 'spring' as const, stiffness: 200, delay: 0.2 }}
           >
             <span className="px-4 py-2 bg-gradient-to-r from-primary-100 to-secondary-100 text-primary-700 rounded-full text-sm font-medium inline-flex items-center gap-2">
               <HelpCircle className="w-4 h-4" />
@@ -216,7 +216,7 @@ export default function FAQPage() {
               }}
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.4 + index * 0.05, type: 'spring' }}
+              transition={{ delay: 0.4 + index * 0.05, type: 'spring' as const }}
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
