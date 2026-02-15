@@ -1,0 +1,29 @@
+
+> salam-institute@1.0.0 build
+> next build
+
+  ▲ Next.js 14.2.35
+  - Environments: .env
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+Failed to compile.
+
+./src/lib/auth.ts:33:3
+Type error: Type 'import("/Users/abdelrahmanahmed/Teaching-management-system-main/node_modules/@auth/core/adapters").Adapter' is not assignable to type 'import("/Users/abdelrahmanahmed/Teaching-management-system-main/node_modules/next-auth/node_modules/@auth/core/adapters").Adapter'.
+  Types of property 'createUser' are incompatible.
+    Type '((user: import("/Users/abdelrahmanahmed/Teaching-management-system-main/node_modules/@auth/core/adapters").AdapterUser) => import("/Users/abdelrahmanahmed/Teaching-management-system-main/node_modules/@auth/core/types").Awaitable<import("/Users/abdelrahmanahmed/Teaching-management-system-main/node_modules/@auth/core/...' is not assignable to type '((user: import("/Users/abdelrahmanahmed/Teaching-management-system-main/node_modules/next-auth/node_modules/@auth/core/adapters").AdapterUser) => import("/Users/abdelrahmanahmed/Teaching-management-system-main/node_modules/next-auth/node_modules/@auth/core/types").Awaitable<import("/Users/abdelrahmanahmed/Teaching-m...'.
+      Type '(user: import("/Users/abdelrahmanahmed/Teaching-management-system-main/node_modules/@auth/core/adapters").AdapterUser) => import("/Users/abdelrahmanahmed/Teaching-management-system-main/node_modules/@auth/core/types").Awaitable<import("/Users/abdelrahmanahmed/Teaching-management-system-main/node_modules/@auth/core/a...' is not assignable to type '(user: import("/Users/abdelrahmanahmed/Teaching-management-system-main/node_modules/next-auth/node_modules/@auth/core/adapters").AdapterUser) => import("/Users/abdelrahmanahmed/Teaching-management-system-main/node_modules/next-auth/node_modules/@auth/core/types").Awaitable<import("/Users/abdelrahmanahmed/Teaching-ma...'.
+        Type 'import("/Users/abdelrahmanahmed/Teaching-management-system-main/node_modules/@auth/core/types").Awaitable<import("/Users/abdelrahmanahmed/Teaching-management-system-main/node_modules/@auth/core/adapters").AdapterUser>' is not assignable to type 'import("/Users/abdelrahmanahmed/Teaching-management-system-main/node_modules/next-auth/node_modules/@auth/core/types").Awaitable<import("/Users/abdelrahmanahmed/Teaching-management-system-main/node_modules/next-auth/node_modules/@auth/core/adapters").AdapterUser>'.
+          Type 'AdapterUser' is not assignable to type 'Awaitable<AdapterUser>'.
+            Property 'role' is missing in type 'import("/Users/abdelrahmanahmed/Teaching-management-system-main/node_modules/@auth/core/adapters").AdapterUser' but required in type 'import("/Users/abdelrahmanahmed/Teaching-management-system-main/node_modules/next-auth/node_modules/@auth/core/adapters").AdapterUser'.
+
+[0m [90m 31 |[39m[0m
+[0m [90m 32 |[39m [36mexport[39m [36mconst[39m { handlers[33m,[39m auth[33m,[39m signIn[33m,[39m signOut } [33m=[39m [33mNextAuth[39m({[0m
+[0m[31m[1m>[22m[39m[90m 33 |[39m   adapter[33m:[39m [33mPrismaAdapter[39m(prisma)[33m,[39m[0m
+[0m [90m    |[39m   [31m[1m^[22m[39m[0m
+[0m [90m 34 |[39m   session[33m:[39m {[0m
+[0m [90m 35 |[39m     strategy[33m:[39m [32m'jwt'[39m[33m,[39m[0m
+[0m [90m 36 |[39m     maxAge[33m:[39m [35m30[39m [33m*[39m [35m24[39m [33m*[39m [35m60[39m [33m*[39m [35m60[39m[33m,[39m [90m// 30 days[39m[0m
+Next.js build worker exited with code: 1 and signal: null
