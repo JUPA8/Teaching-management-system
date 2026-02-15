@@ -1,7 +1,22 @@
 import createMiddleware from 'next-intl/middleware';
 import { routing } from './i18n/routing';
+import { NextRequest, NextResponse } from 'next/server';
 
-export default createMiddleware(routing);
+const intlMiddleware = createMiddleware(routing);
+
+export default function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // Redirect /admin to /de/admin (default locale)
+  if (pathname === '/admin' || pathname.startsWith('/admin/')) {
+    const locale = 'de';
+    const newPathname = `/${locale}${pathname}`;
+    return NextResponse.redirect(new URL(newPathname, request.url));
+  }
+
+  // Run next-intl middleware for all other routes
+  return intlMiddleware(request);
+}
 
 export const config = {
   // Match all pathnames except for:

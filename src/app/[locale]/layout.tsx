@@ -6,7 +6,7 @@ import { routing } from '@/i18n/routing';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import StagingBanner from '@/components/StagingBanner';
-import FloatingActions from '@/components/FloatingActions';
+import ConditionalFloatingActions from '@/components/ConditionalFloatingActions';
 
 export const metadata: Metadata = {
   title: 'Salam Institute - Learn Quran Online',
@@ -61,7 +61,7 @@ export default async function LocaleLayout({
             <main className="flex-1">{children}</main>
             <Footer />
           </div>
-          <FloatingActions />
+          <ConditionalFloatingActions />
         </NextIntlClientProvider>
       </body>
     </html>

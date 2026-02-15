@@ -1,41 +1,35 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
+import { Link } from '@/i18n/routing';
 import { motion } from 'framer-motion';
-import { GraduationCap, Clock, UserCheck, TrendingUp } from 'lucide-react';
-import { IslamicBorder } from './decorative';
+import Image from 'next/image';
+import { BookOpen, Laptop, GraduationCap } from 'lucide-react';
 
 export default function Features() {
   const t = useTranslations('features');
+  const hero = useTranslations('hero');
+  const locale = useLocale();
+  const isArabic = locale === 'ar';
 
   const features = [
     {
       icon: GraduationCap,
       title: t('qualified.title'),
       description: t('qualified.description'),
-      bgColor: '#3B6F5F',
-      iconBg: 'rgba(59, 111, 95, 0.1)',
+      imageSrc: '/feature-qualified-teacher.png',
     },
     {
-      icon: Clock,
-      title: t('flexible.title'),
-      description: t('flexible.description'),
-      bgColor: '#C19A6B',
-      iconBg: 'rgba(193, 154, 107, 0.1)',
+      icon: Laptop,
+      title: t('interactive.title'),
+      description: t('interactive.description'),
+      imageSrc: '/feature-interactive-learning.png',
     },
     {
-      icon: UserCheck,
-      title: t('personalized.title'),
-      description: t('personalized.description'),
-      bgColor: '#D4AF37',
-      iconBg: 'rgba(212, 175, 55, 0.1)',
-    },
-    {
-      icon: TrendingUp,
-      title: t('progress.title'),
-      description: t('progress.description'),
-      bgColor: '#2F5F54',
-      iconBg: 'rgba(47, 95, 84, 0.1)',
+      icon: BookOpen,
+      title: t('diverse.title'),
+      description: t('diverse.description'),
+      imageSrc: '/feature-diverse-methods.png',
     },
   ];
 
@@ -43,9 +37,7 @@ export default function Features() {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-      },
+      transition: { staggerChildren: 0.2 },
     },
   };
 
@@ -54,22 +46,28 @@ export default function Features() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: {
-        type: 'spring' as const,
-        stiffness: 100,
-        damping: 12,
-      },
+      transition: { type: 'spring', stiffness: 100, damping: 12 },
     },
   };
 
   return (
-    <section className="py-16 md:py-24 relative overflow-hidden" style={{ background: 'linear-gradient(180deg, #F5EFE7 0%, #FAF6F1 100%)' }}>
-      {/* Decorative Islamic Border */}
-      <div className="absolute top-0 left-0 right-0 flex justify-center">
-        <IslamicBorder className="w-full max-w-2xl h-8" color="#C19A6B" />
+    <section className="py-16 md:py-24 relative overflow-hidden bg-[#FAF6F1]">
+      {/* Islamic decorative patterns background */}
+      <div className="absolute inset-0 opacity-5">
+        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="islamic-pattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+              <path d="M50 0 L60 20 L50 40 L40 20 Z" fill="#C9A24D" />
+              <circle cx="20" cy="20" r="3" fill="#D4AF6B" />
+              <circle cx="80" cy="80" r="3" fill="#D4AF6B" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#islamic-pattern)" />
+        </svg>
       </div>
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* Title */}
         <motion.div
           className="text-center mb-12 md:mb-16"
           initial={{ opacity: 0, y: 30 }}
@@ -78,7 +76,7 @@ export default function Features() {
           transition={{ duration: 0.6 }}
         >
           <motion.h2
-            className="text-3xl md:text-4xl font-bold text-charcoal mb-4 font-serif"
+            className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#2A2A2A] mb-4 font-serif"
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
@@ -88,61 +86,146 @@ export default function Features() {
           </motion.h2>
         </motion.div>
 
+        {/* Features Grid - 3 columns */}
         <motion.div
-          className="grid md:grid-cols-2 lg:grid-cols-4 gap-8"
+          className="grid md:grid-cols-3 gap-8 mb-16"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: '-100px' }}
+          viewport={{ once: true }}
         >
           {features.map((feature, index) => (
             <motion.div
               key={index}
               variants={itemVariants}
-              whileHover={{
-                y: -10,
-                borderColor: feature.bgColor,
-              }}
-              className="group p-6 rounded-2xl transition-all duration-300 cursor-pointer border-2 relative"
-              style={{
-                background: 'linear-gradient(135deg, #FAF6F1 0%, #F5EFE7 100%)',
-                borderColor: '#C19A6B',
-                boxShadow: '0 8px 25px rgba(193, 154, 107, 0.1)',
-              }}
+              className="text-center"
             >
-              {/* Corner decorations */}
-              <div className="absolute top-2 left-2 w-3 h-3 border-t-2 border-l-2 opacity-30" style={{ borderColor: feature.bgColor }}></div>
-              <div className="absolute top-2 right-2 w-3 h-3 border-t-2 border-r-2 opacity-30" style={{ borderColor: feature.bgColor }}></div>
-              <div className="absolute bottom-2 left-2 w-3 h-3 border-b-2 border-l-2 opacity-30" style={{ borderColor: feature.bgColor }}></div>
-              <div className="absolute bottom-2 right-2 w-3 h-3 border-b-2 border-r-2 opacity-30" style={{ borderColor: feature.bgColor }}></div>
-              
+              {/* REAL PHOTO with Animation */}
               <motion.div
-                className="w-14 h-14 rounded-xl flex items-center justify-center mb-5 transition-all duration-300"
-                style={{ 
-                  background: feature.iconBg,
-                }}
-                whileHover={{ 
-                  rotate: [0, -10, 10, 0], 
-                  scale: 1.1,
-                  background: feature.bgColor,
-                  color: 'white'
-                }}
-                transition={{ duration: 0.5 }}
+                className="relative w-full max-w-[280px] h-[280px] mx-auto mb-6 rounded-3xl overflow-hidden shadow-2xl"
+                whileHover={{ scale: 1.08, rotate: 2 }}
+                transition={{ type: 'spring', stiffness: 200 }}
               >
-                <feature.icon className="w-7 h-7" style={{ color: feature.bgColor }} />
+                <Image
+                  src={feature.imageSrc}
+                  alt={feature.title}
+                  fill
+                  className="object-cover"
+                />
+                {/* Gradient overlay for better text contrast */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                
+                {/* Icon overlay */}
+                <motion.div
+                  className="absolute top-4 right-4 w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg"
+                  whileHover={{ scale: 1.2, rotate: 360 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <feature.icon className="w-6 h-6 text-[#2B7A78]" />
+                </motion.div>
               </motion.div>
-              <motion.h3
-                className="text-xl font-semibold text-charcoal mb-3 font-serif"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.1 * index }}
-              >
+
+              {/* Title */}
+              <h3 className="text-xl md:text-2xl font-bold text-[#2A2A2A] mb-3 font-serif">
                 {feature.title}
-              </motion.h3>
-              <p className="text-charcoal-light leading-relaxed">{feature.description}</p>
+              </h3>
+
+              {/* Description */}
+              <p className="text-gray-600 leading-relaxed px-4">
+                {feature.description}
+              </p>
             </motion.div>
           ))}
+        </motion.div>
+
+        {/* Stats and CTA */}
+        <motion.div
+          className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+        >
+          {/* Left Stat */}
+          <motion.div
+            className="text-center"
+            whileHover={{ scale: 1.05 }}
+          >
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <motion.svg
+                width="30"
+                height="30"
+                viewBox="0 0 30 30"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              >
+                <path d="M15 5 L20 10 L15 15 L10 10 Z" fill="#C9A24D" />
+                <circle cx="15" cy="15" r="2" fill="#D4AF6B" />
+              </motion.svg>
+              <span className="text-4xl md:text-5xl font-bold text-[#C9A24D]">
+                {isArabic ? '١٠٬٠٠٠+' : '+10,000'}
+              </span>
+              <motion.svg
+                width="30"
+                height="30"
+                viewBox="0 0 30 30"
+                animate={{ rotate: -360 }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              >
+                <path d="M15 5 L20 10 L15 15 L10 10 Z" fill="#C9A24D" />
+                <circle cx="15" cy="15" r="2" fill="#D4AF6B" />
+              </motion.svg>
+            </div>
+            <p className="text-gray-700 font-medium">
+              {hero('studentsLearned')}
+            </p>
+          </motion.div>
+
+          {/* Center CTA Button */}
+          <Link href="/courses">
+            <motion.button
+              whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(47, 95, 84, 0.3)' }}
+              whileTap={{ scale: 0.98 }}
+              className="px-8 py-4 bg-gradient-to-r from-[#2F6F68] to-[#3B6F5F] text-white font-bold rounded-2xl shadow-2xl text-lg"
+            >
+              {t('exploreAll')}
+            </motion.button>
+          </Link>
+
+          {/* Right Stat */}
+          <motion.div
+            className="text-center"
+            whileHover={{ scale: 1.05 }}
+          >
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <motion.svg
+                width="30"
+                height="30"
+                viewBox="0 0 30 30"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              >
+                <path d="M15 5 L20 10 L15 15 L10 10 Z" fill="#C9A24D" />
+                <circle cx="15" cy="15" r="2" fill="#D4AF6B" />
+              </motion.svg>
+              <span className="text-4xl md:text-5xl font-bold text-[#C9A24D]">
+                {isArabic ? '١٬٠٠٠+' : '+1,000'}
+              </span>
+              <motion.svg
+                width="30"
+                height="30"
+                viewBox="0 0 30 30"
+                animate={{ rotate: -360 }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              >
+                <path d="M15 5 L20 10 L15 15 L10 10 Z" fill="#C9A24D" />
+                <circle cx="15" cy="15" r="2" fill="#D4AF6B" />
+              </motion.svg>
+            </div>
+            <p className="text-gray-700 font-medium">
+              {hero('premiumSessions')}
+            </p>
+          </motion.div>
         </motion.div>
       </div>
     </section>

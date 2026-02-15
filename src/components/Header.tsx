@@ -101,9 +101,9 @@ export default function Header() {
           >
             <Link href="/" className="flex items-center gap-3">
               <motion.img
-                src="/salam-logo-new.png"
+                src="/salam-institute-logo.png"
                 alt="Salam Institute"
-                className="w-14 h-14 object-contain"
+                className="w-12 h-12 object-contain"
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.3 }}
               />
@@ -120,32 +120,12 @@ export default function Header() {
           </motion.div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-4">
-            {navLinks.slice(0, 1).map((link, index) => (
-              <motion.div
-                key={link.href}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 + index * 0.05 }}
-              >
-                <Link
-                  href={link.href}
-                  className="text-charcoal hover:text-primary-500 font-medium transition-colors relative group px-2 whitespace-nowrap"
-                >
-                  {link.label}
-                  <motion.span
-                    className="absolute -bottom-1 start-0 w-0 h-0.5 bg-secondary-500 group-hover:w-full transition-all duration-300"
-                    layoutId="underline"
-                  />
-                </Link>
-              </motion.div>
-            ))}
-
+          <nav className="hidden lg:flex items-center gap-6 ml-20">
             {/* Courses Dropdown */}
             <div className="relative">
               <motion.button
                 onClick={() => setIsCoursesOpen(!isCoursesOpen)}
-                className="flex items-center gap-1 text-charcoal hover:text-primary-500 font-medium transition-colors px-2 whitespace-nowrap"
+                className="flex items-center gap-1 text-charcoal hover:text-primary-500 font-medium transition-colors whitespace-nowrap"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -213,7 +193,7 @@ export default function Header() {
             <LanguageSwitcher />
 
             <motion.div
-              className="hidden md:flex items-center gap-3"
+              className="hidden md:flex items-center gap-4"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
@@ -231,7 +211,18 @@ export default function Header() {
                   href="/register"
                   className="bg-primary-500 hover:bg-primary-600 text-white font-medium text-sm py-2.5 px-5 rounded-xl shadow-md hover:shadow-lg transition-all whitespace-nowrap inline-flex items-center justify-center"
                 >
-                  {t('freeTrial')}
+                  {t('register')}
+                </Link>
+              </motion.div>
+              
+              {/* Probestunde Button */}
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Link
+                  href="/probestunde"
+                  className="bg-gradient-to-r from-secondary-400 to-secondary-500 hover:from-secondary-500 hover:to-secondary-600 text-white font-semibold text-sm py-2.5 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all whitespace-nowrap inline-flex items-center justify-center gap-2"
+                >
+                  <BookOpen className="w-4 h-4" />
+                  {t('probestunde') || 'Probestunde'}
                 </Link>
               </motion.div>
             </motion.div>

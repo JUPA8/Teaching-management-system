@@ -6,6 +6,7 @@ import { BookOpen } from 'lucide-react';
 import { Course } from '@/types';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 interface CourseCardProps {
   course: Course;
@@ -63,33 +64,23 @@ export default function CourseCard({ course, featured = false }: CourseCardProps
       <div className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-secondary-400 opacity-50"></div>
       <div className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-secondary-400 opacity-50"></div>
       <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-secondary-400 opacity-50"></div>
-      {/* Image with Islamic pattern */}
+      {/* Course Image */}
       <div
         className={cn(
-          'relative h-48',
+          'relative h-48 overflow-hidden',
           featured && 'lg:h-auto lg:w-2/5'
         )}
-        style={{
-          background: 'linear-gradient(135deg, #3B6F5F 0%, #2F5F54 50%, #C19A6B 100%)',
-        }}
       >
-        {/* Islamic pattern overlay */}
-        <div 
-          className="absolute inset-0" 
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23FFFFFF' fill-opacity='0.08'%3E%3Cpath d='M30 30L15 15h30L30 30zm0 0L45 45H15l15-15z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          }}
-        ></div>
+        <Image
+          src={course.image}
+          alt={getCourseText(course.titleKey)}
+          fill
+          className="object-cover transition-transform duration-500 group-hover:scale-110"
+        />
+        {/* Gradient overlay for better text readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
         
-        <motion.div 
-          className="absolute inset-0 flex items-center justify-center"
-          whileHover={{ scale: 1.1, rotate: 5 }}
-          transition={{ duration: 0.3 }}
-        >
-          <BookOpen className="w-16 h-16 text-white/40" />
-        </motion.div>
-        
-        <div className="absolute top-4 start-4">
+        <div className="absolute top-4 start-4 z-10">
           <motion.span
             className={cn(
               'px-3 py-1.5 rounded-full text-xs font-medium shadow-lg',

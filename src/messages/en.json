@@ -18,14 +18,18 @@
     "logout": "Logout",
     "dashboard": "Dashboard",
     "freeTrial": "Free Trial Lesson",
+    "probestunde": "Trial Lesson",
     "startNow": "Start Now",
     "learnMore": "Learn More",
+    "bookTrial": "Book Free Trial",
     "contact": "Contact",
     "about": "About Us",
     "faq": "FAQ",
     "privacy": "Privacy Policy",
     "terms": "Terms of Service",
-    "imprint": "Imprint"
+    "imprint": "Imprint",
+    "noCreditCard": "No Credit Card",
+    "needHelp": "Need Help?"
     
   },
   "hero": {
@@ -36,13 +40,31 @@
     "students": "Students",
     "teachers": "Teachers",
     "countries": "Countries",
-    "bookTrial": "Book Free Trial"
+    "bookTrial": "Book Free Trial",
+    "badge": "Premium Online Quran & Arabic Institute",
+    "welcomeTo": "Welcome to",
+    "salamInstitute": "Salam Institute",
+    "mainDescription": "Learn the Holy Quran and Islamic Studies with certified teachers online from the comfort of your home.",
+    "startFreeTrial": "Start Your Free Trial",
+    "exploreCourses": "Explore Courses",
+    "studentsLearned": "Students learned with us",
+    "premiumSessions": "Premium monthly sessions",
+    "illustration": "Islamic Illustration"
   },
   "features": {
-    "title": "Why Salam Institute?",
+    "title": "Why Choose Salam Institute?",
+    "exploreAll": "Explore All Courses",
     "qualified": {
       "title": "Qualified Teachers",
-      "description": "All our teachers are certified and have years of experience in online teaching."
+      "description": "All our teachers are certified and have years of experience in online teaching"
+    },
+    "interactive": {
+      "title": "Interactive Live Learning",
+      "description": "Live lessons with personalized feedback from teachers"
+    },
+    "diverse": {
+      "title": "Diverse Learning Methods",
+      "description": "Customized curriculum for each student based on their level"
     },
     "flexible": {
       "title": "Flexible Schedule",
@@ -60,9 +82,46 @@
   "courses": {
     "title": "Our Courses",
     "subtitle": "Discover our diverse course offerings",
+    "learnMore": "Learn More",
     "quranAdults": {
       "title": "Quran for Adults",
       "description": "Learn Quran recitation, Tajweed, and Hifz with experienced teachers.",
+      "badge": "Adult Learning Program",
+      "viewPrograms": "View Programs",
+      "specializedTitle": "Our Specialized Programs",
+      "specializedSubtitle": "Choose the path that suits your learning goals",
+      "startLearning": "Start Learning",
+      "supportiveTitle": "Learn in a Supportive Environment",
+      "supportiveDescription": "Join our community of adult learners in structured, interactive Quran classes designed for busy professionals and parents.",
+      "benefitsTitle": "Master the Art of Tajweed",
+      "benefitsDescription": "Perfect your Quran recitation with proper pronunciation, rules, and beautiful articulation under expert guidance.",
+      "benefitsList": {
+        "stepByStep": "Step-by-step Tajweed rules",
+        "liveFeedback": "Practice with live feedback",
+        "pronunciation": "Correct pronunciation techniques",
+        "beautify": "Beautify your recitation"
+      },
+      "startJourney": "Start Your Journey",
+      "availableTitle": "Available Courses",
+      "availableSubtitle": "Browse our comprehensive Quran courses for adults",
+      "environment": {
+        "certified": {
+          "title": "Expert Certified Teachers",
+          "description": "Learn from qualified scholars with Ijazah"
+        },
+        "flexible": {
+          "title": "Flexible Schedule",
+          "description": "Choose times that fit your lifestyle"
+        },
+        "personalized": {
+          "title": "Personalized Learning",
+          "description": "Customized pace for adult learners"
+        },
+        "anywhere": {
+          "title": "Learn Anywhere",
+          "description": "Online classes from home"
+        }
+      },
       "features": {
         "tajweed": {
           "title": "Tajweed Mastery",
@@ -85,6 +144,33 @@
     "quranKids": {
       "title": "Quran for Kids",
       "description": "Age-appropriate Quran teaching with interactive and fun methods.",
+      "availableSubtitle": "Browse our fun Quran courses for children",
+      "ageBadge": "Ages 4-14 Years",
+      "startFreeTrial": "Start Free Trial",
+      "learnMore": "Learn More",
+      "funLearningTitle": "Learning Made Fun & Easy",
+      "funLearningSubtitle": "Interactive methods designed specifically for children",
+      "classroomAlt": "Kids Quran Classroom",
+      "joyfulTitle": "Joyful Learning Environment",
+      "joyfulDescription": "Our Quran classes create a warm, welcoming space where children feel comfortable and excited to learn.",
+      "environment": {
+        "smallGroups": {
+          "title": "Small Group Classes",
+          "description": "Personal attention for every child"
+        },
+        "qualifiedTeachers": {
+          "title": "Qualified Teachers",
+          "description": "Experienced in teaching young learners"
+        },
+        "interactiveActivities": {
+          "title": "Interactive Activities",
+          "description": "Games, songs, and fun exercises"
+        },
+        "progressTracking": {
+          "title": "Progress Tracking",
+          "description": "Regular updates for parents"
+        }
+      },
       "features": {
         "interactive": {
           "title": "Interactive Learning",
@@ -101,6 +187,7 @@
       },
       "agePrograms": {
         "title": "Programs for Every Age",
+        "subtitle": "Age-appropriate curriculum for every stage",
         "ages46": {
           "title": "Ages 4-6",
           "description": "Introduction to Arabic letters and short surahs"
@@ -113,11 +200,50 @@
           "title": "Ages 11-14",
           "description": "Advanced Tajweed and extended memorization"
         }
-      }
+      },
+      "enrollNow": "Enroll Now",
+      "materialsTitle": "Colorful & Engaging Materials",
+      "materialsDescription": "We use specially designed materials that make learning Arabic letters and Quran recitation fun and memorable for children.",
+      "materialsList": {
+        "books": "Colorful Quran books for kids",
+        "games": "Interactive learning games",
+        "aids": "Visual and audio aids",
+        "rewards": "Reward system to motivate"
+      },
+      "bookFreeTrial": "Book Free Trial",
+      "learningAlt": "Kids Learning Materials"
     },
     "arabic": {
       "title": "Arabic Language",
       "description": "From basics to conversation - Arabic for all levels.",
+      "availableSubtitle": "Browse our comprehensive Arabic language courses",
+      "startLearning": "Start Learning",
+      "viewLevels": "View Levels",
+      "heroAlt": "Arabic Language",
+      "heroBadge": "Master the Arabic Language",
+      "whatYouLearnTitle": "What You'll Learn",
+      "whatYouLearnSubtitle": "Comprehensive Arabic language curriculum from basics to fluency",
+      "teachingAlt": "Arabic Language Teaching",
+      "expertTeachersTitle": "Expert Native Teachers",
+      "expertTeachersDescription": "Learn Arabic from qualified native speakers who use proven teaching methods to help you achieve fluency.",
+      "teachingFeatures": {
+        "native": {
+          "title": "Native Arabic Speakers",
+          "description": "Learn authentic pronunciation and accent"
+        },
+        "interactive": {
+          "title": "Interactive Methods",
+          "description": "Speaking practice in every lesson"
+        },
+        "modern": {
+          "title": "Modern Materials",
+          "description": "Up-to-date teaching resources"
+        },
+        "cultural": {
+          "title": "Cultural Context",
+          "description": "Understand Arabic culture and customs"
+        }
+      },
       "features": {
         "alphabet": "Alphabet",
         "alphabetDesc": "Master Arabic letters & sounds",
@@ -129,16 +255,46 @@
         "quranicDesc": "Understand the Quran directly"
       },
       "learningPath": "Your Learning Path",
+      "learningPathSubtitle": "From beginner to advanced in 4 structured levels",
       "levels": {
         "1": "Beginner",
         "2": "Elementary",
         "3": "Intermediate",
         "4": "Advanced"
-      }
+      },
+      "writingTitle": "Master Arabic Writing",
+      "writingDescription": "Learn to read and write beautiful Arabic script with proper letter connections and flowing handwriting.",
+      "writingFeatures": {
+        "letters": "Learn all 28 Arabic letters",
+        "connections": "Master letter connections",
+        "practice": "Practice writing exercises",
+        "fluency": "Read Arabic fluently"
+      },
+      "startJourney": "Start Your Journey",
+      "calligraphyAlt": "Arabic Calligraphy"
     },
     "islamic": {
       "title": "Islamic Studies",
       "description": "Fiqh, Aqidah, Seerah and more from qualified scholars.",
+      "availableSubtitle": "Browse our comprehensive Islamic studies courses",
+      "startLearningToday": "Start Learning Today",
+      "heroAlt": "Islamic Studies",
+      "heroBadge": "Islamic Knowledge",
+      "beginJourney": "Begin Your Journey",
+      "exploreSubjects": "Explore Subjects",
+      "coreSubjectsTitle": "Core Islamic Subjects",
+      "coreSubjectsSubtitle": "Comprehensive Islamic education from qualified scholars",
+      "learnMore": "Learn More",
+      "classroomAlt": "Islamic Studies Classroom",
+      "authenticSourcesTitle": "Study Authentic Sources",
+      "authenticSourcesDescription": "Learn from classical and contemporary Islamic texts with expert guidance and commentary.",
+      "authenticFeatures": {
+        "classical": "Classical texts with modern explanations",
+        "isnad": "Authentic chain of narration (Isnad)",
+        "context": "Context and practical application",
+        "qa": "Q&A sessions with scholars"
+      },
+      "booksAlt": "Islamic Books",
       "subjects": {
         "fiqh": {
           "title": "Fiqh",
@@ -325,6 +481,21 @@
     "title": "Our Teachers",
     "subtitle": "Learn from the Best",
     "badgeLabel": "Meet Our Team",
+    "heroEducationAlt": "Islamic Education",
+    "excellenceAlt": "Excellence",
+    "certifiedExcellence": "Certified Excellence",
+    "teachingAlt": "Islamic Teaching",
+    "qualifiedTitle": "100% Qualified Teachers",
+    "qualifiedDescription": "All our teachers are certified with Ijazah in Quranic sciences",
+    "expertTeam": "Our Expert Team",
+    "meetScholars": "Meet Our Scholars",
+    "scholarsDescription": "Learn from certified scholars with years of experience in Islamic education, each dedicated to your spiritual and academic growth",
+    "certified": "Certified",
+    "yearsExperience": "Years Experience",
+    "languagesCount": "Languages",
+    "noCreditCard": "No Credit Card Required",
+    "minFreeTrial": "30-Min Free Trial",
+    "happyStudents": "10,000+ Happy Students",
     "specializations": "Specializations:",
     "languages": "Languages:",
     "stats": {
@@ -375,11 +546,23 @@
         "languages": ["Arabic", "English", "German"],
         "specializations": ["Fiqh", "Seerah", "Aqidah"]
       }
+    },
+    "cta": {
+      "title": "Ready to Start Learning?",
+      "subtitle": "Book your free trial lesson today and experience our teaching quality firsthand",
+      "button": "Book Free Trial Lesson"
     }
   },
   "testimonials": {
     "title": "What Our Students Say",
     "subtitle": "Experiences from our satisfied learners",
+    "badge": "Student Success Stories",
+    "verified": "Verified",
+    "stats": {
+      "averageRating": "Average Rating",
+      "happyReviews": "Happy Reviews",
+      "satisfactionRate": "Satisfaction Rate"
+    },
     "items": {
       "sarah": {
         "name": "Sarah M.",
@@ -403,71 +586,12 @@
       }
     }
   },
-  "pricing": {
-    "title": "Our Pricing",
-    "subtitle": "Transparent pricing with no hidden costs",
-    "badgeLabel": "Flexible Plans",
-    "membershipTypes": {
-      "private": "Private (1-on-1)",
-      "group": "Group Class",
-      "groupSave": "Save 30%",
-      "privateTitle": "Private 1-on-1 Lessons",
-      "privateDescription": "Personalized one-on-one sessions with your dedicated teacher. Full attention and customized learning pace.",
-      "groupTitle": "Group Classes",
-      "groupDescription": "Learn together with 3-5 students in an interactive group setting. More affordable while maintaining quality."
-    },
-    "perMonth": "per month",
-    "perLesson": "per lesson",
-    "lessonsPerWeek": "lessons per week",
-    "popular": "Popular",
-    "choosePlan": "Choose Plan",
-    "faqTitle": "Frequently Asked Questions",
-    "faq": {
-      "trial": {
-        "question": "Is there a free trial?",
-        "answer": "Yes! We offer a free 30-minute trial lesson so you can experience our teaching method before committing to a plan."
-      },
-      "change": {
-        "question": "Can I change my plan later?",
-        "answer": "Absolutely. You can upgrade or downgrade your plan at any time. Changes will take effect from your next billing cycle."
-      },
-      "payment": {
-        "question": "What payment methods do you accept?",
-        "answer": "We accept all major credit cards, PayPal, and bank transfers. All payments are processed securely."
-      },
-      "lessonLength": {
-        "question": "How long is each lesson?",
-        "answer": "Each lesson is 30 minutes long, which is the optimal duration for effective learning and retention."
-      },
-      "reschedule": {
-        "question": "Can I reschedule a lesson?",
-        "answer": "Yes, you can reschedule lessons up to 12 hours before the scheduled time at no extra cost."
-      }
-    },
-    "ctaTitle": "Ready to Start Your Journey?",
-    "ctaDescription": "Join thousands of students who are learning Quran and Arabic with our expert teachers.",
-    "basic": {
-      "title": "Basic",
-      "description": "Perfect for getting started"
-    },
-    "standard": {
-      "title": "Standard",
-      "description": "For regular learning"
-    },
-    "premium": {
-      "title": "Premium",
-      "description": "Intensive learning"
-    },
-    "features": {
-      "oneOnOne": "1-on-1 lessons",
-      "qualifiedTeachers": "Qualified teachers",
-      "flexibleSchedule": "Flexible schedule",
-      "progressReports": "Progress reports",
-      "recordedLessons": "Recorded lessons",
-      "prioritySupport": "Priority support"
-    }
-  },
   "register": {
+    "heroAlt": "Join Salam Institute",
+    "journeyAlt": "Learning Journey",
+    "journeyTitle": "Begin Your Journey",
+    "journeySubtitle": "Join 10,000+ students worldwide",
+    "badge": "Start Today",
     "title": "Register",
     "subtitle": "Create your free account",
     "community": "Join Our Community",
@@ -497,6 +621,16 @@
     "loginHere": "Login here"
   },
   "login": {
+    "heroAlt": "Welcome Back",
+    "heroBadge": "Welcome Back",
+    "heroTitle": "Welcome Back to Salam Institute",
+    "heroDescription": "Continue your Islamic education journey and grow your knowledge with our expert teachers.",
+    "heroFeatures": {
+      "dashboard": "Access to your personalized dashboard",
+      "courses": "Continue your courses and progress",
+      "teachers": "Connect with teachers instantly"
+    },
+    "studyAlt": "Study",
     "title": "Login",
     "subtitle": "Welcome back!",
     "email": "Email",
@@ -504,8 +638,51 @@
     "remember": "Remember me",
     "forgot": "Forgot password?",
     "submit": "Login",
+    "orContinue": "or continue with",
+    "googleLogin": "Continue with Google",
     "noAccount": "Don't have an account?",
     "registerHere": "Register here"
+  },
+  "probestunde": {
+    "heroAlt": "Free Trial Lesson",
+    "onlineClassAlt": "Online Class",
+    "badge": "Quick & Easy Booking",
+    "title": "Book Trial Lesson",
+    "mainTitle": "Book Your Free Trial Now",
+    "mainDescription": "Fill out the form below and start your Islamic education journey today!",
+    "subtitle": "Fill out the form and we will contact you",
+    "benefits": {
+      "liveSession": "Live One-on-One Session",
+      "freeClass": "30 Minutes Free Class",
+      "expertTeacher": "Expert Certified Teacher"
+    },
+    "numStudentsLabel": "Number of Students",
+    "studentLabel": "Student",
+    "nameLabel": "Name",
+    "namePlaceholder": "Enter name",
+    "ageLabel": "Age",
+    "agePlaceholder": "Enter age",
+    "emailLabel": "Email Address",
+    "phoneLabel": "Phone Number (WhatsApp)",
+    "contactMethodLabel": "Preferred Contact Method",
+    "whatsapp": "WhatsApp",
+    "email": "Email",
+    "call": "Call",
+    "teacherLabel": "Teacher Preference",
+    "male": "Male",
+    "female": "Female",
+    "noPreference": "No Preference",
+    "submit": "Book Now",
+    "sending": "Sending...",
+    "features": {
+      "noCreditCard": "No Credit Card",
+      "instantConfirmation": "Instant Confirmation",
+      "free": "100% Free"
+    },
+    "successAlt": "Success",
+    "successTitle": "Start Your Success Journey",
+    "successDescription": "Join thousands of successful students learning authentic Islamic education",
+    "success": "Successfully sent!"
   },
   "dashboard": {
     "welcome": "Welcome back",
@@ -525,18 +702,25 @@
     "contactSupport": "Contact Support"
   },
   "footer": {
-    "description": "Salam Institute - Your online platform for Quran, Arabic, and Islamic studies.",
+    "description": "Your online platform for Quran, Arabic, and Islamic studies",
     "quickLinks": "Quick Links",
     "courses": "Courses",
     "support": "Support",
     "legal": "Legal",
     "newsletter": "Newsletter",
-    "newsletterText": "Subscribe to our newsletter for updates and offers.",
+    "newsletterText": "Subscribe to our newsletter for updates and offers",
     "subscribe": "Subscribe",
     "emailPlaceholder": "Your email",
-    "copyright": "© 2026 Salam Institute. All rights reserved."
+    "copyright": "All rights reserved",
+    "madeWith": "Made with"
   },
   "videos": {
+    "heroAlt": "Islamic Education",
+    "stats": {
+      "videos": "Videos",
+      "views": "Views",
+      "categories": "Categories"
+    },
     "title": "Video Library",
     "subtitle": "Learn with our free educational videos",
     "badgeLabel": "Video Library",
@@ -583,27 +767,30 @@
     "contact": "Contact"
   },
   "cta": {
-    "title": "Start Your Quran Journey Today",
-    "description": "Join thousands of students worldwide who are learning Quran, Arabic, and Islamic studies with our expert teachers.",
+    "title": "Start Your Learning Journey Today!",
+    "description": "Join thousands of students worldwide and get an exceptional learning experience with Salam Institute",
     "benefits": {
-      "teachers": "Qualified & Certified Teachers",
-      "schedule": "Flexible Schedule - Learn Anytime",
-      "personalized": "1-on-1 Personalized Sessions",
-      "progress": "Progress Tracking & Reports"
+      "teachers": "Certified and experienced teachers",
+      "schedule": "Flexible schedule that fits your time",
+      "personalized": "Personalized learning experience",
+      "progress": "Precise progress tracking"
     },
     "freeTrialCard": {
-      "title": "Free Trial Lesson",
-      "description": "Experience our teaching method with a complimentary 30-minute session",
+      "title": "Free Trial",
+      "description": "Book your trial lesson now",
       "noCreditCard": "No credit card required",
-      "chooseTime": "Choose your preferred time",
-      "meetTeacher": "Meet your teacher first",
+      "chooseTime": "Choose your convenient time",
+      "meetTeacher": "Meet your teacher",
+      "fullSession": "Full trial session",
       "bookNow": "Book Now"
     }
   },
   "about": {
     "story": "Our Story",
+    "established": "Est. 2010",
     "title": "About Salam Institute",
     "subtitle": "Empowering Muslims worldwide to connect with the Quran through personalized, high-quality online education since 2018.",
+    "description": "Empowering Muslims worldwide to connect with the Quran through personalized, high-quality online education since 2010.",
     "startLearning": "Start Learning",
     "contactUs": "Contact Us",
     "stats": {
@@ -612,25 +799,43 @@
       "countries": "Countries Reached",
       "rating": "Average Rating"
     },
-    "mission": "Our Mission",
-    "missionTitle": "Making Quran Education Accessible to Everyone",
-    "missionDesc1": "At Salam Institute, we believe that quality Islamic education should be accessible to every Muslim, regardless of their location or schedule. Our mission is to bridge the gap between traditional Islamic scholarship and modern technology, creating meaningful learning experiences that nurture both knowledge and spirituality.",
-    "missionDesc2": "Founded in 2018, we have grown from a small team of passionate educators to a global platform serving thousands of students across 15+ countries. Our qualified teachers bring decades of combined experience in Quran, Tajweed, Arabic, and Islamic studies.",
-    "missionFeatures": {
-      "ijazah": "Certified Ijazah holders",
-      "paths": "Personalized learning paths",
-      "flexible": "Flexible scheduling",
-      "support": "24/7 support"
+    "mission": {
+      "badge": "Mission",
+      "imageAlt": "Our Mission",
+      "cardTitle": "Our Mission",
+      "cardSubtitle": "Spreading authentic Islamic knowledge",
+      "title": "Empowering Through Islamic Education",
+      "description": "To provide accessible, authentic, and comprehensive Islamic education that transforms lives and strengthens faith across the globe.",
+      "features": {
+        "instruction": "Authentic Quran & Tajweed instruction",
+        "curriculum": "Comprehensive Islamic Studies curriculum",
+        "teachers": "Qualified & certified teachers",
+        "platform": "Flexible online learning platform"
+      }
     },
     "vision": {
-      "title": "Our Vision",
-      "description": "To become the world's most trusted platform for online Quran education, nurturing a global community of learners who carry the light of the Quran in their hearts and lives."
+      "badge": "Vision",
+      "imageAlt": "Our Vision",
+      "cardTitle": "Our Vision",
+      "cardSubtitle": "Building tomorrow's Muslim leaders",
+      "title": "A Global Community of Learners",
+      "description": "To become the world's leading online Islamic institute, building a unified ummah through knowledge, compassion, and excellence in Islamic education.",
+      "features": {
+        "reach": "Reach 1 million students worldwide",
+        "excellence": "Excellence in Islamic scholarship",
+        "technology": "Technology-enhanced learning",
+        "community": "Building a global Muslim community"
+      }
     },
-    "ctaTitle": "Ready to Begin Your Journey?",
-    "ctaDescription": "Join thousands of students who have transformed their relationship with the Quran through Salam Institute.",
+    "coreValuesBadge": "Core Values",
     "valuesTitle": "What We Stand For",
-    "coreValues": "Our Core Values",
-    "coreValuesDesc": "These principles guide everything we do at Salam Institute.",
+    "valuesDescription": "Our values guide everything we do, from curriculum design to student support",
+    "communityImageAlt": "Our Community Values",
+    "communityTitle": "United in Learning",
+    "communityDescription": "Join a global community of learners dedicated to Islamic knowledge and spiritual growth",
+    "ctaTitle": "Start Your Learning Journey Today",
+    "ctaDescription": "Join thousands of students worldwide in authentic Islamic education",
+    "getStartedFree": "Get Started Free",
     "values": {
       "excellence": {
         "title": "Excellence in Teaching",
@@ -639,6 +844,14 @@
       "compassion": {
         "title": "Compassionate Learning",
         "description": "Our teachers approach every student with patience, understanding, and genuine care for their spiritual growth."
+      },
+      "dedication": {
+        "title": "Dedicated to Your Success",
+        "description": "We are committed to helping every student achieve their learning goals through consistent support and guidance."
+      },
+      "innovation": {
+        "title": "Innovation in Teaching",
+        "description": "We combine traditional Islamic knowledge with modern teaching methods and technology for the best learning experience."
       },
       "personalized": {
         "title": "Personalized Approach",
@@ -737,9 +950,46 @@
     }
   },
   "contact": {
-    "title": "Get In Touch",
+    "heroAlt": "Contact Us",
+    "badge24h": "24/7 Support",
+    "badgeQuick": "Quick Response",
+    "title": "Contact Us",
     "heading": "Contact Us",
     "subtitle": "Have questions about our courses or need assistance? We're here to help you on your Quran learning journey.",
+    "quickLinks": {
+      "email": "Email Us",
+      "call": "Call Us",
+      "book": "Book Meeting"
+    },
+    "sectionBadge": "Get In Touch",
+    "sectionTitle": "Multiple Ways To Reach Us",
+    "sectionDescription": "Choose your preferred method of communication",
+    "whatsapp": {
+      "title": "WhatsApp Support",
+      "description": "We work online. For support, contact us via WhatsApp"
+    },
+    "contactNow": "Contact Now",
+    "supportImageAlt": "Customer Support",
+    "supportBadgeTitle": "Professional Support",
+    "supportBadgeSubtitle": "Available 24/7 for your questions",
+    "supportTitle": "Dedicated Support Team",
+    "supportDescription": "Our experienced support team is here to help you with any questions about courses, enrollment, or technical issues.",
+    "supportFeatures": {
+      "response": "Average response time: Under 2 hours",
+      "multilang": "Multi-language support available",
+      "expert": "Expert guidance from certified staff",
+      "technical": "Technical support for online classes"
+    },
+    "communicationAlt": "Communication",
+    "communicationTitle": "Let's Connect",
+    "communicationDescription": "Share your questions, feedback, or inquiries with us",
+    "globalAlt": "Global Reach",
+    "globalStats": {
+      "countries": "Countries",
+      "support": "Support",
+      "response": "Response"
+    },
+    "formBadge": "Contact Form",
     "formTitle": "Send us a Message",
     "formDescription": "We'd love to hear from you",
     "form": {
@@ -747,12 +997,13 @@
       "email": "Email Address",
       "subject": "Subject",
       "message": "Your Message",
+      "send": "Send Message",
       "submit": "Send Message",
       "placeholder": {
-        "name": "John Doe",
-        "email": "john@example.com",
-        "subject": "Select a subject...",
-        "message": "Tell us how we can help..."
+        "name": "Your full name",
+        "email": "email@example.com",
+        "subject": "What is this regarding?",
+        "message": "Tell us more about your inquiry..."
       },
       "options": {
         "courses": "Course Information",
@@ -764,9 +1015,11 @@
       }
     },
     "success": {
-      "title": "Message Sent!",
-      "description": "We'll get back to you within 24 hours."
+      "title": "Message Sent Successfully!",
+      "description": "We'll get back to you within 24 hours",
+      "thankYou": "Thank you for reaching out!"
     },
+    "privacyNote": "We respect your privacy and will never share your information",
     "info": {
       "email": {
         "title": "Email Us",
@@ -808,5 +1061,82 @@
   },
   "courseCard": {
     "featured": "Featured"
+  },
+  "pricing": {
+    "title": "Our Pricing",
+    "heroAlt": "Islamic Architecture",
+    "badge": "Premium & Flexible Plans",
+    "subtitle": "Transparent pricing with no hidden costs",
+    "membershipTypes": {
+      "private": "Private",
+      "group": "Group",
+      "privateSubtitle": "1-on-1 Private Lessons",
+      "groupSubtitle": "Save 30%"
+    },
+    "duration": {
+      "thirtyMin": "30 MINS CLASS",
+      "sixtyMin": "60 MINS CLASS"
+    },
+    "thirtyMinDescription": {
+      "private": "Perfect for focused 1-on-1 learning sessions",
+      "group": "Perfect for collaborative group learning (3-5 students)"
+    },
+    "sixtyMinDescription": {
+      "private": "Best value for comprehensive 1-on-1 learning",
+      "group": "Best value for group learning with peers (3-5 students)"
+    },
+    "pricingType": {
+      "private": "Private 1-on-1 Pricing",
+      "group": "Group Pricing (Save 30%)"
+    },
+    "classesPerWeek": "class / week",
+    "costPerMonth": "Cost per month",
+    "perClass": "per class",
+    "classesPerMonth": "classes per month",
+    "choosePlan": "Choose Plan",
+    "bestValue": "Best Value",
+    "premiumImageAlt": "Premium Islamic Education",
+    "premiumQuality": "Premium Quality",
+    "authenticEducation": "Authentic Islamic Education",
+    "whyChoose": "Why Choose Salam Institute?",
+    "features": {
+      "certified": {
+        "title": "Certified Teachers",
+        "description": "Learn from qualified Islamic scholars with Ijazah"
+      },
+      "flexible": {
+        "title": "Flexible Schedule",
+        "description": "Choose times that work perfectly for you"
+      },
+      "reports": {
+        "title": "Progress Reports",
+        "description": "Track your learning journey with detailed analytics"
+      },
+      "guarantee": {
+        "title": "Quality Guarantee",
+        "description": "100% satisfaction or money back guarantee"
+      },
+      "discounts": {
+        "title": "Family Discounts",
+        "description": "Special rates for multiple family members"
+      },
+      "materials": {
+        "title": "Premium Materials",
+        "description": "Access to exclusive educational resources"
+      }
+    },
+    "certificate": {
+      "badge": "Certificate of Achievement",
+      "title": "Get Certified in Your Islamic Studies",
+      "description": "Upon completion of your courses, receive an official certificate recognized by Islamic institutions worldwide. Track your progress and celebrate your achievements.",
+      "features": {
+        "ijazah": "Ijazah certification available",
+        "tracking": "Progress tracking system",
+        "reports": "Monthly achievement reports",
+        "recognized": "Recognized qualifications"
+      },
+      "imageAlt": "Islamic Certificate"
+    },
+    "startJourney": "Start Your Journey"
   }
 }

@@ -3,56 +3,67 @@
 import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/routing';
 import { motion } from 'framer-motion';
-import { Check, Star, Sparkles, Shield, Clock, Zap, CreditCard, ChevronDown } from 'lucide-react';
-import { pricingPlans } from '@/lib/data';
+import { Check, Star, Sparkles, Shield, Clock, Award, Users, UserCheck, Crown, Gem, CheckCircle } from 'lucide-react';
 import { useState } from 'react';
 import { formatNumberForLocale } from '@/lib/utils';
-
-// Helper type for dynamic pricing translation keys
-type PricingTranslationKey = Parameters<ReturnType<typeof useTranslations<'pricing'>>>[0];
+import IslamicDivider from '@/components/IslamicDivider';
+import Image from 'next/image';
 
 export default function PricingPage() {
   const t = useTranslations('pricing');
-  const locale = useLocale();
-
-  // Helper function for dynamic keys
-  const getPricingText = (key: string) => t(key as PricingTranslationKey);
   const common = useTranslations('common');
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const locale = useLocale();
+  const isArabic = locale === 'ar';
   const [membershipType, setMembershipType] = useState<'private' | 'group'>('private');
 
-  // Features translation keys for each plan
-  const planFeatures: Record<string, string[]> = {
-    basic: ['features.oneOnOne', 'features.qualifiedTeachers', 'features.flexibleSchedule'],
-    standard: ['features.oneOnOne', 'features.qualifiedTeachers', 'features.flexibleSchedule', 'features.progressReports'],
-    premium: ['features.oneOnOne', 'features.qualifiedTeachers', 'features.flexibleSchedule', 'features.progressReports', 'features.recordedLessons', 'features.prioritySupport'],
-  };
-
-  const faqs = [
+  const plans = [
     {
-      question: t('faq.trial.question'),
-      answer: t('faq.trial.answer'),
-      icon: Sparkles,
+      name: isArabic ? 'أساسي' : 'Basic',
+      pricePrivate: membershipType === 'private' ? '€49' : '€29',
+      priceGroup: '€29',
+      period: isArabic ? 'شهرياً' : '/month',
+      description: isArabic ? 'مثالي للمبتدئين' : 'Perfect for beginners',
+      features: [
+        isArabic ? '4 دروس شهرياً' : '4 lessons per month',
+        isArabic ? 'معلمون معتمدون' : 'Certified teachers',
+        isArabic ? 'جدول مرن' : 'Flexible schedule',
+        isArabic ? 'دعم عبر البريد' : 'Email support',
+      ],
+      gradient: 'from-[#2B7A78] to-[#236260]',
+      popular: false,
     },
     {
-      question: t('faq.change.question'),
-      answer: t('faq.change.answer'),
-      icon: Zap,
+      name: isArabic ? 'قياسي' : 'Standard',
+      pricePrivate: membershipType === 'private' ? '€89' : '€59',
+      priceGroup: '€59',
+      period: isArabic ? 'شهرياً' : '/month',
+      description: isArabic ? 'الأكثر شعبية' : 'Most popular',
+      features: [
+        isArabic ? '8 دروس شهرياً' : '8 lessons per month',
+        isArabic ? 'معلمون معتمدون' : 'Certified teachers',
+        isArabic ? 'جدول مرن' : 'Flexible schedule',
+        isArabic ? 'تقارير تقدم' : 'Progress reports',
+        isArabic ? 'دعم ذو أولوية' : 'Priority support',
+      ],
+      gradient: 'from-[#D9B574] to-[#C9A551]',
+      popular: true,
     },
     {
-      question: t('faq.payment.question'),
-      answer: t('faq.payment.answer'),
-      icon: CreditCard,
-    },
-    {
-      question: t('faq.lessonLength.question'),
-      answer: t('faq.lessonLength.answer'),
-      icon: Clock,
-    },
-    {
-      question: t('faq.reschedule.question'),
-      answer: t('faq.reschedule.answer'),
-      icon: Shield,
+      name: isArabic ? 'مميز' : 'Premium',
+      pricePrivate: membershipType === 'private' ? '€149' : '€99',
+      priceGroup: '€99',
+      period: isArabic ? 'شهرياً' : '/month',
+      description: isArabic ? 'للطلاب الجادين' : 'For serious students',
+      features: [
+        isArabic ? '12 درس شهرياً' : '12 lessons per month',
+        isArabic ? 'معلمون متميزون' : 'Premium teachers',
+        isArabic ? 'جدول مرن' : 'Flexible schedule',
+        isArabic ? 'تقارير مفصلة' : 'Detailed reports',
+        isArabic ? 'دروس مسجلة' : 'Recorded lessons',
+        isArabic ? 'دعم 24/7' : '24/7 support',
+      ],
+      gradient: 'from-[#2F6F68] to-[#267169]',
+      popular: false,
     },
   ];
 
@@ -65,421 +76,579 @@ export default function PricingPage() {
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 30, scale: 0.95 },
+    hidden: { opacity: 0, y: 50, scale: 0.9 },
     visible: {
       opacity: 1,
       y: 0,
       scale: 1,
-      transition: { type: 'spring' as const, stiffness: 100, damping: 15 },
+      transition: { type: 'spring', stiffness: 100, damping: 15 },
     },
   };
 
+  // Detailed pricing data - Private (1-on-1) lessons
+  const privatePricing = {
+    thirtyMin: [
+      { classesPerWeek: 1, costPerMonth: '£16', perClass: '£4', classesTotal: 4 },
+      { classesPerWeek: 2, costPerMonth: '£32', perClass: '£4', classesTotal: 8 },
+      { classesPerWeek: 3, costPerMonth: '£48', perClass: '£4', classesTotal: 12 },
+      { classesPerWeek: 4, costPerMonth: '£64', perClass: '£4', classesTotal: 16 },
+      { classesPerWeek: 5, costPerMonth: '£80', perClass: '£4', classesTotal: 20 },
+    ],
+    sixtyMin: [
+      { classesPerWeek: 1, costPerMonth: '£32', perClass: '£8', classesTotal: 4 },
+      { classesPerWeek: 2, costPerMonth: '£64', perClass: '£8', classesTotal: 8 },
+      { classesPerWeek: 3, costPerMonth: '£84', perClass: '£7', classesTotal: 12 },
+      { classesPerWeek: 4, costPerMonth: '£112', perClass: '£7', classesTotal: 16 },
+      { classesPerWeek: 5, costPerMonth: '£130', perClass: '£6.5', classesTotal: 20 },
+    ],
+  };
+
+  // Group lessons pricing (30% discount)
+  const groupPricing = {
+    thirtyMin: [
+      { classesPerWeek: 1, costPerMonth: '£11', perClass: '£2.8', classesTotal: 4 },
+      { classesPerWeek: 2, costPerMonth: '£22', perClass: '£2.8', classesTotal: 8 },
+      { classesPerWeek: 3, costPerMonth: '£34', perClass: '£2.8', classesTotal: 12 },
+      { classesPerWeek: 4, costPerMonth: '£45', perClass: '£2.8', classesTotal: 16 },
+      { classesPerWeek: 5, costPerMonth: '£56', perClass: '£2.8', classesTotal: 20 },
+    ],
+    sixtyMin: [
+      { classesPerWeek: 1, costPerMonth: '£22', perClass: '£5.6', classesTotal: 4 },
+      { classesPerWeek: 2, costPerMonth: '£45', perClass: '£5.6', classesTotal: 8 },
+      { classesPerWeek: 3, costPerMonth: '£59', perClass: '£4.9', classesTotal: 12 },
+      { classesPerWeek: 4, costPerMonth: '£78', perClass: '£4.9', classesTotal: 16 },
+      { classesPerWeek: 5, costPerMonth: '£91', perClass: '£4.6', classesTotal: 20 },
+    ],
+  };
+
+  const detailedPricing = membershipType === 'private' ? privatePricing : groupPricing;
+
   return (
-    <div className="py-12 md:py-20 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <motion.div
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
+    <div className="min-h-screen bg-gradient-to-br from-[#F5F0E8] via-[#FAF6F1] to-[#F0EAE0]">
+      {/* Elegant Hero with Islamic Arch */}
+      <section className="relative py-24 md:py-32 overflow-hidden">
+        {/* Background with Islamic Arch Image */}
+        <div className="absolute inset-0">
+          <Image
+            src="/pricing-hero-arch.png"
+            alt={t('heroAlt')}
+            fill
+            className="object-cover opacity-40"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#F5F0E8]/80 via-[#FAF6F1]/70 to-[#F0EAE0]/80" />
+        </div>
+
+        {/* Ornamental Islamic patterns */}
+        <div className="absolute inset-0 opacity-5">
+          <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="pricingArchPattern" x="0" y="0" width="120" height="120" patternUnits="userSpaceOnUse">
+                <path d="M60,10 Q40,40 60,70 Q80,40 60,10 Z" fill="none" stroke="#8B4513" strokeWidth="1.5"/>
+                <circle cx="60" cy="40" r="15" fill="none" stroke="#8B4513" strokeWidth="1"/>
+                <path d="M30,90 L90,90 L90,110 L30,110 Z" fill="none" stroke="#8B4513" strokeWidth="1"/>
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#pricingArchPattern)" />
+          </svg>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
-            className="inline-block mb-4"
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
-          >
-            <span className="px-4 py-2 bg-gradient-to-r from-gold-100 to-gold-200 text-gold-700 rounded-full text-sm font-medium inline-flex items-center gap-2">
-              <Sparkles className="w-4 h-4" />
-              {t('badgeLabel')}
-            </span>
-          </motion.div>
-          <motion.h1
-            className="text-3xl md:text-5xl font-bold text-gray-900 mb-4"
-            initial={{ opacity: 0, y: 20 }}
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
+            transition={{ duration: 0.8 }}
           >
-            {t('title')}
-          </motion.h1>
-          <motion.p
-            className="text-lg text-gray-600 max-w-2xl mx-auto"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            {t('subtitle')}
-          </motion.p>
-        </motion.div>
-
-        {/* Membership Type Selector */}
-        <motion.div
-          className="flex justify-center mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-        >
-          <div className="inline-flex rounded-xl p-1 border-2" style={{ background: 'linear-gradient(135deg, #FAF6F1 0%, #F5EFE7 100%)', borderColor: '#C19A6B' }}>
-            <motion.button
-              onClick={() => setMembershipType('private')}
-              className="px-6 py-3 rounded-lg font-semibold text-sm transition-all relative"
-              style={{
-                background: membershipType === 'private' ? 'linear-gradient(to right, #3B6F5F, #2F5F54)' : 'transparent',
-                color: membershipType === 'private' ? 'white' : '#3B6F5F',
-              }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <span className="flex items-center gap-2">
-                👤 {t('membershipTypes.private')}
-                {membershipType === 'private' && (
-                  <motion.span
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="ml-1"
-                  >
-                    ✓
-                  </motion.span>
-                )}
-              </span>
-              {membershipType === 'private' && (
-                <motion.div
-                  className="absolute -top-2 -right-2 text-xs px-2 py-0.5 rounded-full text-white shadow-lg"
-                  style={{ background: '#D4AF37' }}
-                  initial={{ scale: 0, rotate: -10 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                >
-                  1-on-1
-                </motion.div>
-              )}
-            </motion.button>
-            <motion.button
-              onClick={() => setMembershipType('group')}
-              className="px-6 py-3 rounded-lg font-semibold text-sm transition-all relative"
-              style={{
-                background: membershipType === 'group' ? 'linear-gradient(to right, #C19A6B, #B8956A)' : 'transparent',
-                color: membershipType === 'group' ? 'white' : '#C19A6B',
-              }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <span className="flex items-center gap-2">
-                👥 {t('membershipTypes.group')}
-                {membershipType === 'group' && (
-                  <motion.span
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="ml-1"
-                  >
-                    ✓
-                  </motion.span>
-                )}
-              </span>
-              {membershipType === 'group' && (
-                <motion.div
-                  className="absolute -top-2 -right-2 text-xs px-2 py-0.5 rounded-full text-white shadow-lg"
-                  style={{ background: '#3B6F5F' }}
-                  initial={{ scale: 0, rotate: -10 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                >
-                  {t('membershipTypes.groupSave')}
-                </motion.div>
-              )}
-            </motion.button>
-          </div>
-        </motion.div>
-
-        {/* Info Banner */}
-        <motion.div
-          className="max-w-3xl mx-auto mb-8 p-4 rounded-xl border-2"
-          style={{ background: membershipType === 'private' ? 'rgba(59, 111, 95, 0.05)' : 'rgba(193, 154, 107, 0.05)', borderColor: membershipType === 'private' ? '#3B6F5F' : '#C19A6B' }}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-        >
-          <div className="flex items-start gap-3">
-            <span className="text-2xl mt-0.5">
-              {membershipType === 'private' ? '🎯' : '🌟'}
-            </span>
-            <div>
-              <h3 className="font-bold text-charcoal mb-1 font-serif">
-                {t(`membershipTypes.${membershipType}Title`)}
-              </h3>
-              <p className="text-sm text-charcoal-light">
-                {t(`membershipTypes.${membershipType}Description`)}
-              </p>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Pricing Cards */}
-        <motion.div
-          className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          key={membershipType}
-        >
-          {pricingPlans.map((plan, index) => (
+            {/* Elegant Badge */}
             <motion.div
-              key={plan.id}
-              variants={itemVariants}
-              whileHover={{ y: -10 }}
-              className={`relative overflow-hidden rounded-2xl bg-white shadow-xl border ${
-                plan.popular ? 'ring-2 ring-primary-600 scale-105 z-10' : 'border-gray-100'
-              }`}
+              className="inline-flex items-center gap-3 px-8 py-4 bg-white/80 backdrop-blur-md rounded-full mb-8 shadow-2xl border-2 border-[#D9B574]/30"
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ type: 'spring', stiffness: 150, delay: 0.2 }}
             >
-              {/* Popular Badge */}
-              {plan.popular && (
-                <motion.div
-                  className="absolute top-0 right-0 bg-gradient-to-r from-primary-600 to-secondary-600 text-white text-xs font-medium px-4 py-1.5 rounded-bl-xl"
-                  initial={{ x: 100 }}
-                  animate={{ x: 0 }}
-                  transition={{ delay: 0.5, type: 'spring' }}
-                >
-                  <span className="flex items-center gap-1">
-                    <Star className="w-3 h-3 fill-white" />
-                    {t('popular')}
-                  </span>
-                </motion.div>
-              )}
+              <Crown className="w-6 h-6 text-[#D9B574]" />
+              <span className="text-lg font-bold text-[#8B4513]">
+                {t('badge')}
+              </span>
+              <Crown className="w-6 h-6 text-[#D9B574]" />
+            </motion.div>
 
-              {/* Card Background Decoration */}
-              {plan.popular && (
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-br from-primary-50/50 to-transparent pointer-events-none"
-                  animate={{ opacity: [0.3, 0.5, 0.3] }}
-                  transition={{ duration: 3, repeat: Infinity }}
-                />
-              )}
+            {/* Main Title with Islamic Aesthetic */}
+            <motion.h1
+              className="text-5xl md:text-7xl font-bold text-[#2A2A2A] mb-6 font-serif leading-tight"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+            >
+              <span className="bg-gradient-to-r from-[#8B4513] via-[#D9B574] to-[#8B4513] bg-clip-text text-transparent">
+                {t('title')}
+              </span>
+            </motion.h1>
 
-              <div className="p-6 md:p-8 relative">
-                {/* Plan Name */}
-                <motion.h3
-                  className="text-xl font-bold text-gray-900 mb-2"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.3 + index * 0.1 }}
-                >
-                  {getPricingText(`${plan.id}.title`)}
-                </motion.h3>
-                <motion.p
-                  className="text-gray-600 text-sm mb-6"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.4 + index * 0.1 }}
-                >
-                  {getPricingText(`${plan.id}.description`)}
-                </motion.p>
+            {/* Ornamental Divider */}
+            <motion.div
+              className="flex items-center justify-center gap-4 mb-8"
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.4 }}
+            >
+              <div className="flex items-center gap-2">
+                <div className="w-12 h-0.5 bg-gradient-to-r from-transparent to-[#D9B574]" />
+                <Gem className="w-5 h-5 text-[#D9B574]" />
+                <div className="w-3 h-3 bg-[#D9B574] rotate-45" />
+                <Gem className="w-5 h-5 text-[#D9B574]" />
+                <div className="w-12 h-0.5 bg-gradient-to-l from-transparent to-[#D9B574]" />
+              </div>
+            </motion.div>
+            
+            {/* Subtitle */}
+            <motion.p
+              className="text-xl md:text-2xl text-gray-700 max-w-3xl mx-auto leading-relaxed font-light mb-12"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+            >
+              {t('subtitle')}
+            </motion.p>
 
-                {/* Price */}
+            {/* Private/Group Toggle */}
+            <motion.div
+              className="inline-flex rounded-2xl p-2 bg-white/90 backdrop-blur-md shadow-2xl border-2 border-[#D9B574]/30"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.6 }}
+            >
+              <button
+                onClick={() => setMembershipType('private')}
+                className={`px-8 py-4 rounded-xl font-bold text-base transition-all flex items-center gap-3 ${
+                  membershipType === 'private'
+                    ? 'bg-gradient-to-r from-[#2B7A78] to-[#236260] text-white shadow-lg scale-105'
+                    : 'text-gray-600 hover:text-[#2B7A78]'
+                }`}
+              >
+                <UserCheck className="w-5 h-5" />
+                <div className="text-left">
+                  <div>{t('membershipTypes.private')}</div>
+                  <div className="text-xs opacity-80 font-normal">
+                    {t('membershipTypes.privateSubtitle')}
+                  </div>
+                </div>
+              </button>
+              <button
+                onClick={() => setMembershipType('group')}
+                className={`px-8 py-4 rounded-xl font-bold text-base transition-all flex items-center gap-3 ${
+                  membershipType === 'group'
+                    ? 'bg-gradient-to-r from-[#D9B574] to-[#C9A551] text-white shadow-lg scale-105'
+                    : 'text-gray-600 hover:text-[#D9B574]'
+                }`}
+              >
+                <Users className="w-5 h-5" />
+                <div className="text-left">
+                  <div>{t('membershipTypes.group')}</div>
+                  <div className="text-xs opacity-80 font-normal">
+                    {t('membershipTypes.groupSubtitle')}
+                  </div>
+                </div>
+              </button>
+            </motion.div>
+          </motion.div>
+
+          {/* Detailed Pricing Tables */}
+          <div className="space-y-20">
+            {/* 60 Mins Class */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+            >
+              {/* Section Header */}
+              <div className="text-center mb-12">
                 <motion.div
-                  className="mb-6"
-                  initial={{ scale: 0 }}
+                  className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-[#2B7A78] to-[#236260] rounded-full mb-6 shadow-xl"
+                  whileHover={{ scale: 1.05 }}
+                  key={membershipType} // Re-animate on change
+                  initial={{ scale: 0.9 }}
                   animate={{ scale: 1 }}
-                  transition={{ delay: 0.5 + index * 0.1, type: 'spring' }}
                 >
-                  <span className="text-5xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
-                    €{formatNumberForLocale(plan.price, locale)}
-                  </span>
-                  <span className="text-gray-500">/{t('perMonth')}</span>
+                  <Award className="w-6 h-6 text-white" />
+                  <h2 className="text-3xl font-bold text-white">{t('duration.sixtyMin')}</h2>
+                  <Award className="w-6 h-6 text-white" />
                 </motion.div>
-
-                {/* Lessons per week */}
+                <p className="text-gray-600 text-lg">
+                  {membershipType === 'private'
+                    ? t('sixtyMinDescription.private')
+                    : t('sixtyMinDescription.group')
+                  }
+                </p>
                 <motion.div
-                  className="bg-gradient-to-r from-primary-50 to-secondary-50 rounded-xl p-4 mb-6 text-center"
-                  whileHover={{ scale: 1.02 }}
+                  className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-white/80 rounded-full shadow-md"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  key={`60min-${membershipType}`}
                 >
-                  <motion.span
-                    className="text-3xl font-bold text-primary-600"
-                    animate={{ scale: [1, 1.1, 1] }}
-                    transition={{ duration: 2, repeat: Infinity, delay: index * 0.3 }}
-                  >
-                    {formatNumberForLocale(plan.lessonsPerWeek, locale)}
-                  </motion.span>
-                  <span className="text-primary-700 text-sm ms-2">
-                    {t('lessonsPerWeek')}
-                  </span>
+                  {membershipType === 'private' ? (
+                    <>
+                      <UserCheck className="w-4 h-4 text-[#2B7A78]" />
+                      <span className="text-sm font-semibold text-[#2B7A78]">{t('pricingType.private')}</span>
+                    </>
+                  ) : (
+                    <>
+                      <Users className="w-4 h-4 text-[#2B7A78]" />
+                      <span className="text-sm font-semibold text-[#2B7A78]">{t('pricingType.group')}</span>
+                    </>
+                  )}
                 </motion.div>
+              </div>
 
-                {/* Features */}
-                <ul className="space-y-3 mb-8">
-                  {(planFeatures[plan.id] || []).map((featureKey, featureIndex) => (
-                    <motion.li
-                      key={featureIndex}
-                      className="flex items-start gap-3"
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.6 + index * 0.1 + featureIndex * 0.05 }}
-                    >
-                      <motion.div
-                        className="w-5 h-5 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0 mt-0.5"
-                        whileHover={{ scale: 1.2, backgroundColor: '#059669' }}
-                      >
-                        <Check className="w-3 h-3 text-primary-600" />
-                      </motion.div>
-                      <span className="text-gray-600 text-sm">{getPricingText(featureKey)}</span>
-                    </motion.li>
-                  ))}
-                </ul>
+              {/* Pricing Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                {detailedPricing.sixtyMin.map((plan, index) => (
+                  <motion.div
+                    key={index}
+                    className="group relative"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1 }}
+                    whileHover={{ y: -8 }}
+                  >
+                    {/* Islamic Arch Card */}
+                    <div className="relative bg-gradient-to-br from-white to-teal-50/30 rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all border-2 border-[#2B7A78]/20 group-hover:border-[#2B7A78]/50 overflow-hidden">
+                      {/* Arch decoration at top */}
+                      <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                        <div className="w-24 h-12 bg-gradient-to-b from-[#2B7A78] to-transparent rounded-b-full opacity-20" />
+                      </div>
 
-                {/* CTA Buttons */}
-                <div className="flex flex-col gap-3">
-                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                    <Link
-                      href="/register"
-                      className={`block w-full text-center py-3.5 rounded-xl font-semibold transition-all ${
-                        plan.popular
-                          ? 'bg-gradient-to-r from-primary-600 to-secondary-600 text-white hover:shadow-lg hover:shadow-primary-500/30'
-                          : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-                      }`}
-                    >
-                      {t('choosePlan')}
-                    </Link>
+                      {/* Best Value Badge */}
+                      {index === 3 && (
+                        <div className="absolute -top-3 -right-3">
+                          <div className="bg-gradient-to-r from-[#2B7A78] to-[#236260] text-white px-4 py-2 rounded-full text-xs font-bold shadow-xl flex items-center gap-1">
+                            <Star className="w-3 h-3" fill="currentColor" />
+                            {t('bestValue')}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Content */}
+                      <div className="text-center relative z-10">
+                        <div className="mb-6">
+                          <div className="text-lg font-bold text-gray-700 mb-2">
+                            {plan.classesPerWeek} {t('classesPerWeek')}
+                          </div>
+                        </div>
+
+                        <div className="mb-6">
+                          <div className="text-sm text-gray-500 mb-2">{t('costPerMonth')}</div>
+                          <div className="text-4xl font-bold text-[#2B7A78] mb-2">
+                            {plan.costPerMonth}
+                          </div>
+                          <div className="text-lg font-semibold text-[#D9B574]">
+                            {plan.perClass} {t('perClass')}
+                          </div>
+                        </div>
+
+                        <div className="py-4 px-6 bg-gradient-to-r from-[#2B7A78]/10 to-[#D9B574]/10 rounded-xl mb-6">
+                          <div className="text-sm text-gray-600">
+                            {plan.classesTotal} {t('classesPerMonth')}
+                          </div>
+                        </div>
+
+                        <Link href="/register">
+                          <motion.button
+                            className="w-full py-3 bg-gradient-to-r from-[#2B7A78] to-[#236260] text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                          >
+                            {t('choosePlan')}
+                          </motion.button>
+                        </Link>
+                      </div>
+                    </div>
                   </motion.div>
-                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                    <Link
-                      href="/register"
-                      className="block w-full text-center py-3.5 rounded-xl font-semibold transition-all border-2 border-primary-600 text-primary-600 hover:bg-primary-50"
-                    >
-                      {common('freeTrial')}
-                    </Link>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* 30 Mins Class */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+            >
+              {/* Section Header */}
+              <div className="text-center mb-12">
+                <motion.div
+                  className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-[#D9B574] to-[#C9A551] rounded-full mb-6 shadow-xl"
+                  whileHover={{ scale: 1.05 }}
+                  key={membershipType} // Re-animate on change
+                  initial={{ scale: 0.9 }}
+                  animate={{ scale: 1 }}
+                >
+                  <Clock className="w-6 h-6 text-white" />
+                  <h2 className="text-3xl font-bold text-white">{t('duration.thirtyMin')}</h2>
+                  <Clock className="w-6 h-6 text-white" />
+                </motion.div>
+                <p className="text-gray-600 text-lg">
+                  {membershipType === 'private' 
+                    ? t('thirtyMinDescription.private')
+                    : t('thirtyMinDescription.group')
+                  }
+                </p>
+                <motion.div
+                  className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-white/80 rounded-full shadow-md"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  key={`30min-${membershipType}`}
+                >
+                  {membershipType === 'private' ? (
+                    <>
+                      <UserCheck className="w-4 h-4 text-[#D9B574]" />
+                      <span className="text-sm font-semibold text-[#D9B574]">{t('pricingType.private')}</span>
+                    </>
+                  ) : (
+                    <>
+                      <Users className="w-4 h-4 text-[#D9B574]" />
+                      <span className="text-sm font-semibold text-[#D9B574]">{t('pricingType.group')}</span>
+                    </>
+                  )}
+                </motion.div>
+              </div>
+
+              {/* Pricing Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                {detailedPricing.thirtyMin.map((plan, index) => (
+                  <motion.div
+                    key={index}
+                    className="group relative"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1 }}
+                    whileHover={{ y: -8 }}
+                  >
+                    {/* Islamic Arch Card */}
+                    <div className="relative bg-gradient-to-br from-white to-amber-50/30 rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all border-2 border-[#D9B574]/20 group-hover:border-[#D9B574]/50 overflow-hidden">
+                      {/* Arch decoration at top */}
+                      <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                        <div className="w-24 h-12 bg-gradient-to-b from-[#D9B574] to-transparent rounded-b-full opacity-20" />
+                      </div>
+
+                      {/* Content */}
+                      <div className="text-center relative z-10">
+                        <div className="mb-6">
+                          <div className="text-lg font-bold text-gray-700 mb-2">
+                            {plan.classesPerWeek} {t('classesPerWeek')}
+                          </div>
+                          {index === 2 && (
+                            <div className="absolute -top-4 -right-4">
+                              <Star className="w-8 h-8 text-[#D9B574]" fill="#D9B574" />
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="mb-6">
+                          <div className="text-sm text-gray-500 mb-2">{t('costPerMonth')}</div>
+                          <div className="text-4xl font-bold text-[#D9B574] mb-2">
+                            {plan.costPerMonth}
+                          </div>
+                          <div className="text-lg font-semibold text-[#2B7A78]">
+                            {plan.perClass} {t('perClass')}
+                          </div>
+                        </div>
+
+                        <div className="py-4 px-6 bg-gradient-to-r from-[#D9B574]/10 to-[#2B7A78]/10 rounded-xl mb-6">
+                          <div className="text-sm text-gray-600">
+                            {plan.classesTotal} {t('classesPerMonth')}
+                          </div>
+                        </div>
+
+                        <Link href="/register">
+                          <motion.button
+                            className="w-full py-3 bg-gradient-to-r from-[#D9B574] to-[#C9A551] text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                          >
+                            {t('choosePlan')}
+                          </motion.button>
+                        </Link>
+                      </div>
+                    </div>
                   </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Premium Quality Section with Image */}
+          <motion.div
+            className="mt-24 grid md:grid-cols-2 gap-12 items-center bg-gradient-to-br from-white to-amber-50/30 rounded-3xl p-12 shadow-2xl border-2 border-[#D9B574]/30 overflow-hidden"
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            {/* Image Side */}
+            <motion.div
+              className="relative h-[400px] rounded-2xl overflow-hidden shadow-xl"
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+            >
+              <Image
+                src="/pricing-premium-quality.png"
+                alt={t('premiumImageAlt')}
+                fill
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+              <div className="absolute bottom-6 left-6 right-6">
+                <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#D9B574] to-[#C9A551] flex items-center justify-center">
+                      <Gem className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <div className="font-bold text-gray-900">{t('premiumQuality')}</div>
+                      <div className="text-sm text-gray-600">{t('authenticEducation')}</div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </motion.div>
-          ))}
-        </motion.div>
 
-        {/* FAQ Section */}
-        <motion.div
-          className="mt-20 max-w-3xl mx-auto"
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <motion.h2
-            className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-8"
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-          >
-            {t('faqTitle')}
-          </motion.h2>
-
-          <motion.div
-            className="space-y-4"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            {faqs.map((faq, index) => (
-              <motion.div
-                key={index}
-                variants={itemVariants}
-                className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden"
-              >
-                <motion.button
-                  className="w-full p-5 flex items-center gap-4 text-left"
-                  onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                  whileHover={{ backgroundColor: 'rgba(16, 185, 129, 0.05)' }}
-                >
-                  <motion.div
-                    className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-100 to-secondary-100 flex items-center justify-center flex-shrink-0"
-                    whileHover={{ rotate: [0, -5, 5, 0] }}
-                  >
-                    <faq.icon className="w-5 h-5 text-primary-600" />
-                  </motion.div>
-                  <span className="font-semibold text-gray-900 flex-1">
-                    {faq.question}
-                  </span>
-                  <motion.div
-                    animate={{ rotate: openFaq === index ? 180 : 0 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <ChevronDown className="w-5 h-5 text-gray-400" />
-                  </motion.div>
-                </motion.button>
-                <motion.div
-                  initial={false}
-                  animate={{
-                    height: openFaq === index ? 'auto' : 0,
-                    opacity: openFaq === index ? 1 : 0,
-                  }}
-                  transition={{ duration: 0.3 }}
-                  className="overflow-hidden"
-                >
-                  <p className="px-5 pb-5 text-gray-600 text-sm pl-19">
-                    {faq.answer}
-                  </p>
-                </motion.div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </motion.div>
-
-        {/* CTA Section */}
-        <motion.div
-          className="mt-16 text-center"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <motion.div
-            className="relative bg-gradient-to-br from-primary-500 via-primary-600 to-secondary-600 rounded-3xl p-8 md:p-12 overflow-hidden"
-            whileHover={{ scale: 1.01 }}
-          >
-            {/* Decorative Elements */}
-            <motion.div
-              className="absolute top-4 left-4 w-32 h-32 bg-white/10 rounded-full"
-              animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.2, 0.1] }}
-              transition={{ duration: 4, repeat: Infinity }}
-            />
-            <motion.div
-              className="absolute bottom-4 right-4 w-24 h-24 bg-white/10 rounded-full"
-              animate={{ scale: [1, 1.3, 1], opacity: [0.1, 0.15, 0.1] }}
-              transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
-            />
-            <motion.div
-              className="absolute top-1/2 right-1/4 w-16 h-16 bg-white/5 rounded-full"
-              animate={{ y: [0, -20, 0] }}
-              transition={{ duration: 4, repeat: Infinity }}
-            />
-
-            <div className="relative z-10">
-              <motion.h2
-                className="text-2xl md:text-3xl font-bold text-white mb-4"
+            {/* Content Side */}
+            <div>
+              <motion.h3
+                className="text-3xl md:text-4xl font-bold text-[#2A2A2A] mb-6"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
               >
-                {t('ctaTitle')}
-              </motion.h2>
-              <motion.p
-                className="text-primary-100 mb-8 max-w-xl mx-auto"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2 }}
-              >
-                {t('ctaDescription')}
-              </motion.p>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Link
-                  href="/register"
-                  className="inline-block bg-white text-primary-600 font-semibold px-8 py-4 rounded-xl hover:shadow-xl transition-shadow"
+                {t('whyChoose')}
+              </motion.h3>
+              <div className="space-y-4">
+                {[
+                  { icon: CheckCircle, title: t('features.certified.title'), desc: t('features.certified.description') },
+                  { icon: Clock, title: t('features.flexible.title'), desc: t('features.flexible.description') },
+                  { icon: Award, title: t('features.reports.title'), desc: t('features.reports.description') },
+                  { icon: Shield, title: t('features.guarantee.title'), desc: t('features.guarantee.description') },
+                  { icon: Users, title: t('features.discounts.title'), desc: t('features.discounts.description') },
+                  { icon: Gem, title: t('features.materials.title'), desc: t('features.materials.description') },
+                ].map((feature, index) => (
+                  <motion.div
+                    key={index}
+                    className="flex items-start gap-4 p-4 rounded-xl hover:bg-white/80 transition-all"
+                    initial={{ opacity: 0, x: 20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#2B7A78] to-[#D9B574] flex items-center justify-center flex-shrink-0">
+                      <feature.icon className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-base text-gray-900 mb-1">{feature.title}</h4>
+                      <p className="text-gray-600 text-sm leading-relaxed">{feature.desc}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Certificate/Achievement Section */}
+          <motion.div
+            className="mt-24 bg-gradient-to-br from-[#2B7A78] to-[#236260] rounded-3xl p-12 shadow-2xl overflow-hidden relative"
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            {/* Background Pattern */}
+            <div className="absolute inset-0 opacity-10">
+              <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                <pattern id="certPattern" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+                  <circle cx="30" cy="30" r="2" fill="white" />
+                  <path d="M30,15 L30,45 M15,30 L45,30" stroke="white" strokeWidth="0.5" opacity="0.5"/>
+                </pattern>
+                <rect width="100%" height="100%" fill="url(#certPattern)" />
+              </svg>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-12 items-center relative z-10">
+              <div className="text-white">
+                <motion.div
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full mb-6"
+                  initial={{ opacity: 0, scale: 0 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
                 >
-                  {common('freeTrial')}
+                  <Award className="w-5 h-5 text-[#D9B574]" />
+                  <span className="text-sm font-bold">{t('certificate.badge')}</span>
+                </motion.div>
+
+                <h3 className="text-3xl md:text-4xl font-bold mb-6">
+                  {t('certificate.title')}
+                </h3>
+                <p className="text-white/90 text-lg leading-relaxed mb-8">
+                  {t('certificate.description')}
+                </p>
+
+                <div className="space-y-4">
+                  {[
+                    t('certificate.features.ijazah'),
+                    t('certificate.features.tracking'),
+                    t('certificate.features.reports'),
+                    t('certificate.features.recognized'),
+                  ].map((item, index) => (
+                    <motion.div
+                      key={index}
+                      className="flex items-center gap-3"
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.1 }}
+                    >
+                      <CheckCircle className="w-5 h-5 text-[#D9B574]" />
+                      <span className="text-white/90">{item}</span>
+                    </motion.div>
+                  ))}
+                </div>
+
+                <Link href="/register">
+                  <motion.button
+                    className="mt-8 px-8 py-4 bg-gradient-to-r from-[#D9B574] to-[#C9A551] text-white font-bold rounded-xl shadow-xl hover:shadow-2xl transition-all"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {t('startJourney')}
+                  </motion.button>
                 </Link>
+              </div>
+
+              {/* Certificate Image */}
+              <motion.div
+                className="relative h-[400px] rounded-2xl overflow-hidden shadow-2xl"
+                initial={{ opacity: 0, scale: 0.9, rotate: -5 }}
+                whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3 }}
+                whileHover={{ scale: 1.05, rotate: 2 }}
+              >
+                <Image
+                  src="/pricing-certificate.png"
+                  alt={t('certificate.imageAlt')}
+                  fill
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
               </motion.div>
             </div>
           </motion.div>
-        </motion.div>
-      </div>
+        </div>
+      </section>
     </div>
   );
 }

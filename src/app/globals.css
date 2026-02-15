@@ -5,14 +5,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800&display=swap');
 
 :root {
-  /* Warm Traditional Theme Colors */
+  /* Colors from Salam Institute Logo - Exact Match */
   --cream-bg: #FAF6F1;
   --cream-surface: #F5EFE7;
-  --deep-teal: #3B6F5F;
-  --deep-teal-dark: #2F5F54;
-  --golden-bronze: #C19A6B;
-  --golden-bronze-light: #D4AF6B;
-  --gold-leaf: #D4AF37;
+  --deep-teal: #2B7A78;        /* EXACT from logo arch */
+  --deep-teal-dark: #236260;   /* Darker shade */
+  --golden-bronze: #D9B574;    /* EXACT from logo text */
+  --golden-bronze-light: #E3C897;
+  --gold-leaf: #D9B574;        /* Same as golden-bronze for consistency */
   --charcoal: #2C3E50;
   --charcoal-light: #6B5D54;
 

@@ -9,60 +9,60 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Warm Traditional Theme - Beige/Cream Background
+        // Colors extracted from Salam Institute Logo
         cream: {
           50: '#FEFDFB',
-          100: '#FAF6F1',  // Primary Background - Warmer beige
+          100: '#FAF6F1',  // Primary Background - matches logo background
           200: '#F5EFE7',  // Surface/Card Color
           300: '#F0E8DD',
           400: '#E8DFD0',
           500: '#E0D6C3',
         },
-        // Deep Teal/Emerald - Primary Accent (More saturated)
+        // Deep Teal - From Logo Islamic Arch (exact match)
         primary: {
-          50: '#F0F5F4',
-          100: '#D9E8E6',
-          200: '#B3D1CD',
-          300: '#8DBAB4',
-          400: '#5A9A91',
-          500: '#3B6F5F',  // Main Deep Teal - More saturated
-          600: '#2F5F54',  // Darker teal for depth
-          700: '#254B43',
-          800: '#1C3932',
-          900: '#132721',
+          50: '#E8F3F2',
+          100: '#D1E7E5',
+          200: '#A3CFCB',
+          300: '#75B7B1',
+          400: '#479F97',
+          500: '#2B7A78',  // EXACT match from logo arch
+          600: '#236260',  // Darker shade
+          700: '#1A4948',
+          800: '#123130',
+          900: '#091918',
         },
-        // Golden Bronze - Secondary Accent (Richer gold)
+        // Golden Bronze - From Logo Arabic Text (exact match)
         secondary: {
           50: '#FBF8F3',
           100: '#F6EDDC',
           200: '#EDDBBA',
           300: '#E3C897',
-          400: '#D4AF6B',  // Richer gold
-          500: '#C19A6B',  // Main Golden Bronze - warmer
-          600: '#A88456',
-          700: '#8E6E45',
-          800: '#745834',
-          900: '#5A4223',
+          400: '#D9B574',  // EXACT match from logo text
+          500: '#C9A551',  // Main golden
+          600: '#B18C41',
+          700: '#997431',
+          800: '#805C21',
+          900: '#684411',
         },
-        // Gold Leaf - Decorative accent
+        // Gold accent - From logo highlights
         gold: {
           50: '#FBF8F0',
           100: '#F7EFDB',
           200: '#EEDFB7',
           300: '#E5CF93',
           400: '#DCBF6F',
-          500: '#D4AF37',  // Pure gold for decorations
-          600: '#C19A2D',
-          700: '#A68223',
-          800: '#8B6A19',
-          900: '#70520F',
+          500: '#D9B574',  // Matches secondary-400 for consistency
+          600: '#C9A551',
+          700: '#B18C41',
+          800: '#997431',
+          900: '#805C21',
         },
-        // Text Colors - Warmer tones
+        // Text Colors
         charcoal: {
-          DEFAULT: '#2C3E50',  // Deep charcoal for titles
-          light: '#6B5D54',    // Warm brown for body text
+          DEFAULT: '#2C3E50',
+          light: '#6B5D54',
         },
-        // Navy - For trust and professionalism
+        // Navy - For trust
         navy: {
           50: '#f5f7fa',
           100: '#e4e9f0',

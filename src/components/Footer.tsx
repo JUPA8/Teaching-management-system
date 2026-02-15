@@ -1,14 +1,16 @@
 'use client';
 
 import { Link } from '@/i18n/routing';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Facebook, Instagram, Youtube, Heart, Send } from 'lucide-react';
-import { IslamicBorder } from './decorative';
+import Image from 'next/image';
 
 export default function Footer() {
   const t = useTranslations('footer');
   const common = useTranslations('common');
+  const locale = useLocale();
+  const isArabic = locale === 'ar';
 
   const quickLinks = [
     { href: '/', label: common('home') },
@@ -63,55 +65,82 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative overflow-hidden" style={{ background: 'linear-gradient(180deg, #2C3E50 0%, #1a252f 100%)' }}>
-      {/* Decorative Islamic Border at top */}
-      <div className="absolute top-0 left-0 right-0">
-        <IslamicBorder className="w-full h-8" color="#C19A6B" />
+    <footer className="relative overflow-hidden bg-gradient-to-br from-[#2A2A2A] via-[#1F2937] to-[#1A1A1A]">
+      {/* Islamic Decorative Border at top */}
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#2B7A78] via-[#D9B574] to-[#2B7A78]" />
+
+      {/* Background Islamic Pattern */}
+      <div className="absolute inset-0 opacity-5">
+        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="footer-pattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+              <path d="M50 10 L60 30 L50 50 L40 30 Z" fill="#D9B574" />
+              <circle cx="20" cy="20" r="3" fill="#E3C897" />
+              <circle cx="80" cy="80" r="3" fill="#E3C897" />
+              <path d="M30 60 Q35 65 30 70" stroke="#D9B574" strokeWidth="1" fill="none" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#footer-pattern)" />
+        </svg>
       </div>
-      
-      {/* Background Decorations */}
+
+      {/* Floating decorative elements */}
       <motion.div
-        className="absolute top-0 start-1/4 w-96 h-96 rounded-full blur-3xl"
-        style={{ background: 'rgba(59, 111, 95, 0.08)' }}
-        animate={{ scale: [1, 1.2, 1], opacity: [0.05, 0.1, 0.05] }}
+        className="absolute top-20 left-10 w-64 h-64 rounded-full bg-[#2B7A78] opacity-5 blur-3xl"
+        animate={{
+          scale: [1, 1.2, 1],
+          opacity: [0.05, 0.1, 0.05],
+        }}
         transition={{ duration: 8, repeat: Infinity }}
       />
       <motion.div
-        className="absolute bottom-0 end-1/4 w-72 h-72 rounded-full blur-3xl"
-        style={{ background: 'rgba(193, 154, 107, 0.08)' }}
-        animate={{ scale: [1, 1.1, 1], opacity: [0.05, 0.08, 0.05] }}
-        transition={{ duration: 6, repeat: Infinity, delay: 1 }}
+        className="absolute bottom-20 right-20 w-80 h-80 rounded-full bg-[#D9B574] opacity-5 blur-3xl"
+        animate={{
+          scale: [1, 1.3, 1],
+          opacity: [0.05, 0.08, 0.05],
+        }}
+        transition={{ duration: 10, repeat: Infinity, delay: 1 }}
       />
 
-      {/* Main Footer */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20 relative z-10 text-gray-300">
+      {/* Main Footer Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20 relative z-10">
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 mb-12"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
         >
-          {/* About Section */}
+          {/* About Section - Logo & Contact */}
           <motion.div variants={itemVariants} className="lg:col-span-1">
-            <motion.div whileHover={{ scale: 1.02 }}>
-              <Link href="/" className="flex items-center gap-3 mb-4">
-                <motion.img
-                  src="/salam-logo-new.png"
-                  alt="Salam Institute"
-                  className="w-14 h-14 object-contain"
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.3 }}
-                />
+            {/* Logo */}
+            <Link href="/" className="inline-block mb-6">
+              <motion.div
+                className="flex items-center gap-3"
+                whileHover={{ scale: 1.02 }}
+                transition={{ type: 'spring', stiffness: 300 }}
+              >
+                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#2B7A78] to-[#236260] flex items-center justify-center shadow-lg">
+                  <Image
+                    src="/salam-institute-logo.png"
+                    alt="Salam Institute"
+                    width={40}
+                    height={40}
+                    className="object-contain"
+                  />
+                </div>
                 <div className="flex flex-col">
-                  <span className="text-lg font-bold font-serif" style={{ color: '#C19A6B' }}>
+                  <span className="text-xl font-bold text-[#D9B574] font-serif">
                     Salam Institute
                   </span>
-                  <span className="text-xs font-arabic" style={{ color: '#D4AF37' }}>معهد سلام</span>
+                  <span className="text-sm text-[#E3C897]">معهد سلام</span>
                 </div>
-              </Link>
-            </motion.div>
-            <p className="text-gray-400 text-sm mb-6">{t('description')}</p>
+              </motion.div>
+            </Link>
+
+            <p className="text-gray-400 text-sm mb-6 leading-relaxed">
+              {t('description')}
+            </p>
 
             {/* Contact Info */}
             <div className="space-y-3">
@@ -123,18 +152,13 @@ export default function Footer() {
                 <motion.a
                   key={index}
                   href={item.href}
-                  className="flex items-center gap-2 text-sm transition-colors group"
-                  style={{ color: '#9CA3AF' }}
-                  whileHover={{ x: 5, color: '#C19A6B' }}
+                  className="flex items-center gap-3 text-gray-400 hover:text-[#C9A24D] transition-all group"
+                  whileHover={{ x: 5 }}
                 >
-                  <motion.div
-                    className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors"
-                    style={{ background: 'rgba(59, 111, 95, 0.2)' }}
-                    whileHover={{ scale: 1.1, background: 'rgba(193, 154, 107, 0.3)' }}
-                  >
+                  <div className="w-9 h-9 rounded-lg bg-[#3B6F5F]/20 group-hover:bg-[#C9A24D]/20 flex items-center justify-center transition-all">
                     <item.icon className="w-4 h-4" />
-                  </motion.div>
-                  {item.text}
+                  </div>
+                  <span className="text-sm">{item.text}</span>
                 </motion.a>
               ))}
             </div>
@@ -142,11 +166,11 @@ export default function Footer() {
 
           {/* Quick Links */}
           <motion.div variants={itemVariants}>
-            <h3 className="text-white font-semibold mb-4 flex items-center gap-2 font-serif">
-              <span className="w-8 h-0.5" style={{ background: 'linear-gradient(to right, #3B6F5F, #C19A6B)' }}></span>
+            <h3 className="text-white font-bold text-lg mb-6 font-serif flex items-center gap-2">
+              <div className="w-1 h-6 bg-gradient-to-b from-[#C9A24D] to-[#D4AF6B] rounded-full" />
               {t('quickLinks')}
             </h3>
-            <ul className="space-y-2">
+            <ul className="space-y-3">
               {quickLinks.map((link, index) => (
                 <motion.li
                   key={link.href}
@@ -155,20 +179,16 @@ export default function Footer() {
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.05 }}
                 >
-                  <motion.div whileHover={{ x: 5 }}>
-                    <Link
-                      href={link.href}
-                      className="text-sm transition-colors flex items-center gap-2"
-                      style={{ color: '#9CA3AF' }}
-                    >
-                      <motion.span 
-                        className="w-1.5 h-1.5 rounded-full" 
-                        style={{ background: '#4B5563' }}
-                        whileHover={{ background: '#C19A6B' }}
-                      ></motion.span>
-                      <motion.span whileHover={{ color: '#C19A6B' }}>{link.label}</motion.span>
-                    </Link>
-                  </motion.div>
+                  <Link
+                    href={link.href}
+                    className="text-gray-400 hover:text-[#C9A24D] text-sm transition-all flex items-center gap-2 group"
+                  >
+                    <motion.span
+                      className="w-1.5 h-1.5 rounded-full bg-gray-600 group-hover:bg-[#C9A24D]"
+                      whileHover={{ scale: 1.5 }}
+                    />
+                    <motion.span whileHover={{ x: 3 }}>{link.label}</motion.span>
+                  </Link>
                 </motion.li>
               ))}
             </ul>
@@ -176,11 +196,11 @@ export default function Footer() {
 
           {/* Support & Legal */}
           <motion.div variants={itemVariants}>
-            <h3 className="text-white font-semibold mb-4 flex items-center gap-2 font-serif">
-              <span className="w-8 h-0.5" style={{ background: 'linear-gradient(to right, #3B6F5F, #C19A6B)' }}></span>
+            <h3 className="text-white font-bold text-lg mb-6 font-serif flex items-center gap-2">
+              <div className="w-1 h-6 bg-gradient-to-b from-[#C9A24D] to-[#D4AF6B] rounded-full" />
               {t('support')}
             </h3>
-            <ul className="space-y-2 mb-6">
+            <ul className="space-y-3 mb-8">
               {supportLinks.map((link, index) => (
                 <motion.li
                   key={link.href}
@@ -189,23 +209,25 @@ export default function Footer() {
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.05 }}
                 >
-                  <motion.div whileHover={{ x: 5 }}>
-                    <Link
-                      href={link.href}
-                      className="text-sm hover:text-primary-400 transition-colors"
-                    >
-                      {link.label}
-                    </Link>
-                  </motion.div>
+                  <Link
+                    href={link.href}
+                    className="text-gray-400 hover:text-[#C9A24D] text-sm transition-all flex items-center gap-2 group"
+                  >
+                    <motion.span
+                      className="w-1.5 h-1.5 rounded-full bg-gray-600 group-hover:bg-[#C9A24D]"
+                      whileHover={{ scale: 1.5 }}
+                    />
+                    <motion.span whileHover={{ x: 3 }}>{link.label}</motion.span>
+                  </Link>
                 </motion.li>
               ))}
             </ul>
 
-            <h3 className="text-white font-semibold mb-4 flex items-center gap-2 font-serif">
-              <span className="w-8 h-0.5" style={{ background: 'linear-gradient(to right, #3B6F5F, #C19A6B)' }}></span>
+            <h3 className="text-white font-bold text-lg mb-6 font-serif flex items-center gap-2">
+              <div className="w-1 h-6 bg-gradient-to-b from-[#C9A24D] to-[#D4AF6B] rounded-full" />
               {t('legal')}
             </h3>
-            <ul className="space-y-2">
+            <ul className="space-y-3">
               {legalLinks.map((link, index) => (
                 <motion.li
                   key={link.href}
@@ -214,14 +236,16 @@ export default function Footer() {
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.05 }}
                 >
-                  <motion.div whileHover={{ x: 5 }}>
-                    <Link
-                      href={link.href}
-                      className="text-sm hover:text-primary-400 transition-colors"
-                    >
-                      {link.label}
-                    </Link>
-                  </motion.div>
+                  <Link
+                    href={link.href}
+                    className="text-gray-400 hover:text-[#C9A24D] text-sm transition-all flex items-center gap-2 group"
+                  >
+                    <motion.span
+                      className="w-1.5 h-1.5 rounded-full bg-gray-600 group-hover:bg-[#C9A24D]"
+                      whileHover={{ scale: 1.5 }}
+                    />
+                    <motion.span whileHover={{ x: 3 }}>{link.label}</motion.span>
+                  </Link>
                 </motion.li>
               ))}
             </ul>
@@ -229,24 +253,24 @@ export default function Footer() {
 
           {/* Newsletter */}
           <motion.div variants={itemVariants}>
-            <h3 className="text-white font-semibold mb-4 flex items-center gap-2 font-serif">
-              <span className="w-8 h-0.5" style={{ background: 'linear-gradient(to right, #3B6F5F, #C19A6B)' }}></span>
+            <h3 className="text-white font-bold text-lg mb-6 font-serif flex items-center gap-2">
+              <div className="w-1 h-6 bg-gradient-to-b from-[#C9A24D] to-[#D4AF6B] rounded-full" />
               {t('newsletter')}
             </h3>
-            <p className="text-sm text-gray-400 mb-4">{t('newsletterText')}</p>
-            <form className="space-y-3">
-              <motion.div whileFocus={{ scale: 1.02 }}>
-                <input
-                  type="email"
-                  placeholder={t('emailPlaceholder')}
-                  className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
-                />
-              </motion.div>
+            <p className="text-gray-400 text-sm mb-4 leading-relaxed">
+              {t('newsletterText')}
+            </p>
+            
+            <form className="space-y-3 mb-6">
+              <input
+                type="email"
+                placeholder={t('emailPlaceholder')}
+                className="w-full px-4 py-3 bg-[#2A2A2A] border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-[#C9A24D] focus:border-[#C9A24D] outline-none transition-all"
+              />
               <motion.button
                 type="submit"
-                className="w-full text-white font-medium py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-2"
-                style={{ background: 'linear-gradient(to right, #3B6F5F, #2F5F54)' }}
-                whileHover={{ scale: 1.02, boxShadow: '0 10px 25px rgba(193, 154, 107, 0.3)' }}
+                className="w-full bg-gradient-to-r from-[#3B6F5F] to-[#2F5F54] text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg"
+                whileHover={{ scale: 1.02, boxShadow: '0 10px 30px rgba(201, 162, 77, 0.3)' }}
                 whileTap={{ scale: 0.98 }}
               >
                 <Send className="w-4 h-4" />
@@ -255,18 +279,13 @@ export default function Footer() {
             </form>
 
             {/* Social Links */}
-            <div className="flex gap-3 mt-6">
+            <div className="flex gap-3">
               {socialLinks.map((social, index) => (
                 <motion.a
                   key={social.label}
                   href={social.href}
-                  className="w-10 h-10 rounded-xl flex items-center justify-center transition-all"
-                  style={{ background: 'rgba(59, 111, 95, 0.3)' }}
-                  whileHover={{ 
-                    scale: 1.1, 
-                    rotate: 5,
-                    background: 'linear-gradient(135deg, #3B6F5F, #C19A6B)'
-                  }}
+                  className="w-10 h-10 rounded-xl bg-[#3B6F5F]/20 hover:bg-gradient-to-br hover:from-[#3B6F5F] hover:to-[#C9A24D] flex items-center justify-center text-gray-400 hover:text-white transition-all"
+                  whileHover={{ scale: 1.15, rotate: 5 }}
                   whileTap={{ scale: 0.95 }}
                   initial={{ opacity: 0, scale: 0 }}
                   whileInView={{ opacity: 1, scale: 1 }}
@@ -280,33 +299,56 @@ export default function Footer() {
             </div>
           </motion.div>
         </motion.div>
-      </div>
 
-      {/* Bottom Bar */}
-      <motion.div
-        className="border-t border-gray-800/50"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <motion.p
-            className="text-sm text-center text-gray-500 flex items-center justify-center gap-1"
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            {t('copyright')} Made with{' '}
-            <motion.span
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ duration: 1, repeat: Infinity }}
-            >
-              <Heart className="w-4 h-4 text-red-500 fill-red-500 inline" />
-            </motion.span>{' '}
-            by Abdelrahman Ahmed
-          </motion.p>
-        </div>
-      </motion.div>
+        {/* Islamic Divider */}
+        <motion.div
+          className="flex justify-center my-8"
+          initial={{ opacity: 0, scaleX: 0 }}
+          whileInView={{ opacity: 1, scaleX: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+        >
+          <svg width="300" height="20" viewBox="0 0 300 20" fill="none">
+            <line x1="0" y1="10" x2="120" y2="10" stroke="url(#grad1)" strokeWidth="1" />
+            <circle cx="130" cy="10" r="2" fill="#C9A24D" />
+            <path d="M150 5 L155 10 L150 15 L145 10 Z" fill="#C9A24D" />
+            <circle cx="170" cy="10" r="2" fill="#C9A24D" />
+            <line x1="180" y1="10" x2="300" y2="10" stroke="url(#grad2)" strokeWidth="1" />
+            <defs>
+              <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#C9A24D" stopOpacity="0" />
+                <stop offset="100%" stopColor="#C9A24D" stopOpacity="1" />
+              </linearGradient>
+              <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#C9A24D" stopOpacity="1" />
+                <stop offset="100%" stopColor="#C9A24D" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </motion.div>
+
+        {/* Bottom Copyright */}
+        <motion.div
+          className="text-center pt-8"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <p className="text-gray-500 text-sm flex items-center justify-center gap-2 flex-wrap">
+            <span>© 2024 Salam Institute. {t('copyright')}.</span>
+            <span className="flex items-center gap-1">
+              {t('madeWith')}
+              <motion.span
+                animate={{ scale: [1, 1.3, 1] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              >
+                <Heart className="w-4 h-4 text-red-500 fill-red-500" />
+              </motion.span>
+              by Abdelrahman Ahmed
+            </span>
+          </p>
+        </motion.div>
+      </div>
     </footer>
   );
 }

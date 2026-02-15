@@ -1,0 +1,391 @@
+// Prisma Schema for Salam Institute Teaching Management System
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum UserRole {
+  ADMIN
+  TEACHER
+  STUDENT
+}
+
+enum TeacherGender {
+  MALE
+  FEMALE
+}
+
+enum ContactMethod {
+  WHATSAPP
+  EMAIL
+  CALL
+}
+
+enum TeacherPreference {
+  MALE
+  FEMALE
+  NO_PREFERENCE
+}
+
+enum BookingStatus {
+  PENDING      // Awaiting confirmation
+  CONFIRMED    // Approved and scheduled
+  COMPLETED    // Class finished
+  CANCELLED    // Cancelled by user or admin
+  NO_SHOW      // Student didn't attend
+}
+
+enum PaymentStatus {
+  PENDING      // Payment initiated
+  COMPLETED    // Successfully paid
+  FAILED       // Payment failed
+  REFUNDED     // Payment refunded
+}
+
+enum CourseType {
+  QURAN_KIDS
+  QURAN_ADULTS
+  ARABIC_LANGUAGE
+  ISLAMIC_STUDIES
+}
+
+// ============================================
+// USER & AUTH MODELS
+// ============================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified DateTime?
+  name          String?
+  password      String    // hashed with bcrypt
+  role          UserRole  @default(STUDENT)
+  phone         String?
+  image         String?
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  accounts      Account[]
+  sessions      Session[]
+  teacher       Teacher?
+  student       Student?
+
+  @@index([email])
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ============================================
+// TEACHER & STUDENT MODELS
+// ============================================
+
+model Teacher {
+  id              String         @id @default(cuid())
+  userId          String         @unique
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  bio             String?        @db.Text
+  gender          TeacherGender
+  specializations String[]       // e.g., ["Tajweed", "Quranic Arabic", "Fiqh"]
+  languages       String[]       // e.g., ["English", "Arabic", "German"]
+  hourlyRate      Float?         // in EUR
+  availability    Json?          // Store weekly availability schedule
+  
+  isActive        Boolean        @default(true)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  // Relations
+  bookings        Booking[]
+  courses         CourseTeacher[]
+
+  @@index([userId])
+  @@index([isActive])
+  @@map("teachers")
+}
+
+model Student {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  dateOfBirth     DateTime?
+  address         String?
+  city            String?
+  country         String?
+  postalCode      String?
+  
+  // Parent/Guardian info (for kids)
+  parentName      String?
+  parentPhone     String?
+  parentEmail     String?
+  
+  enrollmentDate  DateTime   @default(now())
+  isActive        Boolean    @default(true)
+  
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  // Relations
+  bookings        Booking[]
+  payments        Payment[]
+  enrollments     CourseEnrollment[]
+
+  @@index([userId])
+  @@index([isActive])
+  @@map("students")
+}
+
+// ============================================
+// COURSE MODELS
+// ============================================
+
+model Course {
+  id              String     @id @default(cuid())
+  
+  name            String
+  nameAr          String?    // Arabic translation
+  nameDe          String?    // German translation
+  
+  description     String     @db.Text
+  descriptionAr   String?    @db.Text
+  descriptionDe   String?    @db.Text
+  
+  type            CourseType
+  
+  price           Float      // Base price in EUR
+  duration        Int        // Duration in minutes per session
+  totalSessions   Int        // Total number of sessions
+  
+  level           String?    // e.g., "Beginner", "Intermediate", "Advanced"
+  ageGroup        String?    // e.g., "Kids (6-12)", "Adults (18+)"
+  
+  image           String?    // S3 URL
+  syllabus        String?    @db.Text
+  
+  isActive        Boolean    @default(true)
+  
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  // Relations
+  teachers        CourseTeacher[]
+  enrollments     CourseEnrollment[]
+  bookings        Booking[]
+
+  @@index([type])
+  @@index([isActive])
+  @@map("courses")
+}
+
+model CourseTeacher {
+  id          String   @id @default(cuid())
+  courseId    String
+  teacherId   String
+  
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  teacher     Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  
+  assignedAt  DateTime @default(now())
+
+  @@unique([courseId, teacherId])
+  @@map("course_teachers")
+}
+
+model CourseEnrollment {
+  id          String   @id @default(cuid())
+  courseId    String
+  studentId   String
+  
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  
+  enrolledAt  DateTime @default(now())
+  completedAt DateTime?
+  
+  progress    Int      @default(0) // Percentage 0-100
+  isActive    Boolean  @default(true)
+
+  @@unique([courseId, studentId])
+  @@index([studentId])
+  @@index([courseId])
+  @@map("course_enrollments")
+}
+
+// ============================================
+// BOOKING & SCHEDULING
+// ============================================
+
+model Booking {
+  id              String        @id @default(cuid())
+  
+  courseId        String
+  studentId       String
+  teacherId       String
+  
+  course          Course        @relation(fields: [courseId], references: [id])
+  student         Student       @relation(fields: [studentId], references: [id])
+  teacher         Teacher       @relation(fields: [teacherId], references: [id])
+  
+  scheduledAt     DateTime      // Date and time of the class
+  endTime         DateTime      // Calculated: scheduledAt + course.duration
+  
+  status          BookingStatus @default(PENDING)
+  
+  meetingLink     String?       // Zoom/Google Meet link
+  notes           String?       @db.Text
+  adminNotes      String?       @db.Text
+  
+  cancelledAt     DateTime?
+  cancelReason    String?       @db.Text
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([studentId])
+  @@index([teacherId])
+  @@index([courseId])
+  @@index([scheduledAt])
+  @@index([status])
+  @@map("bookings")
+}
+
+// ============================================
+// PAYMENT MODELS
+// ============================================
+
+model Payment {
+  id              String        @id @default(cuid())
+  
+  studentId       String
+  student         Student       @relation(fields: [studentId], references: [id])
+  
+  amount          Float         // Amount in EUR
+  currency        String        @default("EUR")
+  
+  status          PaymentStatus @default(PENDING)
+  
+  // Stripe Integration
+  stripePaymentIntentId String? @unique
+  stripeCheckoutSessionId String? @unique
+  
+  description     String?
+  metadata        Json?         // Store additional payment info
+  
+  paidAt          DateTime?
+  refundedAt      DateTime?
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([studentId])
+  @@index([status])
+  @@index([stripePaymentIntentId])
+  @@map("payments")
+}
+
+// ============================================
+// PROBESTUNDE (TRIAL CLASS) REQUESTS
+// ============================================
+
+model ProbestundeRequest {
+  id                String             @id @default(cuid())
+  
+  numStudents       Int
+  students          Json               // Array of {name: string, age: string}
+  
+  email             String
+  phone             String
+  
+  contactMethod     ContactMethod
+  teacherPreference TeacherPreference
+  
+  // Status tracking
+  isContacted       Boolean            @default(false)
+  contactedAt       DateTime?
+  contactedBy       String?            // Admin user ID
+  
+  notes             String?            @db.Text
+  adminNotes        String?            @db.Text
+  
+  // Conversion tracking
+  convertedToStudentId String?         // If converted to actual student
+  
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  @@index([email])
+  @@index([isContacted])
+  @@index([createdAt])
+  @@map("probestunde_requests")
+}
+
+// ============================================
+// NOTIFICATIONS & LOGS (Optional - Future)
+// ============================================
+
+model ActivityLog {
+  id          String   @id @default(cuid())
+  userId      String?  // Can be null for system actions
+  action      String   // e.g., "USER_CREATED", "BOOKING_CONFIRMED"
+  entityType  String?  // e.g., "User", "Booking", "Payment"
+  entityId    String?
+  metadata    Json?
+  ipAddress   String?
+  userAgent   String?
+  
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("activity_logs")
+}
