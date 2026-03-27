@@ -26,6 +26,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (!stripe) {
+      return NextResponse.json(
+        { success: false, error: 'Payment processing is not configured' },
+        { status: 503 }
+      );
+    }
+
     const data = validation.data;
 
     // Verify course exists

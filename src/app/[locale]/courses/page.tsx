@@ -1,10 +1,10 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Link } from '@/i18n/routing';
 import { motion } from 'framer-motion';
 import { ArrowRight, BookOpen, Users, Clock, Award, Star, Check } from 'lucide-react';
-import CourseCard from '@/components/CourseCard';
-import { courses } from '@/lib/data';
+import DbCourseCard, { DbCourse } from '@/components/DbCourseCard';
 import { useTranslations, useLocale } from 'next-intl';
 import IslamicDivider from '@/components/IslamicDivider';
 import Image from 'next/image';
@@ -14,6 +14,19 @@ export default function CoursesPage() {
   const common = useTranslations('common');
   const locale = useLocale();
   const isArabic = locale === 'ar';
+
+  const [dbCourses, setDbCourses] = useState<DbCourse[]>([]);
+  const [loadingCourses, setLoadingCourses] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/courses?isActive=true&limit=50')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success) setDbCourses(data.data.courses);
+      })
+      .catch(() => {})
+      .finally(() => setLoadingCourses(false));
+  }, []);
 
   const categories = [
     {
@@ -249,23 +262,25 @@ export default function CoursesPage() {
             </p>
           </motion.div>
 
-          <motion.div
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            {courses.map((course, index) => (
-              <motion.div
-                key={course.id}
-                variants={itemVariants}
-                whileHover={{ y: -5 }}
-              >
-                <CourseCard course={course} />
-              </motion.div>
-            ))}
-          </motion.div>
+          {loadingCourses ? (
+            <div className="text-center py-12 text-gray-500">Loading courses...</div>
+          ) : dbCourses.length === 0 ? (
+            <div className="text-center py-12 text-gray-500">No courses available yet.</div>
+          ) : (
+            <motion.div
+              className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              {dbCourses.map((course) => (
+                <motion.div key={course.id} variants={itemVariants} whileHover={{ y: -5 }}>
+                  <DbCourseCard course={course} />
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
         </div>
       </section>
     </div>

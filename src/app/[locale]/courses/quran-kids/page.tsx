@@ -1,15 +1,22 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
 import Image from 'next/image';
-import CourseCard from '@/components/CourseCard';
-import { getCoursesByCategory } from '@/lib/data';
+import DbCourseCard, { DbCourse } from '@/components/DbCourseCard';
 import { motion } from 'framer-motion';
 
 export default function QuranKidsPage() {
   const t = useTranslations('courses');
-  const courses = getCoursesByCategory('quran-kids');
+  const [courses, setCourses] = useState<DbCourse[]>([]);
+
+  useEffect(() => {
+    fetch('/api/courses?type=QURAN_KIDS&isActive=true&limit=20')
+      .then((r) => r.json())
+      .then((data) => { if (data.success) setCourses(data.data.courses); })
+      .catch(() => {});
+  }, []);
 
   return (
     <div className="min-h-screen bg-cream">
@@ -386,7 +393,7 @@ export default function QuranKidsPage() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
               >
-                <CourseCard course={course} />
+                <DbCourseCard course={course} />
               </motion.div>
             ))}
           </div>

@@ -1,14 +1,16 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useTranslations } from 'next-intl';
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 import { motion } from 'framer-motion';
+import { useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
 import {
   BookOpen,
   Calendar,
   TrendingUp,
-  MessageSquare,
-  Settings,
   Play,
   Clock,
   CheckCircle,
@@ -17,53 +19,35 @@ import {
   Flame,
 } from 'lucide-react';
 
+interface UpcomingLesson {
+  id: string;
+  course: { name: string };
+  teacher: { user: { name: string | null } };
+  scheduledAt: string;
+  endTime: string;
+  status: string;
+}
+
 export default function DashboardPage() {
   const t = useTranslations('dashboard');
+  const { data: session } = useSession();
+  const [upcomingLessons, setUpcomingLessons] = useState<UpcomingLesson[]>([]);
 
-  // Mock data - in real app, this would come from API
-  const user = {
-    firstName: 'Ahmed',
-    lastName: 'Hassan',
-  };
+  const firstName = session?.user?.name?.split(' ')[0] ?? '...';
 
-  const enrolledCourses = [
-    {
-      id: '1',
-      title: 'Quran Reading Basics',
-      progress: 65,
-      nextLesson: 'Lesson 12: Surah Al-Ikhlas',
-      teacher: 'Sheikh Ahmad Hassan',
-    },
-    {
-      id: '2',
-      title: 'Arabic for Beginners',
-      progress: 30,
-      nextLesson: 'Lesson 5: Basic Vocabulary',
-      teacher: 'Dr. Omar Rashid',
-    },
-  ];
-
-  const upcomingLessons = [
-    {
-      id: '1',
-      course: 'Quran Reading Basics',
-      teacher: 'Sheikh Ahmad Hassan',
-      date: 'Today',
-      time: '14:00 - 14:30',
-    },
-    {
-      id: '2',
-      course: 'Arabic for Beginners',
-      date: 'Tomorrow',
-      teacher: 'Dr. Omar Rashid',
-      time: '10:00 - 10:30',
-    },
-  ];
+  useEffect(() => {
+    fetch('/api/bookings?limit=5&status=CONFIRMED')
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) setUpcomingLessons(data.data.bookings);
+      })
+      .catch(() => {});
+  }, []);
 
   const stats = [
-    { label: 'Completed Lessons', value: 24, icon: CheckCircle, color: 'from-primary-500 to-primary-600' },
-    { label: 'Hours Learned', value: 12, icon: Clock, color: 'from-secondary-500 to-secondary-600' },
-    { label: 'Current Streak', value: '7 days', icon: Flame, color: 'from-gold-500 to-gold-600' },
+    { label: 'Upcoming Lessons', value: upcomingLessons.length, icon: CheckCircle, color: 'from-primary-500 to-primary-600' },
+    { label: 'Booked Sessions', value: upcomingLessons.length, icon: Clock, color: 'from-secondary-500 to-secondary-600' },
+    { label: 'Account Active', value: '✓', icon: Flame, color: 'from-gold-500 to-gold-600' },
   ];
 
   const containerVariants = {
@@ -107,7 +91,7 @@ export default function DashboardPage() {
               👋
             </motion.span>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
-              {t('welcome')}, {user.firstName}!
+              {t('welcome')}, {firstName}!
             </h1>
           </motion.div>
           <motion.p
@@ -192,61 +176,45 @@ export default function DashboardPage() {
                 </motion.div>
               </div>
 
-              <motion.div
-                className="space-y-4"
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-              >
-                {enrolledCourses.map((course, index) => (
-                  <motion.div
-                    key={course.id}
-                    variants={itemVariants}
-                    whileHover={{ scale: 1.01, boxShadow: '0 10px 30px -10px rgba(0, 0, 0, 0.1)' }}
-                    className="border border-gray-100 rounded-xl p-4 hover:border-primary-200 transition-colors bg-gradient-to-r from-white to-gray-50"
-                  >
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <h3 className="font-semibold text-gray-900">
-                          {course.title}
-                        </h3>
-                        <p className="text-sm text-gray-500">{course.teacher}</p>
-                      </div>
-                      <motion.span
-                        className="text-sm font-bold text-primary-600 bg-primary-50 px-2 py-1 rounded-lg"
-                        animate={{ scale: [1, 1.05, 1] }}
-                        transition={{ duration: 2, repeat: Infinity, delay: index * 0.5 }}
-                      >
-                        {course.progress}%
-                      </motion.span>
-                    </div>
-
-                    {/* Progress Bar */}
-                    <div className="w-full bg-gray-100 rounded-full h-2.5 mb-3 overflow-hidden">
+              {upcomingLessons.length === 0 ? (
+                <p className="text-gray-500 text-sm py-4">{t('noLessons')}</p>
+              ) : (
+                <motion.div
+                  className="space-y-4"
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  {upcomingLessons.map((lesson, index) => {
+                    const scheduledDate = new Date(lesson.scheduledAt);
+                    const endDate = new Date(lesson.endTime);
+                    return (
                       <motion.div
-                        className="bg-gradient-to-r from-primary-500 to-secondary-500 h-2.5 rounded-full"
-                        initial={{ width: 0 }}
-                        animate={{ width: `${course.progress}%` }}
-                        transition={{ duration: 1, delay: 0.5 + index * 0.2 }}
-                      />
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm text-gray-600">
-                        Next: {course.nextLesson}
-                      </p>
-                      <motion.button
-                        className="bg-gradient-to-r from-primary-600 to-secondary-600 text-white text-sm py-2 px-4 rounded-lg flex items-center gap-1 font-medium"
-                        whileHover={{ scale: 1.05, boxShadow: '0 5px 15px rgba(16, 185, 129, 0.3)' }}
-                        whileTap={{ scale: 0.95 }}
+                        key={lesson.id}
+                        variants={itemVariants}
+                        whileHover={{ scale: 1.01, boxShadow: '0 10px 30px -10px rgba(0, 0, 0, 0.1)' }}
+                        className="border border-gray-100 rounded-xl p-4 hover:border-primary-200 transition-colors bg-gradient-to-r from-white to-gray-50"
                       >
-                        <Play className="w-4 h-4" />
-                        Continue
-                      </motion.button>
-                    </div>
-                  </motion.div>
-                ))}
-              </motion.div>
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <h3 className="font-semibold text-gray-900">{lesson.course.name}</h3>
+                            <p className="text-sm text-gray-500">{lesson.teacher.user.name ?? 'Teacher'}</p>
+                          </div>
+                          <span className="text-sm font-bold text-primary-600 bg-primary-50 px-2 py-1 rounded-lg">
+                            {lesson.status}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <p className="text-sm text-gray-600 flex items-center gap-1">
+                            <Calendar className="w-4 h-4" />
+                            {scheduledDate.toLocaleDateString()} {scheduledDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} – {endDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </p>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </motion.div>
+              )}
             </motion.div>
 
             {/* Recent Activity */}
@@ -329,34 +297,38 @@ export default function DashboardPage() {
                   initial="hidden"
                   animate="visible"
                 >
-                  {upcomingLessons.map((lesson, index) => (
-                    <motion.div
-                      key={lesson.id}
-                      variants={itemVariants}
-                      whileHover={{ scale: 1.02, x: 3 }}
-                      className="p-4 bg-gradient-to-r from-gray-50 to-primary-50/30 rounded-xl border border-gray-100"
-                    >
-                      <p className="font-medium text-gray-900 text-sm">
-                        {lesson.course}
-                      </p>
-                      <p className="text-xs text-gray-500 mb-2">
-                        {lesson.teacher}
-                      </p>
-                      <div className="flex items-center justify-between text-xs">
-                        <motion.span
-                          className="text-primary-600 font-semibold bg-primary-50 px-2 py-1 rounded"
-                          animate={lesson.date === 'Today' ? { scale: [1, 1.05, 1] } : {}}
-                          transition={{ duration: 1.5, repeat: Infinity }}
-                        >
-                          {lesson.date}
-                        </motion.span>
-                        <span className="text-gray-500 flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          {lesson.time}
-                        </span>
-                      </div>
-                    </motion.div>
-                  ))}
+                  {upcomingLessons.slice(0, 3).map((lesson) => {
+                    const scheduledDate = new Date(lesson.scheduledAt);
+                    const endDate = new Date(lesson.endTime);
+                    const today = new Date();
+                    const isToday = scheduledDate.toDateString() === today.toDateString();
+                    const isTomorrow = scheduledDate.toDateString() === new Date(today.getTime() + 86400000).toDateString();
+                    const dayLabel = isToday ? 'Today' : isTomorrow ? 'Tomorrow' : scheduledDate.toLocaleDateString();
+                    return (
+                      <motion.div
+                        key={lesson.id}
+                        variants={itemVariants}
+                        whileHover={{ scale: 1.02, x: 3 }}
+                        className="p-4 bg-gradient-to-r from-gray-50 to-primary-50/30 rounded-xl border border-gray-100"
+                      >
+                        <p className="font-medium text-gray-900 text-sm">{lesson.course.name}</p>
+                        <p className="text-xs text-gray-500 mb-2">{lesson.teacher.user.name ?? 'Teacher'}</p>
+                        <div className="flex items-center justify-between text-xs">
+                          <motion.span
+                            className="text-primary-600 font-semibold bg-primary-50 px-2 py-1 rounded"
+                            animate={isToday ? { scale: [1, 1.05, 1] } : {}}
+                            transition={{ duration: 1.5, repeat: Infinity }}
+                          >
+                            {dayLabel}
+                          </motion.span>
+                          <span className="text-gray-500 flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            {scheduledDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} – {endDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
                 </motion.div>
               ) : (
                 <p className="text-gray-500 text-sm">{t('noLessons')}</p>
@@ -380,25 +352,34 @@ export default function DashboardPage() {
                 Quick Links
               </h2>
               <div className="space-y-2">
-                {[
-                  { href: '/dashboard/messages', icon: MessageSquare, label: t('messages') },
-                  { href: '/dashboard/settings', icon: Settings, label: t('settings') },
-                ].map((link, index) => (
-                  <motion.div key={link.href} whileHover={{ x: 5 }}>
-                    <Link
-                      href={link.href}
-                      className="flex items-center gap-3 p-3 rounded-xl hover:bg-gradient-to-r hover:from-gray-50 hover:to-primary-50/30 transition-colors"
+                <motion.div whileHover={{ x: 5 }}>
+                  <Link
+                    href="/courses"
+                    className="flex items-center gap-3 p-3 rounded-xl hover:bg-gradient-to-r hover:from-gray-50 hover:to-primary-50/30 transition-colors"
+                  >
+                    <motion.div
+                      whileHover={{ rotate: 10 }}
+                      className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center"
                     >
-                      <motion.div
-                        whileHover={{ rotate: 10 }}
-                        className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center"
-                      >
-                        <link.icon className="w-5 h-5 text-gray-500" />
-                      </motion.div>
-                      <span className="text-gray-700 font-medium">{link.label}</span>
-                    </Link>
-                  </motion.div>
-                ))}
+                      <BookOpen className="w-5 h-5 text-gray-500" />
+                    </motion.div>
+                    <span className="text-gray-700 font-medium">Browse Courses</span>
+                  </Link>
+                </motion.div>
+                <motion.div whileHover={{ x: 5 }}>
+                  <Link
+                    href="/probestunde"
+                    className="flex items-center gap-3 p-3 rounded-xl hover:bg-gradient-to-r hover:from-gray-50 hover:to-primary-50/30 transition-colors"
+                  >
+                    <motion.div
+                      whileHover={{ rotate: 10 }}
+                      className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center"
+                    >
+                      <Calendar className="w-5 h-5 text-gray-500" />
+                    </motion.div>
+                    <span className="text-gray-700 font-medium">Book Free Trial</span>
+                  </Link>
+                </motion.div>
               </div>
             </motion.div>
 
@@ -431,13 +412,12 @@ export default function DashboardPage() {
                 <p className="text-sm text-primary-100 mb-4">
                   Our support team is here to assist you with any questions.
                 </p>
-                <motion.button
-                  className="bg-white text-primary-600 font-semibold py-2.5 px-4 rounded-xl text-sm hover:bg-primary-50 transition-colors w-full"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                <Link
+                  href="/probestunde"
+                  className="block bg-white text-primary-600 font-semibold py-2.5 px-4 rounded-xl text-sm hover:bg-primary-50 transition-colors w-full text-center"
                 >
                   Contact Support
-                </motion.button>
+                </Link>
               </div>
             </motion.div>
           </motion.div>

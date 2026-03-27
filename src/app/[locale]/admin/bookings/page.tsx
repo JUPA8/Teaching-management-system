@@ -95,7 +95,7 @@ export default async function AdminBookingsPage({
               </tr>
             </thead>
             <tbody className="divide-y divide-[#D9B574]/10">
-              {bookings.map((booking, index) => (
+              {bookings.map((booking: (typeof bookings)[number], index: number) => (
                 <tr 
                   key={booking.id}
                   className={`hover:bg-gradient-to-r hover:from-[#D9B574]/5 hover:to-[#C4A565]/5 transition-colors ${

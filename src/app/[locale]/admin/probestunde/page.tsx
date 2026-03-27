@@ -8,7 +8,7 @@ export default async function AdminProbestundePage() {
   });
 
   // Convert to plain objects
-  const plainRequests = requests.map(r => ({
+  const plainRequests = requests.map((r: (typeof requests)[number]) => ({
     ...r,
     createdAt: r.createdAt.toISOString(),
     updatedAt: r.updatedAt.toISOString(),

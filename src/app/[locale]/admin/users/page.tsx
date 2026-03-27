@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
+import DeleteUserButton from './DeleteUserButton';
 
 export default async function AdminUsersPage({
   params,
@@ -68,7 +69,7 @@ export default async function AdminUsersPage({
               </tr>
             </thead>
             <tbody className="divide-y divide-[#D9B574]/10">
-              {users.map((user, index) => (
+              {users.map((user: (typeof users)[number], index: number) => (
                 <tr 
                   key={user.id} 
                   className={`hover:bg-gradient-to-r hover:from-[#2B7A78]/5 hover:to-[#D9B574]/5 transition-colors ${
@@ -105,18 +106,19 @@ export default async function AdminUsersPage({
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <div className="flex gap-2">
-                      <Link 
-                        href={`/${locale}/admin/users/${user.id}`} 
+                      <Link
+                        href={`/${locale}/admin/users/${user.id}`}
                         className="px-4 py-2 bg-gradient-to-r from-[#2B7A78] to-[#1d5856] text-white rounded-lg hover:shadow-lg transition-all font-semibold"
                       >
                         View
                       </Link>
-                      <Link 
-                        href={`/${locale}/admin/users/${user.id}/edit`} 
+                      <Link
+                        href={`/${locale}/admin/users/${user.id}/edit`}
                         className="px-4 py-2 bg-gradient-to-r from-[#D9B574] to-[#C4A565] text-white rounded-lg hover:shadow-lg transition-all font-semibold"
                       >
                         Edit
                       </Link>
+                      <DeleteUserButton userId={user.id} />
                     </div>
                   </td>
                 </tr>

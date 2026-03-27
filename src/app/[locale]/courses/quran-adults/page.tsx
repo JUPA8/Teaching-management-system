@@ -1,15 +1,22 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
 import Image from 'next/image';
-import CourseCard from '@/components/CourseCard';
-import { getCoursesByCategory } from '@/lib/data';
+import DbCourseCard, { DbCourse } from '@/components/DbCourseCard';
 import { motion } from 'framer-motion';
 
 export default function QuranAdultsPage() {
   const t = useTranslations('courses');
-  const courses = getCoursesByCategory('quran-adults');
+  const [courses, setCourses] = useState<DbCourse[]>([]);
+
+  useEffect(() => {
+    fetch('/api/courses?type=QURAN_ADULTS&isActive=true&limit=20')
+      .then((r) => r.json())
+      .then((data) => { if (data.success) setCourses(data.data.courses); })
+      .catch(() => {});
+  }, []);
 
   return (
     <div className="min-h-screen bg-cream">
@@ -322,17 +329,21 @@ export default function QuranAdultsPage() {
           </motion.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {courses.map((course, index) => (
-              <motion.div
-                key={course.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <CourseCard course={course} />
-              </motion.div>
-            ))}
+            {courses.length === 0 ? (
+              <div className="col-span-3 text-center py-8 text-gray-500">Loading courses...</div>
+            ) : (
+              courses.map((course, index) => (
+                <motion.div
+                  key={course.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <DbCourseCard course={course} />
+                </motion.div>
+              ))
+            )}
           </div>
 
           {/* See All Courses Button */}

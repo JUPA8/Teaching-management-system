@@ -1,15 +1,21 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
+import { useParams } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { Eye, EyeOff, CheckCircle, Sparkles, BookOpen, Users, Award, Star, ArrowRight, Rocket, Globe, Heart } from 'lucide-react';
+import { Eye, EyeOff, CheckCircle, Sparkles, BookOpen, Users, Award, ArrowRight, Rocket } from 'lucide-react';
 
 export default function RegisterPage() {
   const t = useTranslations('register');
+  const params = useParams();
+  const locale = params.locale as string;
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -21,10 +27,52 @@ export default function RegisterPage() {
     timezone: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle registration logic here
-    console.log('Form submitted:', formData);
+    setError('');
+
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          name: `${formData.firstName} ${formData.lastName}`.trim(),
+          phone: formData.phone,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!result.success) {
+        setError(result.error || 'Registration failed');
+        setIsLoading(false);
+        return;
+      }
+
+      // Auto sign-in after registration
+      const signInResult = await signIn('credentials', {
+        redirect: false,
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (signInResult?.ok) {
+        window.location.href = `/${locale}/dashboard`;
+      } else {
+        window.location.href = `/${locale}/login`;
+      }
+    } catch {
+      setError('An error occurred. Please try again.');
+      setIsLoading(false);
+    }
   };
 
   const benefits = [
@@ -230,6 +278,12 @@ export default function RegisterPage() {
 
               {/* Form */}
               <form onSubmit={handleSubmit} className="space-y-5">
+                {/* Error Message */}
+                {error && (
+                  <div className="p-4 bg-red-50 border-2 border-red-200 rounded-xl text-red-700 font-medium text-sm">
+                    {error}
+                  </div>
+                )}
                 {/* Name Fields */}
                 <div className="grid sm:grid-cols-2 gap-4">
                   <motion.div custom={0} variants={formFieldVariants} initial="hidden" animate="visible">
@@ -368,17 +422,27 @@ export default function RegisterPage() {
                 {/* Submit Button */}
                 <motion.button
                   type="submit"
-                  className="group w-full py-5 bg-gradient-to-r from-[#D9B574] to-[#C9A551] text-white font-bold rounded-xl shadow-xl hover:shadow-2xl transition-all flex items-center justify-center gap-3 text-lg mt-8"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  disabled={isLoading}
+                  className="group w-full py-5 bg-gradient-to-r from-[#D9B574] to-[#C9A551] text-white font-bold rounded-xl shadow-xl hover:shadow-2xl transition-all flex items-center justify-center gap-3 text-lg mt-8 disabled:opacity-50 disabled:cursor-not-allowed"
+                  whileHover={!isLoading ? { scale: 1.02 } : {}}
+                  whileTap={!isLoading ? { scale: 0.98 } : {}}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 }}
                 >
-                  {t('submit')}
-                  <motion.div animate={{ x: [0, 5, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
-                    <ArrowRight className="w-6 h-6" />
-                  </motion.div>
+                  {isLoading ? (
+                    <>
+                      <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <span>Creating account...</span>
+                    </>
+                  ) : (
+                    <>
+                      {t('submit')}
+                      <motion.div animate={{ x: [0, 5, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
+                        <ArrowRight className="w-6 h-6" />
+                      </motion.div>
+                    </>
+                  )}
                 </motion.button>
 
                 {/* Login Link */}

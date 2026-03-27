@@ -85,7 +85,7 @@ export default async function AdminPaymentsPage({
               </tr>
             </thead>
             <tbody className="divide-y divide-[#D9B574]/10">
-              {payments.map((payment, index) => (
+              {payments.map((payment: (typeof payments)[number], index: number) => (
                 <tr 
                   key={payment.id}
                   className={`hover:bg-gradient-to-r hover:from-purple-50/30 hover:to-[#D9B574]/5 transition-colors ${

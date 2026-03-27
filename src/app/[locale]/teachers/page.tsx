@@ -4,7 +4,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import { motion } from 'framer-motion';
 import { Users, Award, Globe, GraduationCap, BookOpen, Star, Calendar, Video, MessageCircle, CheckCircle, Clock } from 'lucide-react';
 import Image from 'next/image';
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 
 const teacherKeys = ['ahmad', 'fatima', 'mariam', 'omar', 'ibrahim'] as const;
 const teacherExperience: Record<typeof teacherKeys[number], number> = {

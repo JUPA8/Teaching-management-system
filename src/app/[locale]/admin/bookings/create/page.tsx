@@ -58,7 +58,11 @@ export default function CreateBookingPage() {
       const response = await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          // datetime-local gives "2024-01-15T14:00" — convert to full ISO 8601 with timezone
+          scheduledAt: formData.scheduledAt ? new Date(formData.scheduledAt).toISOString() : '',
+        }),
       });
 
       const result = await response.json();

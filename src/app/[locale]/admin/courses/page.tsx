@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
+import DeleteCourseButton from './DeleteCourseButton';
 
 export default async function AdminCoursesPage({
   params,
@@ -43,7 +44,7 @@ export default async function AdminCoursesPage({
 
       {/* Islamic styled cards grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {courses.map((course) => (
+        {courses.map((course: (typeof courses)[number]) => (
           <div key={course.id} className="relative group">
             {/* Glow effect on hover */}
             <div className={`absolute inset-0 rounded-2xl blur-sm opacity-0 group-hover:opacity-50 transition-opacity ${
@@ -112,18 +113,19 @@ export default async function AdminCoursesPage({
                     <span className="text-sm text-gray-600 font-medium">students</span>
                   </div>
                   <div className="flex gap-2">
-                    <Link 
-                      href={`/${locale}/admin/courses/${course.id}`} 
+                    <Link
+                      href={`/${locale}/admin/courses/${course.id}`}
                       className="px-4 py-2 bg-gradient-to-r from-[#2B7A78] to-[#1d5856] text-white rounded-lg hover:shadow-lg transition-all text-sm font-bold"
                     >
                       View
                     </Link>
-                    <Link 
-                      href={`/${locale}/admin/courses/${course.id}/edit`} 
+                    <Link
+                      href={`/${locale}/admin/courses/${course.id}/edit`}
                       className="px-4 py-2 bg-gradient-to-r from-[#D9B574] to-[#C4A565] text-white rounded-lg hover:shadow-lg transition-all text-sm font-bold"
                     >
                       Edit
                     </Link>
+                    <DeleteCourseButton courseId={course.id} />
                   </div>
                 </div>
               </div>

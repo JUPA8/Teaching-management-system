@@ -27,6 +27,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (!s3Client || !S3_BUCKET_NAME) {
+      return NextResponse.json(
+        { success: false, error: 'File storage is not configured' },
+        { status: 503 }
+      );
+    }
+
     const { fileName, fileType, fileSize, folder } = validation.data;
 
     // Validate file type (only allow images and PDFs for now)
@@ -63,7 +70,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    const signedUrl = await getSignedUrl(s3Client, command, {
+    const signedUrl = await getSignedUrl(s3Client!, command, {
       expiresIn: 3600, // URL expires in 1 hour
     });
 

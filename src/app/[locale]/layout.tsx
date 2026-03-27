@@ -7,6 +7,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import StagingBanner from '@/components/StagingBanner';
 import ConditionalFloatingActions from '@/components/ConditionalFloatingActions';
+import AuthProvider from '@/components/AuthProvider';
 
 export const metadata: Metadata = {
   title: 'Salam Institute - Learn Quran Online',
@@ -55,13 +56,15 @@ export default async function LocaleLayout({
     <html lang={locale} dir={isRTL ? 'rtl' : 'ltr'}>
       <body className={isRTL ? 'font-arabic' : 'font-sans'}>
         <NextIntlClientProvider messages={messages}>
-          <StagingBanner />
-          <div className="flex flex-col min-h-screen">
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
-          <ConditionalFloatingActions />
+          <AuthProvider>
+            <StagingBanner />
+            <div className="flex flex-col min-h-screen">
+              <Header />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
+            <ConditionalFloatingActions />
+          </AuthProvider>
         </NextIntlClientProvider>
       </body>
     </html>

@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
-    // Create user
+    // Create user and auto-create the role profile (Student or Teacher)
     const user = await prisma.user.create({
       data: {
         email: data.email,
@@ -117,6 +117,8 @@ export async function POST(request: NextRequest) {
         name: data.name,
         role: data.role,
         phone: data.phone,
+        ...(data.role === 'STUDENT' ? { student: { create: {} } } : {}),
+        ...(data.role === 'TEACHER' ? { teacher: { create: {} } } : {}),
       },
       select: {
         id: true,
