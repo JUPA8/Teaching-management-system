@@ -68,6 +68,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           throw new Error('Invalid email or password');
         }
 
+        // Students must verify their email before logging in
+        if (user.role === 'STUDENT' && !user.isVerified) {
+          throw new Error('Please verify your email before logging in. Check your inbox for a verification link.');
+        }
+
         return {
           id: user.id,
           email: user.email,

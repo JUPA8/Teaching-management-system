@@ -3,11 +3,47 @@
 import { useState } from 'react';
 import { Link } from '@/i18n/routing';
 import { useParams } from 'next/navigation';
-import { signIn } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { Eye, EyeOff, CheckCircle, Sparkles, BookOpen, Users, Award, ArrowRight, Rocket } from 'lucide-react';
+import { Eye, EyeOff, CheckCircle, Sparkles, BookOpen, Users, Award, ArrowRight, Rocket, Mail } from 'lucide-react';
+
+function ResendVerificationButton({ email }: { email: string }) {
+  const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleResend = async () => {
+    setLoading(true);
+    try {
+      await fetch('/api/resend-verification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      setSent(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (sent) {
+    return (
+      <p className="text-sm text-green-600 font-medium py-2">
+        ✓ Verification email resent!
+      </p>
+    );
+  }
+
+  return (
+    <button
+      onClick={handleResend}
+      disabled={loading}
+      className="w-full py-3 border-2 border-gray-200 text-gray-600 font-semibold rounded-xl hover:border-[#2B7A78] hover:text-[#2B7A78] transition-colors disabled:opacity-50"
+    >
+      {loading ? 'Sending...' : 'Resend verification email'}
+    </button>
+  );
+}
 
 export default function RegisterPage() {
   const t = useTranslations('register');
@@ -16,6 +52,7 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [registeredEmail, setRegisteredEmail] = useState('');
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -57,18 +94,8 @@ export default function RegisterPage() {
         return;
       }
 
-      // Auto sign-in after registration
-      const signInResult = await signIn('credentials', {
-        redirect: false,
-        email: formData.email,
-        password: formData.password,
-      });
-
-      if (signInResult?.ok) {
-        window.location.href = `/${locale}/dashboard`;
-      } else {
-        window.location.href = `/${locale}/login`;
-      }
+      // Show email verification success screen
+      setRegisteredEmail(formData.email);
     } catch {
       setError('An error occurred. Please try again.');
       setIsLoading(false);
@@ -107,6 +134,49 @@ export default function RegisterPage() {
       transition: { delay: i * 0.05, type: 'spring' as const, stiffness: 100 },
     }),
   };
+
+  // Show success screen after registration
+  if (registeredEmail) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#D9B574]/20 to-[#2B7A78]/10 px-4">
+        <motion.div
+          className="bg-white rounded-3xl shadow-2xl p-10 max-w-md w-full text-center"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ type: 'spring' as const, stiffness: 200 }}
+        >
+          <motion.div
+            className="w-20 h-20 bg-gradient-to-br from-[#2B7A78] to-[#D9B574] rounded-full flex items-center justify-center mx-auto mb-6"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring' as const, stiffness: 300, delay: 0.1 }}
+          >
+            <Mail className="w-10 h-10 text-white" />
+          </motion.div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-3">Check your email!</h2>
+          <p className="text-gray-600 mb-2">
+            We sent a verification link to:
+          </p>
+          <p className="font-bold text-[#2B7A78] text-lg mb-6 break-all">{registeredEmail}</p>
+          <p className="text-gray-500 text-sm mb-8">
+            Click the link in the email to verify your account. The link expires in 24 hours.
+          </p>
+          <div className="space-y-3">
+            <Link
+              href="/login"
+              className="block w-full py-3 bg-gradient-to-r from-[#2B7A78] to-[#D9B574] text-white font-bold rounded-xl text-center"
+            >
+              Go to Login
+            </Link>
+            <ResendVerificationButton email={registeredEmail} />
+          </div>
+          <p className="text-xs text-gray-400 mt-4">
+            Can&apos;t find the email? Check your spam folder.
+          </p>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen relative overflow-hidden">

@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useParams, useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { Link } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
@@ -14,9 +14,25 @@ export default function LoginPage() {
   const params = useParams();
   const locale = params.locale as string;
   
+  const searchParams = useSearchParams();
+
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+
+  useEffect(() => {
+    const verified = searchParams.get('verified');
+    const errorParam = searchParams.get('error');
+    if (verified === '1') {
+      setSuccessMessage('Your email has been verified! You can now log in.');
+    } else if (errorParam === 'token_expired') {
+      setError('Your verification link has expired. Please request a new one.');
+    } else if (errorParam === 'invalid_token') {
+      setError('Invalid verification link. Please request a new one.');
+    }
+  }, [searchParams]);
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -36,7 +52,12 @@ export default function LoginPage() {
       });
 
       if (result?.error) {
-        setError('Invalid email or password');
+        // NextAuth passes the thrown error message through result.error
+        if (result.error.includes('verify your email')) {
+          setError(result.error);
+        } else {
+          setError('Invalid email or password');
+        }
         setIsLoading(false);
         return;
       }
@@ -215,6 +236,18 @@ export default function LoginPage() {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Success Message */}
+            {successMessage && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-center gap-3 p-4 bg-green-50 border-2 border-green-200 rounded-xl"
+              >
+                <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                <p className="text-sm text-green-700 font-medium">{successMessage}</p>
+              </motion.div>
+            )}
+
             {/* Error Message */}
             {error && (
               <motion.div
