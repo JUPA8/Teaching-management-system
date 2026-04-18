@@ -4,6 +4,11 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 import { UserRole } from '@prisma/client';
+import { checkRateLimit, tooManyRequests } from '@/lib/rate-limit';
+
+// 10 login attempts per email per 15 minutes
+const LOGIN_RATE_LIMIT = 10;
+const LOGIN_RATE_WINDOW_MS = 15 * 60 * 1000;
 
 // Extend NextAuth types
 declare module 'next-auth' {
@@ -49,6 +54,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
           throw new Error('Missing email or password');
+        }
+
+        // Rate limit by normalized email — 10 attempts per 15 minutes
+        const emailKey = `login:${(credentials.email as string).toLowerCase().trim()}`;
+        const rl = checkRateLimit(emailKey, LOGIN_RATE_LIMIT, LOGIN_RATE_WINDOW_MS);
+        if (!rl.success) {
+          throw new Error(
+            `Too many login attempts. Please wait ${rl.retryAfterSeconds} seconds before trying again.`
+          );
         }
 
         const user = await prisma.user.findUnique({

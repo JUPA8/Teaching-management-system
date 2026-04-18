@@ -5,6 +5,11 @@ import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { sendVerificationEmail } from '@/lib/email';
 import { validatePassword, normalizeEmail } from '@/lib/validation';
+import { checkRateLimit, getClientIP, tooManyRequests } from '@/lib/rate-limit';
+
+// 5 registrations per IP per 15 minutes
+const RATE_LIMIT = 5;
+const RATE_WINDOW_MS = 15 * 60 * 1000;
 
 const registerSchema = z.object({
   email: z
@@ -46,6 +51,11 @@ const registerSchema = z.object({
 
 // POST /api/register — Public self-registration (STUDENT accounts only)
 export async function POST(request: NextRequest) {
+  // Rate limit: 5 attempts per IP per 15 minutes
+  const ip = getClientIP(request);
+  const rl = checkRateLimit(`register:${ip}`, RATE_LIMIT, RATE_WINDOW_MS);
+  if (!rl.success) return tooManyRequests(rl.retryAfterSeconds);
+
   try {
     const body = await request.json();
     const validation = registerSchema.safeParse(body);

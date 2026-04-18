@@ -36,6 +36,10 @@ export async function GET(
       );
     }
 
+    // Admins get full nested data; non-admins get only their own profile fields
+    // (bookings/payments have dedicated scoped endpoints)
+    const isAdmin = currentUser.role === 'ADMIN';
+
     const user = await prisma.user.findUnique({
       where: { id },
       select: {
@@ -47,17 +51,43 @@ export async function GET(
         image: true,
         createdAt: true,
         updatedAt: true,
-        teacher: {
-          include: {
-            bookings: { take: 5, orderBy: { scheduledAt: 'desc' } },
-          },
-        },
-        student: {
-          include: {
-            bookings: { take: 5, orderBy: { scheduledAt: 'desc' } },
-            payments: { take: 5, orderBy: { createdAt: 'desc' } },
-          },
-        },
+        // Only admins receive nested booking/payment history here.
+        // Non-admins query their own records through /api/bookings and /api/payments.
+        teacher: isAdmin
+          ? {
+              select: {
+                id: true,
+                bio: true,
+                gender: true,
+                specializations: true,
+                languages: true,
+                hourlyRate: true,
+                isActive: true,
+                bookings: {
+                  take: 5,
+                  orderBy: { scheduledAt: 'desc' },
+                  select: { id: true, scheduledAt: true, status: true, studentId: true },
+                },
+              },
+            }
+          : { select: { id: true, bio: true, gender: true, specializations: true, languages: true, isActive: true } },
+        student: isAdmin
+          ? {
+              select: {
+                id: true,
+                bookings: {
+                  take: 5,
+                  orderBy: { scheduledAt: 'desc' },
+                  select: { id: true, scheduledAt: true, status: true, teacherId: true },
+                },
+                payments: {
+                  take: 5,
+                  orderBy: { createdAt: 'desc' },
+                  select: { id: true, amount: true, status: true, createdAt: true },
+                },
+              },
+            }
+          : { select: { id: true } },
       },
     });
 

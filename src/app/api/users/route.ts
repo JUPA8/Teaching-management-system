@@ -11,6 +11,7 @@ const createUserSchema = z.object({
   name: z.string().min(2),
   role: z.enum(['ADMIN', 'TEACHER', 'STUDENT']),
   phone: z.string().optional(),
+  gender: z.enum(['MALE', 'FEMALE']).optional(), // used when role === 'TEACHER'
 });
 
 const updateUserSchema = z.object({
@@ -109,6 +110,11 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
+    // Admin-created accounts are always auto-verified — the admin has implicitly
+    // confirmed the identity. Email verification is only required for self-registration.
+    const isVerified = true;
+    const emailVerified = new Date();
+
     // Create user and auto-create the role profile (Student or Teacher)
     const user = await prisma.user.create({
       data: {
@@ -117,8 +123,10 @@ export async function POST(request: NextRequest) {
         name: data.name,
         role: data.role,
         phone: data.phone,
+        isVerified,
+        emailVerified,
         ...(data.role === 'STUDENT' ? { student: { create: {} } } : {}),
-        ...(data.role === 'TEACHER' ? { teacher: { create: {} } } : {}),
+        ...(data.role === 'TEACHER' ? { teacher: { create: { gender: data.gender ?? 'MALE' } } } : {}),
       },
       select: {
         id: true,

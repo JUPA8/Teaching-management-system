@@ -2,11 +2,21 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import crypto from 'crypto';
 import { sendVerificationEmail } from '@/lib/email';
+import { checkRateLimit, getClientIP, tooManyRequests } from '@/lib/rate-limit';
 
 const RESEND_COOLDOWN_MINUTES = 5;
 
+// 5 resend attempts per IP per 15 minutes (in addition to per-email cooldown)
+const RATE_LIMIT = 5;
+const RATE_WINDOW_MS = 15 * 60 * 1000;
+
 // POST /api/resend-verification
 export async function POST(request: NextRequest) {
+  // Rate limit: 5 attempts per IP per 15 minutes
+  const ip = getClientIP(request);
+  const rl = checkRateLimit(`resend-verification:${ip}`, RATE_LIMIT, RATE_WINDOW_MS);
+  if (!rl.success) return tooManyRequests(rl.retryAfterSeconds);
+
   try {
     const body = await request.json();
     const email = typeof body?.email === 'string' ? body.email.toLowerCase().trim() : null;

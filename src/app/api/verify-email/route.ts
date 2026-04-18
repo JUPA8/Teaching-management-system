@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { checkRateLimit, getClientIP, tooManyRequests } from '@/lib/rate-limit';
 
 // GET /api/verify-email?token=...
 export async function GET(request: NextRequest) {
+  // Rate limit: 20 attempts per IP per 15 minutes (tokens are single-use so this is generous)
+  const ip = getClientIP(request);
+  const rl = checkRateLimit(`verify-email:${ip}`, 20, 15 * 60 * 1000);
+  if (!rl.success) return tooManyRequests(rl.retryAfterSeconds);
+
   const { searchParams } = new URL(request.url);
   const token = searchParams.get('token');
 
