@@ -146,7 +146,7 @@ export default function Footer() {
             <div className="space-y-3">
               {[
                 { href: 'mailto:info@salaminstitute.com', icon: Mail, text: 'info@salaminstitute.com' },
-                { href: 'tel:+4912345678', icon: Phone, text: '+49 123 456 78' },
+                { href: 'tel:+201220325887', icon: Phone, text: '+20 122 032 5887' },
                 { href: '#', icon: MapPin, text: 'Berlin, Germany' },
               ].map((item, index) => (
                 <motion.a

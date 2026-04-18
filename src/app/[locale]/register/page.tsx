@@ -9,38 +9,77 @@ import Image from 'next/image';
 import { Eye, EyeOff, CheckCircle, Sparkles, BookOpen, Users, Award, ArrowRight, Rocket, Mail } from 'lucide-react';
 
 function ResendVerificationButton({ email }: { email: string }) {
-  const [sent, setSent] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState<'idle' | 'loading' | 'sent' | 'error' | 'cooldown'>('idle');
+  const [message, setMessage] = useState('');
 
   const handleResend = async () => {
-    setLoading(true);
+    setStatus('loading');
+    setMessage('');
     try {
-      await fetch('/api/resend-verification', {
+      const res = await fetch('/api/resend-verification', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
-      setSent(true);
-    } finally {
-      setLoading(false);
+      const data = await res.json();
+
+      if (res.status === 429 || data.code === 'COOLDOWN') {
+        setStatus('cooldown');
+        setMessage(data.error || 'Please wait a few minutes before requesting another email.');
+        return;
+      }
+      if (!data.success) {
+        setStatus('error');
+        setMessage(data.error || 'Could not send email. Please try again.');
+        return;
+      }
+      setStatus('sent');
+      setMessage(data.emailSent
+        ? 'Verification email sent! Please check your inbox.'
+        : 'Request received. If email is not configured, contact support at +20 122 032 5887.');
+    } catch {
+      setStatus('error');
+      setMessage('Network error. Please check your connection and try again.');
     }
   };
 
-  if (sent) {
+  if (status === 'sent') {
     return (
-      <p className="text-sm text-green-600 font-medium py-2">
-        ✓ Verification email resent!
-      </p>
+      <div className="text-sm text-green-600 font-medium py-2 text-center">
+        ✓ {message}
+      </div>
+    );
+  }
+
+  if (status === 'cooldown') {
+    return (
+      <div className="text-sm text-amber-600 font-medium py-2 text-center">
+        ⏳ {message}
+      </div>
+    );
+  }
+
+  if (status === 'error') {
+    return (
+      <div className="space-y-2">
+        <div className="text-sm text-red-600 font-medium py-1 text-center">{message}</div>
+        <button
+          onClick={handleResend}
+          className="w-full py-3 border-2 border-gray-200 text-gray-600 font-semibold rounded-xl hover:border-[#2B7A78] hover:text-[#2B7A78] transition-colors"
+        >
+          Try again
+        </button>
+      </div>
     );
   }
 
   return (
     <button
       onClick={handleResend}
-      disabled={loading}
+      disabled={status === 'loading'}
       className="w-full py-3 border-2 border-gray-200 text-gray-600 font-semibold rounded-xl hover:border-[#2B7A78] hover:text-[#2B7A78] transition-colors disabled:opacity-50"
     >
-      {loading ? 'Sending...' : 'Resend verification email'}
+      {status === 'loading' ? 'Sending...' : 'Resend verification email'}
     </button>
   );
 }
@@ -53,6 +92,7 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [registeredEmail, setRegisteredEmail] = useState('');
+  const [emailWasSent, setEmailWasSent] = useState(true);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -94,7 +134,8 @@ export default function RegisterPage() {
         return;
       }
 
-      // Show email verification success screen
+      // Show email verification success/warning screen
+      setEmailWasSent(result.emailSent !== false);
       setRegisteredEmail(formData.email);
     } catch {
       setError('An error occurred. Please try again.');
@@ -135,7 +176,7 @@ export default function RegisterPage() {
     }),
   };
 
-  // Show success screen after registration
+  // Show post-registration screen
   if (registeredEmail) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#D9B574]/20 to-[#2B7A78]/10 px-4">
@@ -146,21 +187,46 @@ export default function RegisterPage() {
           transition={{ type: 'spring' as const, stiffness: 200 }}
         >
           <motion.div
-            className="w-20 h-20 bg-gradient-to-br from-[#2B7A78] to-[#D9B574] rounded-full flex items-center justify-center mx-auto mb-6"
+            className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 ${
+              emailWasSent
+                ? 'bg-gradient-to-br from-[#2B7A78] to-[#D9B574]'
+                : 'bg-gradient-to-br from-amber-400 to-amber-600'
+            }`}
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: 'spring' as const, stiffness: 300, delay: 0.1 }}
           >
             <Mail className="w-10 h-10 text-white" />
           </motion.div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-3">Check your email!</h2>
-          <p className="text-gray-600 mb-2">
-            We sent a verification link to:
-          </p>
-          <p className="font-bold text-[#2B7A78] text-lg mb-6 break-all">{registeredEmail}</p>
-          <p className="text-gray-500 text-sm mb-8">
-            Click the link in the email to verify your account. The link expires in 24 hours.
-          </p>
+
+          {emailWasSent ? (
+            <>
+              <h2 className="text-2xl font-bold text-gray-900 mb-3">Check your email!</h2>
+              <p className="text-gray-600 mb-2">We sent a verification link to:</p>
+              <p className="font-bold text-[#2B7A78] text-lg mb-4 break-all">{registeredEmail}</p>
+              <p className="text-gray-500 text-sm mb-8">
+                Click the link in the email to verify your account. The link expires in 24 hours.
+                Can&apos;t find it? Check your spam folder.
+              </p>
+            </>
+          ) : (
+            <>
+              <h2 className="text-2xl font-bold text-gray-900 mb-3">Account created!</h2>
+              <p className="text-gray-600 mb-2">
+                Your account was created for:
+              </p>
+              <p className="font-bold text-[#2B7A78] text-lg mb-4 break-all">{registeredEmail}</p>
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 text-left">
+                <p className="text-amber-800 text-sm font-medium mb-1">⚠️ Email not sent</p>
+                <p className="text-amber-700 text-sm">
+                  We could not send the verification email right now. Use the button below to retry,
+                  or contact us at{' '}
+                  <a href="tel:+201220325887" className="underline font-semibold">+20 122 032 5887</a>.
+                </p>
+              </div>
+            </>
+          )}
+
           <div className="space-y-3">
             <Link
               href="/login"
@@ -170,9 +236,6 @@ export default function RegisterPage() {
             </Link>
             <ResendVerificationButton email={registeredEmail} />
           </div>
-          <p className="text-xs text-gray-400 mt-4">
-            Can&apos;t find the email? Check your spam folder.
-          </p>
         </motion.div>
       </div>
     );

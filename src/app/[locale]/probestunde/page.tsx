@@ -417,7 +417,7 @@ export default function ProbestundePage() {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     className="w-full px-4 py-3 bg-[#F9F4E8] border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
-                    placeholder="+49 123 456 789"
+                    placeholder="+20 122 032 5887"
                   />
                 </div>
               </div>

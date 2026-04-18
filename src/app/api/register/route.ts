@@ -6,13 +6,13 @@ import crypto from 'crypto';
 import { sendVerificationEmail } from '@/lib/email';
 
 const registerSchema = z.object({
-  email: z.string().email(),
+  email: z.string().email('Invalid email address'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
-  name: z.string().min(2),
+  name: z.string().min(2, 'Name must be at least 2 characters').max(100),
   phone: z.string().optional(),
 });
 
-// POST /api/register - Public self-registration (creates STUDENT accounts only)
+// POST /api/register — Public self-registration (STUDENT accounts only)
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -20,63 +20,100 @@ export async function POST(request: NextRequest) {
 
     if (!validation.success) {
       return NextResponse.json(
-        { success: false, error: 'Validation failed', details: validation.error.issues },
+        {
+          success: false,
+          error: validation.error.issues[0]?.message || 'Validation failed',
+        },
         { status: 400 }
       );
     }
 
     const data = validation.data;
+    const normalizedEmail = data.email.toLowerCase().trim();
 
+    // ── Check for existing account ────────────────────────────────────────────
     const existingUser = await prisma.user.findUnique({
-      where: { email: data.email },
+      where: { email: normalizedEmail },
+      select: { id: true, isVerified: true },
     });
 
     if (existingUser) {
+      // Give a safe response — don't reveal verification status to prevent enumeration
+      if (!existingUser.isVerified) {
+        // Resend without leaking that the account exists (treat as "already registered, unverified")
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'An account with this email already exists. If you registered before, please check your email for the verification link or use "Resend verification".',
+            code: 'ALREADY_REGISTERED',
+          },
+          { status: 409 }
+        );
+      }
       return NextResponse.json(
-        { success: false, error: 'An account with this email already exists' },
+        { success: false, error: 'An account with this email already exists.' },
         { status: 409 }
       );
     }
 
-    const hashedPassword = await bcrypt.hash(data.password, 10);
+    // ── Hash password ─────────────────────────────────────────────────────────
+    const hashedPassword = await bcrypt.hash(data.password, 12);
 
-    // Generate a secure verification token valid for 24 hours
+    // ── Generate verification token ───────────────────────────────────────────
     const verificationToken = crypto.randomBytes(32).toString('hex');
-    const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24h
 
+    // ── Create user + student profile in one transaction ──────────────────────
     const user = await prisma.user.create({
       data: {
-        email: data.email,
+        email: normalizedEmail,
         password: hashedPassword,
-        name: data.name,
-        phone: data.phone,
+        name: data.name.trim(),
+        phone: data.phone?.trim() || null,
         role: 'STUDENT',
         isVerified: false,
         emailVerificationToken: verificationToken,
         emailVerificationExpires: verificationExpires,
         student: { create: {} },
       },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        role: true,
-      },
+      select: { id: true, email: true, name: true, role: true },
     });
 
-    // Send verification email (non-blocking — failure doesn't cancel registration)
+    // ── Send verification email ────────────────────────────────────────────────
+    let emailSent = false;
+    let devVerificationLink: string | undefined;
+
     try {
-      await sendVerificationEmail(data.email, data.name, verificationToken);
-    } catch (emailError) {
-      console.error('Failed to send verification email:', emailError);
+      const result = await sendVerificationEmail(normalizedEmail, data.name.trim(), verificationToken);
+      emailSent = result.sent;
+      devVerificationLink = result.devVerificationLink;
+    } catch (emailError: any) {
+      // Log the full error for debugging in Vercel logs
+      console.error('[Registration] Email sending failed:', {
+        email: normalizedEmail,
+        error: emailError?.message,
+      });
+      // User is created but email wasn't sent — they can use resend
+      emailSent = false;
     }
 
-    return NextResponse.json(
-      { success: true, data: user, message: 'Account created. Please check your email to verify your account.' },
-      { status: 201 }
-    );
+    // ── Response ──────────────────────────────────────────────────────────────
+    const response: Record<string, unknown> = {
+      success: true,
+      emailSent,
+      message: emailSent
+        ? 'Account created. Please check your email to verify your account before logging in.'
+        : 'Account created, but we could not send the verification email. Please use "Resend verification email" on the login page.',
+    };
+
+    // In development: include the verification link in the response for easy testing
+    if (process.env.NODE_ENV !== 'production' && devVerificationLink) {
+      response.devVerificationLink = devVerificationLink;
+    }
+
+    return NextResponse.json(response, { status: 201 });
   } catch (error: any) {
-    console.error('Registration error:', error);
+    console.error('[Registration] Unexpected error:', error?.message);
     return NextResponse.json(
       { success: false, error: 'Registration failed. Please try again.' },
       { status: 500 }

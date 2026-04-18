@@ -10,9 +10,8 @@ export default function FloatingActions() {
   const t = useTranslations('common');
   const [showTooltip, setShowTooltip] = useState(false);
 
-  // WhatsApp number - replace with actual number
-  const whatsappNumber = '+491234567890';
-  const whatsappMessage = encodeURIComponent('Hello! I would like to book a free trial lesson at Salam Institute.');
+  const whatsappNumber = '+201220325887';
+  const whatsappMessage = encodeURIComponent('Hello! I would like to book a free trial lesson at Salam Institut.');
   const whatsappLink = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=${whatsappMessage}`;
 
   return (

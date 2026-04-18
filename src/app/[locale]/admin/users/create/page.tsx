@@ -130,7 +130,7 @@ export default function CreateUserPage() {
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 className="w-full px-4 py-3 border-2 border-[#D9B574]/30 rounded-xl focus:ring-2 focus:ring-[#2B7A78] focus:border-[#2B7A78] bg-white/80 backdrop-blur-sm transition-all"
-                placeholder="+49 123 456 789"
+                placeholder="+20 122 032 5887"
               />
             </div>
 

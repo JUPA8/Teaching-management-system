@@ -57,17 +57,17 @@ export default function ContactPage() {
     {
       icon: Phone,
       title: contact('info.phone.title'),
-      info: '+49 123 456 78',
+      info: '+20 122 032 5887',
       description: contact('info.phone.description'),
       gradient: 'from-[#D9B574] to-[#C9A551]',
     },
     {
       icon: MessageCircle,
       title: contact('whatsapp.title'),
-      info: '+49 123 456 78',
+      info: '+20 122 032 5887',
       description: contact('whatsapp.description'),
       gradient: 'from-[#25D366] to-[#128C7E]',
-      link: 'https://wa.me/49123456789',
+      link: 'https://wa.me/201220325887',
     },
     {
       icon: MapPin,
