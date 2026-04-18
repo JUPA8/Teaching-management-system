@@ -10,13 +10,12 @@ import { useEffect, useState } from 'react';
 import {
   BookOpen,
   Calendar,
-  TrendingUp,
-  Play,
   Clock,
   CheckCircle,
   ArrowRight,
   Sparkles,
-  Flame,
+  TrendingUp,
+  Award,
 } from 'lucide-react';
 
 interface UpcomingLesson {
@@ -28,10 +27,28 @@ interface UpcomingLesson {
   status: string;
 }
 
+interface AttendanceRecord {
+  id: string;
+  status: 'PRESENT' | 'ABSENT' | 'LATE' | 'EXCUSED';
+  markedAt: string;
+  booking: { scheduledAt: string; course: { name: string } };
+}
+
+interface GradeRecord {
+  id: string;
+  score: number;
+  maxScore: number;
+  label: string | null;
+  gradedAt: string;
+  course: { name: string };
+}
+
 export default function DashboardPage() {
   const t = useTranslations('dashboard');
   const { data: session } = useSession();
   const [upcomingLessons, setUpcomingLessons] = useState<UpcomingLesson[]>([]);
+  const [recentAttendance, setRecentAttendance] = useState<AttendanceRecord[]>([]);
+  const [recentGrades, setRecentGrades] = useState<GradeRecord[]>([]);
 
   const firstName = session?.user?.name?.split(' ')[0] ?? '...';
 
@@ -39,15 +56,35 @@ export default function DashboardPage() {
     fetch('/api/bookings?limit=5&status=CONFIRMED')
       .then(r => r.json())
       .then(data => {
-        if (data.success) setUpcomingLessons(data.data.bookings);
+        if (data.success) setUpcomingLessons(data.data.bookings ?? data.data ?? []);
+      })
+      .catch(() => {});
+
+    fetch('/api/attendance')
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) setRecentAttendance((data.data ?? []).slice(0, 5));
+      })
+      .catch(() => {});
+
+    fetch('/api/grades')
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) setRecentGrades((data.data ?? []).slice(0, 3));
       })
       .catch(() => {});
   }, []);
 
+  const presentCount = recentAttendance.filter(a => a.status === 'PRESENT' || a.status === 'LATE').length;
+  const attendancePct = recentAttendance.length > 0 ? Math.round((presentCount / recentAttendance.length) * 100) : null;
+  const avgGrade = recentGrades.length > 0
+    ? Math.round((recentGrades.reduce((s, g) => s + (g.score / g.maxScore) * 100, 0) / recentGrades.length) * 10) / 10
+    : null;
+
   const stats = [
     { label: 'Upcoming Lessons', value: upcomingLessons.length, icon: CheckCircle, color: 'from-primary-500 to-primary-600' },
-    { label: 'Booked Sessions', value: upcomingLessons.length, icon: Clock, color: 'from-secondary-500 to-secondary-600' },
-    { label: 'Account Active', value: '✓', icon: Flame, color: 'from-gold-500 to-gold-600' },
+    { label: 'Attendance Rate', value: attendancePct !== null ? `${attendancePct}%` : '—', icon: TrendingUp, color: 'from-secondary-500 to-secondary-600' },
+    { label: 'Avg Grade', value: avgGrade !== null ? `${avgGrade}%` : '—', icon: Award, color: 'from-gold-500 to-gold-600' },
   ];
 
   const containerVariants = {
@@ -217,7 +254,7 @@ export default function DashboardPage() {
               )}
             </motion.div>
 
-            {/* Recent Activity */}
+            {/* Recent Attendance & Grades */}
             <motion.div
               className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100"
               initial={{ opacity: 0, x: -30 }}
@@ -229,39 +266,71 @@ export default function DashboardPage() {
                 whileHover={{ x: 5 }}
               >
                 <TrendingUp className="w-5 h-5 text-primary-600" />
-                {t('progress')}
+                Recent Activity
               </motion.h2>
 
-              <motion.div
-                className="space-y-4"
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-              >
-                {[
-                  { icon: CheckCircle, bg: 'bg-green-50', iconBg: 'bg-green-100', iconColor: 'text-green-600', title: 'Completed Lesson 11: Surah Al-Falaq', time: '2 hours ago' },
-                  { icon: Play, bg: 'bg-blue-50', iconBg: 'bg-blue-100', iconColor: 'text-blue-600', title: 'Started Arabic for Beginners course', time: 'Yesterday' },
-                  { icon: Flame, bg: 'bg-amber-50', iconBg: 'bg-amber-100', iconColor: 'text-amber-600', title: '7-day learning streak achieved!', time: '2 days ago' },
-                ].map((activity, index) => (
-                  <motion.div
-                    key={index}
-                    variants={itemVariants}
-                    whileHover={{ x: 5 }}
-                    className={`flex items-center gap-4 p-4 ${activity.bg} rounded-xl`}
-                  >
-                    <motion.div
-                      className={`w-12 h-12 ${activity.iconBg} rounded-full flex items-center justify-center`}
-                      whileHover={{ scale: 1.1, rotate: 10 }}
-                    >
-                      <activity.icon className={`w-6 h-6 ${activity.iconColor}`} />
-                    </motion.div>
-                    <div>
-                      <p className="font-medium text-gray-900">{activity.title}</p>
-                      <p className="text-sm text-gray-500">{activity.time}</p>
-                    </div>
-                  </motion.div>
-                ))}
-              </motion.div>
+              {recentAttendance.length === 0 && recentGrades.length === 0 ? (
+                <p className="text-gray-500 text-sm py-4">No activity recorded yet.</p>
+              ) : (
+                <motion.div
+                  className="space-y-3"
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  {recentAttendance.map((att) => {
+                    const cfg = {
+                      PRESENT: { bg: 'bg-green-50', iconBg: 'bg-green-100', iconColor: 'text-green-600', label: 'Attended' },
+                      ABSENT: { bg: 'bg-red-50', iconBg: 'bg-red-100', iconColor: 'text-red-600', label: 'Absent' },
+                      LATE: { bg: 'bg-yellow-50', iconBg: 'bg-yellow-100', iconColor: 'text-yellow-600', label: 'Late' },
+                      EXCUSED: { bg: 'bg-blue-50', iconBg: 'bg-blue-100', iconColor: 'text-blue-600', label: 'Excused' },
+                    }[att.status] ?? { bg: 'bg-gray-50', iconBg: 'bg-gray-100', iconColor: 'text-gray-600', label: att.status };
+                    return (
+                      <motion.div
+                        key={att.id}
+                        variants={itemVariants}
+                        whileHover={{ x: 5 }}
+                        className={`flex items-center gap-4 p-4 ${cfg.bg} rounded-xl`}
+                      >
+                        <div className={`w-10 h-10 ${cfg.iconBg} rounded-full flex items-center justify-center flex-shrink-0`}>
+                          <CheckCircle className={`w-5 h-5 ${cfg.iconColor}`} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-gray-900 truncate">
+                            {cfg.label}: {att.booking.course.name}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            {new Date(att.booking.scheduledAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                          </p>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                  {recentGrades.map((grade) => {
+                    const pct = Math.round((grade.score / grade.maxScore) * 100);
+                    return (
+                      <motion.div
+                        key={grade.id}
+                        variants={itemVariants}
+                        whileHover={{ x: 5 }}
+                        className="flex items-center gap-4 p-4 bg-purple-50 rounded-xl"
+                      >
+                        <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                          <Award className="w-5 h-5 text-purple-600" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-gray-900 truncate">
+                            {grade.label ?? 'Assessment'}: {grade.course.name}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            Score: {pct}% · {new Date(grade.gradedAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </motion.div>
+              )}
             </motion.div>
           </div>
 

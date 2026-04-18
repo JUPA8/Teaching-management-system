@@ -43,6 +43,13 @@ enum BookingStatus {
   NO_SHOW      // Student didn't attend
 }
 
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
 enum PaymentStatus {
   PENDING      // Payment initiated
   COMPLETED    // Successfully paid
@@ -151,6 +158,8 @@ model Teacher {
   // Relations
   bookings        Booking[]
   courses         CourseTeacher[]
+  attendance      Attendance[]
+  grades          Grade[]
 
   @@index([userId])
   @@index([isActive])
@@ -183,6 +192,8 @@ model Student {
   bookings        Booking[]
   payments        Payment[]
   enrollments     CourseEnrollment[]
+  attendance      Attendance[]
+  grades          Grade[]
 
   @@index([userId])
   @@index([isActive])
@@ -225,6 +236,7 @@ model Course {
   teachers        CourseTeacher[]
   enrollments     CourseEnrollment[]
   bookings        Booking[]
+  grades          Grade[]
 
   @@index([type])
   @@index([isActive])
@@ -291,9 +303,13 @@ model Booking {
   
   cancelledAt     DateTime?
   cancelReason    String?       @db.Text
-  
+
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
+
+  // Relations
+  attendance      Attendance?
+  grades          Grade[]
 
   @@index([studentId])
   @@index([teacherId])
@@ -301,6 +317,57 @@ model Booking {
   @@index([scheduledAt])
   @@index([status])
   @@map("bookings")
+}
+
+// ============================================
+// ATTENDANCE & GRADES
+// ============================================
+
+model Attendance {
+  id          String           @id @default(cuid())
+  bookingId   String           @unique  // One record per session
+  studentId   String
+  teacherId   String
+
+  booking     Booking          @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  student     Student          @relation(fields: [studentId], references: [id])
+  teacher     Teacher          @relation(fields: [teacherId], references: [id])
+
+  status      AttendanceStatus @default(PRESENT)
+  notes       String?          @db.Text
+
+  markedAt    DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@index([studentId])
+  @@index([teacherId])
+  @@map("attendance")
+}
+
+model Grade {
+  id          String   @id @default(cuid())
+  studentId   String
+  teacherId   String
+  courseId    String
+  bookingId   String?  // Optional: link to specific session
+
+  student     Student  @relation(fields: [studentId], references: [id])
+  teacher     Teacher  @relation(fields: [teacherId], references: [id])
+  course      Course   @relation(fields: [courseId], references: [id])
+  booking     Booking? @relation(fields: [bookingId], references: [id])
+
+  score       Float            // e.g., 0–100
+  maxScore    Float    @default(100)
+  label       String?          // e.g., "Tajweed Assessment"
+  notes       String?  @db.Text
+
+  gradedAt    DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([studentId])
+  @@index([teacherId])
+  @@index([courseId])
+  @@map("grades")
 }
 
 // ============================================

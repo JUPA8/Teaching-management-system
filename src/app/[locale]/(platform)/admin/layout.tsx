@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import { isAdmin } from '@/lib/auth-helpers';
+import AdminLogoutButton from '@/components/platform/AdminLogoutButton';
 
 export default async function AdminLayout({
   children,
@@ -99,11 +100,14 @@ export default async function AdminLayout({
             </a>
           </nav>
 
-          {/* Islamic Decorative Footer */}
-          <div className="absolute bottom-0 left-0 right-0 p-6">
-            <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-[#D9B574]/30">
-              <p className="text-white/80 text-sm text-center font-arabic">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ</p>
-              <p className="text-[#D9B574] text-xs text-center mt-1">In the name of Allah</p>
+          {/* Logout + Islamic Decorative Footer */}
+          <div className="absolute bottom-0 left-0 right-0 p-4 space-y-3">
+            <div className="px-0">
+              <AdminLogoutButton locale={locale} />
+            </div>
+            <div className="bg-white/10 backdrop-blur-md rounded-xl p-3 border border-[#D9B574]/30">
+              <p className="text-white/80 text-xs text-center font-arabic">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ</p>
+              <p className="text-[#D9B574] text-xs text-center mt-0.5">In the name of Allah</p>
             </div>
           </div>
         </aside>
