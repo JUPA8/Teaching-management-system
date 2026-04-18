@@ -7,10 +7,10 @@ const intlMiddleware = createMiddleware(routing);
 export default function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Redirect /admin to /de/admin (default locale)
-  if (pathname === '/admin' || pathname.startsWith('/admin/')) {
-    const locale = 'de';
-    const newPathname = `/${locale}${pathname}`;
+  // Redirect locale-less platform paths to default locale (de)
+  const platformPaths = ['/admin', '/dashboard', '/teacher'];
+  if (platformPaths.some((p) => pathname === p || pathname.startsWith(p + '/'))) {
+    const newPathname = `/de${pathname}`;
     return NextResponse.redirect(new URL(newPathname, request.url));
   }
 

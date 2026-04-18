@@ -68,6 +68,8 @@ export default function LoginContent() {
         const role = session?.user?.role;
         if (role === 'ADMIN') {
           window.location.href = `/${locale}/admin`;
+        } else if (role === 'TEACHER') {
+          window.location.href = `/${locale}/teacher`;
         } else {
           window.location.href = `/${locale}/dashboard`;
         }

@@ -3,10 +3,6 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import StagingBanner from '@/components/StagingBanner';
-import ConditionalFloatingActions from '@/components/ConditionalFloatingActions';
 import AuthProvider from '@/components/AuthProvider';
 
 export const metadata: Metadata = {
@@ -38,18 +34,13 @@ export default async function LocaleLayout({
 }) {
   const { locale } = await params;
 
-  // Ensure that the incoming `locale` is valid
   if (!routing.locales.includes(locale as typeof routing.locales[number])) {
     notFound();
   }
 
-  // Enable static rendering
   setRequestLocale(locale);
 
-  // Determine RTL direction
   const isRTL = locale === 'ar';
-
-  // Get messages for the current locale
   const messages = await getMessages();
 
   return (
@@ -57,13 +48,7 @@ export default async function LocaleLayout({
       <body className={isRTL ? 'font-arabic' : 'font-sans'}>
         <NextIntlClientProvider messages={messages}>
           <AuthProvider>
-            <StagingBanner />
-            <div className="flex flex-col min-h-screen">
-              <Header />
-              <main className="flex-1">{children}</main>
-              <Footer />
-            </div>
-            <ConditionalFloatingActions />
+            {children}
           </AuthProvider>
         </NextIntlClientProvider>
       </body>

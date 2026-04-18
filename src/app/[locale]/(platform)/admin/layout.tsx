@@ -6,15 +6,14 @@ export default async function AdminLayout({
   params,
 }: {
   children: React.ReactNode;
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
+  const { locale } = await params;
   const adminAccess = await isAdmin();
 
   if (!adminAccess) {
-    redirect(`/${params.locale}/login?error=unauthorized`);
+    redirect(`/${locale}/login?error=unauthorized`);
   }
-
-  const locale = params.locale;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#F5F0E8] via-white to-[#E8F5F0]">
