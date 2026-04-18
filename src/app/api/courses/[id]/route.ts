@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 import { requireAdmin } from '@/lib/auth-helpers';
 
 const updateCourseSchema = z.object({
@@ -19,6 +20,9 @@ const updateCourseSchema = z.object({
   image: z.string().optional(),
   syllabus: z.string().optional(),
   isActive: z.boolean().optional(),
+  // Pass full replacement lists; omit to leave unchanged
+  teacherIds: z.array(z.string().cuid()).optional(),
+  studentIds: z.array(z.string().cuid()).optional(),
 });
 
 // GET /api/courses/[id] - Get single course
@@ -111,12 +115,39 @@ export async function PATCH(
       );
     }
 
-    const course = await prisma.course.update({
-      where: { id },
-      data: validation.data,
-      include: {
-        teachers: true,
-      },
+    const { teacherIds, studentIds, ...courseFields } = validation.data;
+
+    // Run relation updates inside a transaction
+    const course = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+      // Replace teachers if provided
+      if (teacherIds !== undefined) {
+        await tx.courseTeacher.deleteMany({ where: { courseId: id } });
+        if (teacherIds.length > 0) {
+          await tx.courseTeacher.createMany({
+            data: teacherIds.map((tid) => ({ courseId: id, teacherId: tid })),
+            skipDuplicates: true,
+          });
+        }
+      }
+      // Replace student enrollments if provided
+      if (studentIds !== undefined) {
+        await tx.courseEnrollment.deleteMany({ where: { courseId: id } });
+        if (studentIds.length > 0) {
+          await tx.courseEnrollment.createMany({
+            data: studentIds.map((sid) => ({ courseId: id, studentId: sid, isActive: true })),
+            skipDuplicates: true,
+          });
+        }
+      }
+      return tx.course.update({
+        where: { id },
+        data: courseFields,
+        include: {
+          teachers: { include: { teacher: { include: { user: { select: { name: true, email: true } } } } } },
+          enrollments: { include: { student: { include: { user: { select: { name: true, email: true } } } } } },
+          _count: { select: { enrollments: true, bookings: true } },
+        },
+      });
     });
 
     return NextResponse.json({

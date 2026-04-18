@@ -1,12 +1,13 @@
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
+import DeleteBookingButton from './DeleteBookingButton';
 
 export default async function AdminBookingsPage({
   params,
 }: {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
-  const locale = params.locale;
+  const { locale } = await params;
 
   const bookings = await prisma.booking.findMany({
     orderBy: { scheduledAt: 'desc' },
@@ -158,19 +159,20 @@ export default async function AdminBookingsPage({
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex gap-2">
-                      <Link 
-                        href={`/${locale}/admin/bookings/${booking.id}`} 
+                    <div className="flex gap-2 flex-wrap">
+                      <Link
+                        href={`/${locale}/admin/bookings/${booking.id}`}
                         className="px-4 py-2 bg-gradient-to-r from-[#2B7A78] to-[#1d5856] text-white rounded-lg hover:shadow-lg transition-all text-sm font-bold"
                       >
                         View
                       </Link>
-                      <Link 
-                        href={`/${locale}/admin/bookings/${booking.id}/edit`} 
+                      <Link
+                        href={`/${locale}/admin/bookings/${booking.id}/edit`}
                         className="px-4 py-2 bg-gradient-to-r from-[#D9B574] to-[#C4A565] text-white rounded-lg hover:shadow-lg transition-all text-sm font-bold"
                       >
                         Edit
                       </Link>
+                      <DeleteBookingButton bookingId={booking.id} />
                     </div>
                   </td>
                 </tr>

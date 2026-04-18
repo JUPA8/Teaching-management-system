@@ -19,6 +19,9 @@ const createCourseSchema = z.object({
   image: z.string().optional(),
   syllabus: z.string().optional(),
   isActive: z.boolean().default(true),
+  // Relations — array of profile IDs (Teacher.id / Student.id)
+  teacherIds: z.array(z.string().cuid()).optional(),
+  studentIds: z.array(z.string().cuid()).optional(),
 });
 
 // GET /api/courses - List all courses
@@ -104,12 +107,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const data = validation.data;
+    const { teacherIds, studentIds, ...courseFields } = validation.data;
 
     const course = await prisma.course.create({
-      data,
+      data: {
+        ...courseFields,
+        ...(teacherIds?.length
+          ? { teachers: { create: teacherIds.map((tid) => ({ teacherId: tid })) } }
+          : {}),
+        ...(studentIds?.length
+          ? {
+              enrollments: {
+                create: studentIds.map((sid) => ({ studentId: sid, isActive: true })),
+              },
+            }
+          : {}),
+      },
       include: {
-        teachers: true,
+        teachers: { include: { teacher: { include: { user: { select: { name: true, email: true } } } } } },
+        enrollments: { include: { student: { include: { user: { select: { name: true, email: true } } } } } },
+        _count: { select: { enrollments: true, bookings: true } },
       },
     });
 
