@@ -6,7 +6,7 @@ import { UserRole } from '@prisma/client';
 
 const createBookingSchema = z.object({
   courseId: z.string().cuid(),
-  studentId: z.string().cuid(),
+  studentId: z.string().cuid().optional(), // optional for STUDENT role — derived from session
   teacherId: z.string().cuid(),
   scheduledAt: z.string().datetime(),
   notes: z.string().optional(),
@@ -144,7 +144,7 @@ export async function POST(request: NextRequest) {
     const data = validation.data;
 
     // ── Ownership enforcement ─────────────────────────────────────────────────
-    let resolvedStudentId = data.studentId;
+    let resolvedStudentId: string;
 
     if (user.role === UserRole.STUDENT) {
       // Derive studentId from the authenticated session — never trust body
@@ -166,6 +166,15 @@ export async function POST(request: NextRequest) {
         );
       }
       resolvedStudentId = student.id;
+    } else {
+      // ADMIN must supply studentId
+      if (!data.studentId) {
+        return NextResponse.json(
+          { success: false, error: 'studentId is required' },
+          { status: 400 }
+        );
+      }
+      resolvedStudentId = data.studentId;
     }
 
     // Verify course exists

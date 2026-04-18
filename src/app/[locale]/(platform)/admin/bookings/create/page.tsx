@@ -41,8 +41,9 @@ export default function CreateBookingPage() {
 
       if (usersData.success) {
         const allUsers = usersData.data.users;
-        setStudents(allUsers.filter((u: any) => u.role === 'STUDENT'));
-        setTeachers(allUsers.filter((u: any) => u.role === 'TEACHER'));
+        // Only include users that have a linked profile record (student.id / teacher.id)
+        setStudents(allUsers.filter((u: any) => u.role === 'STUDENT' && u.student?.id));
+        setTeachers(allUsers.filter((u: any) => u.role === 'TEACHER' && u.teacher?.id));
       }
     } catch (err) {
       setError('Failed to load data');
@@ -121,7 +122,7 @@ export default function CreateBookingPage() {
             >
               <option value="">Select a student</option>
               {students.map((student) => (
-                <option key={student.id} value={student.student?.id}>
+                <option key={student.student.id} value={student.student.id}>
                   {student.name || student.email}
                 </option>
               ))}
@@ -138,7 +139,7 @@ export default function CreateBookingPage() {
             >
               <option value="">Select a teacher</option>
               {teachers.map((teacher) => (
-                <option key={teacher.id} value={teacher.teacher?.id}>
+                <option key={teacher.teacher.id} value={teacher.teacher.id}>
                   {teacher.name || teacher.email}
                 </option>
               ))}
