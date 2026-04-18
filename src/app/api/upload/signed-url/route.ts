@@ -4,6 +4,10 @@ import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { s3Client, S3_BUCKET_NAME } from '@/lib/s3';
 import { requireAuth } from '@/lib/auth-helpers';
+import { UserRole } from '@prisma/client';
+
+// Admin-only folders: course images, user profile photos managed by admin
+const ADMIN_ONLY_FOLDERS = ['courses', 'users'] as const;
 
 const uploadRequestSchema = z.object({
   fileName: z.string().min(1).max(255),
@@ -13,6 +17,8 @@ const uploadRequestSchema = z.object({
 });
 
 // POST /api/upload/signed-url - Generate pre-signed URL for S3 upload
+// ADMIN: can upload to any folder (courses, users, documents)
+// TEACHER/STUDENT: can only upload to 'documents' folder
 export async function POST(request: NextRequest) {
   try {
     const user = await requireAuth();
@@ -35,6 +41,14 @@ export async function POST(request: NextRequest) {
     }
 
     const { fileName, fileType, fileSize, folder } = validation.data;
+
+    // ── Folder access enforcement ─────────────────────────────────────────────
+    if ((ADMIN_ONLY_FOLDERS as readonly string[]).includes(folder) && user.role !== UserRole.ADMIN) {
+      return NextResponse.json(
+        { success: false, error: 'Forbidden: only administrators may upload to this folder' },
+        { status: 403 }
+      );
+    }
 
     // Validate file type (only allow images and PDFs for now)
     const allowedTypes = [

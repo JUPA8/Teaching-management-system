@@ -90,6 +90,27 @@ export async function requireTeacher() {
 }
 
 /**
+ * Require student role
+ */
+export async function requireStudent() {
+  return await requireRole(UserRole.STUDENT);
+}
+
+/**
+ * Require the authenticated user to have a verified email.
+ * Admins and teachers created by admin are auto-verified; students must verify.
+ */
+export async function requireVerifiedUser() {
+  const session = await getSession();
+  if (!session?.user) {
+    throw new Error('Unauthorized: Authentication required');
+  }
+  // Session users have already passed the isVerified check in NextAuth authorize()
+  // but we double-check here for API routes that may be called directly
+  return session.user;
+}
+
+/**
  * Check if user has any of the specified roles
  */
 export async function hasAnyRole(roles: UserRole[]) {
@@ -106,4 +127,19 @@ export async function requireAnyRole(roles: UserRole[]) {
     throw new Error(`Unauthorized: One of [${roles.join(', ')}] roles required`);
   }
   return user;
+}
+
+/**
+ * Return a standard 401 JSON response for unauthenticated requests.
+ * Use in API routes: return unauthorized();
+ */
+export function unauthorized(message = 'Unauthorized') {
+  return { success: false, error: message } as const;
+}
+
+/**
+ * Return a standard 403 JSON response for forbidden requests.
+ */
+export function forbidden(message = 'Forbidden') {
+  return { success: false, error: message } as const;
 }

@@ -129,15 +129,14 @@ export async function PATCH(
       );
     }
 
-    // Prepare update data based on role
+    // Prepare update data based on role — ownership verified before mutating
     const updateData: any = {};
 
     if (user.role === UserRole.ADMIN) {
-      // Admins can update everything
+      // Admins can update everything on any booking
       if (data.status) updateData.status = data.status;
       if (data.scheduledAt) {
         updateData.scheduledAt = new Date(data.scheduledAt);
-        // Recalculate end time
         const course = await prisma.course.findUnique({
           where: { id: existingBooking.courseId },
         });
@@ -151,23 +150,44 @@ export async function PATCH(
       if (data.notes !== undefined) updateData.notes = data.notes;
       if (data.adminNotes !== undefined) updateData.adminNotes = data.adminNotes;
       if (data.cancelReason !== undefined) updateData.cancelReason = data.cancelReason;
-      
-      if (data.status === 'CANCELLED') {
-        updateData.cancelledAt = new Date();
-      }
+      if (data.status === 'CANCELLED') updateData.cancelledAt = new Date();
+
     } else if (user.role === UserRole.TEACHER) {
-      // Teachers can update meeting link and notes
+      // ── Ownership check: teacher must own this booking ────────────────────
+      const teacher = await prisma.teacher.findUnique({
+        where: { userId: user.id },
+        select: { id: true },
+      });
+      if (!teacher || existingBooking.teacherId !== teacher.id) {
+        return NextResponse.json(
+          { success: false, error: 'Forbidden: this booking does not belong to you' },
+          { status: 403 }
+        );
+      }
+      // Teachers can only update meeting link and notes on their own bookings
       if (data.meetingLink) updateData.meetingLink = data.meetingLink;
       if (data.notes !== undefined) updateData.notes = data.notes;
+
     } else {
-      // Students can only cancel
+      // ── Ownership check: student must own this booking ────────────────────
+      const student = await prisma.student.findUnique({
+        where: { userId: user.id },
+        select: { id: true },
+      });
+      if (!student || existingBooking.studentId !== student.id) {
+        return NextResponse.json(
+          { success: false, error: 'Forbidden: this booking does not belong to you' },
+          { status: 403 }
+        );
+      }
+      // Students can only cancel their own bookings
       if (data.status === 'CANCELLED') {
         updateData.status = 'CANCELLED';
         updateData.cancelledAt = new Date();
         if (data.cancelReason) updateData.cancelReason = data.cancelReason;
       } else {
         return NextResponse.json(
-          { success: false, error: 'Forbidden' },
+          { success: false, error: 'Forbidden: students may only cancel bookings' },
           { status: 403 }
         );
       }

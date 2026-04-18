@@ -124,9 +124,12 @@ export async function GET(request: NextRequest) {
 }
 
 // POST /api/bookings - Create new booking
+// ADMIN: can book for any student/teacher
+// STUDENT: can only book for themselves; studentId in body is ignored and derived from session
+// TEACHER: cannot create bookings (only admin and students book)
 export async function POST(request: NextRequest) {
   try {
-    const user = await requireAuth();
+    const user = await requireAnyRole([UserRole.ADMIN, UserRole.STUDENT]);
 
     const body = await request.json();
     const validation = createBookingSchema.safeParse(body);
@@ -140,6 +143,31 @@ export async function POST(request: NextRequest) {
 
     const data = validation.data;
 
+    // ── Ownership enforcement ─────────────────────────────────────────────────
+    let resolvedStudentId = data.studentId;
+
+    if (user.role === UserRole.STUDENT) {
+      // Derive studentId from the authenticated session — never trust body
+      const student = await prisma.student.findUnique({
+        where: { userId: user.id },
+        select: { id: true },
+      });
+      if (!student) {
+        return NextResponse.json(
+          { success: false, error: 'Student profile not found' },
+          { status: 404 }
+        );
+      }
+      // Reject if body tries to book on behalf of a different student
+      if (data.studentId && data.studentId !== student.id) {
+        return NextResponse.json(
+          { success: false, error: 'Forbidden: cannot book on behalf of another student' },
+          { status: 403 }
+        );
+      }
+      resolvedStudentId = student.id;
+    }
+
     // Verify course exists
     const course = await prisma.course.findUnique({
       where: { id: data.courseId },
@@ -148,6 +176,25 @@ export async function POST(request: NextRequest) {
     if (!course) {
       return NextResponse.json(
         { success: false, error: 'Course not found' },
+        { status: 404 }
+      );
+    }
+
+    if (!course.isActive) {
+      return NextResponse.json(
+        { success: false, error: 'Course is not available' },
+        { status: 400 }
+      );
+    }
+
+    // Verify teacher exists and is active
+    const teacher = await prisma.teacher.findUnique({
+      where: { id: data.teacherId },
+      select: { id: true, isActive: true },
+    });
+    if (!teacher || !teacher.isActive) {
+      return NextResponse.json(
+        { success: false, error: 'Teacher not found or inactive' },
         { status: 404 }
       );
     }
@@ -162,18 +209,8 @@ export async function POST(request: NextRequest) {
         teacherId: data.teacherId,
         status: { in: ['PENDING', 'CONFIRMED'] },
         OR: [
-          {
-            AND: [
-              { scheduledAt: { lte: scheduledAt } },
-              { endTime: { gt: scheduledAt } },
-            ],
-          },
-          {
-            AND: [
-              { scheduledAt: { lt: endTime } },
-              { endTime: { gte: endTime } },
-            ],
-          },
+          { AND: [{ scheduledAt: { lte: scheduledAt } }, { endTime: { gt: scheduledAt } }] },
+          { AND: [{ scheduledAt: { lt: endTime } }, { endTime: { gte: endTime } }] },
         ],
       },
     });
@@ -189,7 +226,7 @@ export async function POST(request: NextRequest) {
     const booking = await prisma.booking.create({
       data: {
         courseId: data.courseId,
-        studentId: data.studentId,
+        studentId: resolvedStudentId,
         teacherId: data.teacherId,
         scheduledAt,
         endTime,
@@ -200,24 +237,12 @@ export async function POST(request: NextRequest) {
         course: true,
         student: {
           include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-              },
-            },
+            user: { select: { id: true, name: true, email: true } },
           },
         },
         teacher: {
           include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-              },
-            },
+            user: { select: { id: true, name: true, email: true } },
           },
         },
       },
@@ -230,9 +255,12 @@ export async function POST(request: NextRequest) {
     }, { status: 201 });
   } catch (error: any) {
     console.error('Error creating booking:', error);
+    const status = error.message?.includes('Unauthorized') ? 401
+                 : error.message?.includes('One of') ? 403
+                 : 500;
     return NextResponse.json(
       { success: false, error: error.message || 'Failed to create booking' },
-      { status: error.message?.includes('Unauthorized') ? 403 : 500 }
+      { status }
     );
   }
 }
