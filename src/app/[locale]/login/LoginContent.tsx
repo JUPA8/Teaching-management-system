@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { Eye, EyeOff, BookOpen, Lock, Mail, ArrowRight, CheckCircle, Sparkles, AlertCircle } from 'lucide-react';
+import { normalizeEmail } from '@/lib/validation';
 
 export default function LoginContent() {
   const t = useTranslations('login');
@@ -47,7 +48,7 @@ export default function LoginContent() {
     try {
       const result = await signIn('credentials', {
         redirect: false,
-        email: formData.email,
+        email: normalizeEmail(formData.email),
         password: formData.password,
       });
 
@@ -55,7 +56,7 @@ export default function LoginContent() {
         if (result.error.includes('verify your email')) {
           setError(result.error);
         } else {
-          setError('Invalid email or password');
+          setError('Invalid email or password. Please check your credentials and try again.');
         }
         setIsLoading(false);
         return;

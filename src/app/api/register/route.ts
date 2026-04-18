@@ -4,11 +4,43 @@ import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { sendVerificationEmail } from '@/lib/email';
+import { validatePassword, normalizeEmail } from '@/lib/validation';
 
 const registerSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-  name: z.string().min(2, 'Name must be at least 2 characters').max(100),
+  email: z
+    .string()
+    .min(1, 'Email is required')
+    .email('Invalid email address')
+    .transform((v) => normalizeEmail(v)),
+  password: z
+    .string()
+    .min(1, 'Password is required')
+    .superRefine((password, ctx) => {
+      const { isValid, failedRules, isCommon } = validatePassword(password);
+      if (isCommon) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'This password is too common. Please choose a more unique password.',
+        });
+        return;
+      }
+      if (!isValid) {
+        const messages: Record<string, string> = {
+          length:    'Password must be at least 8 characters.',
+          uppercase: 'Password must contain at least 1 uppercase letter.',
+          lowercase: 'Password must contain at least 1 lowercase letter.',
+          number:    'Password must contain at least 1 number.',
+          special:   'Password must contain at least 1 special character.',
+        };
+        for (const ruleId of failedRules) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: messages[ruleId] ?? 'Password does not meet requirements.',
+          });
+        }
+      }
+    }),
+  name: z.string().min(2, 'Name must be at least 2 characters').max(100).trim(),
   phone: z.string().optional(),
 });
 
@@ -19,17 +51,20 @@ export async function POST(request: NextRequest) {
     const validation = registerSchema.safeParse(body);
 
     if (!validation.success) {
+      // Return all validation errors, not just the first
+      const errors = validation.error.issues.map((i) => i.message);
       return NextResponse.json(
         {
           success: false,
-          error: validation.error.issues[0]?.message || 'Validation failed',
+          error: errors[0],         // primary message for simple UI
+          errors,                   // full list for detailed UI
         },
         { status: 400 }
       );
     }
 
     const data = validation.data;
-    const normalizedEmail = data.email.toLowerCase().trim();
+    const normalizedEmail = data.email; // already normalized by transform
 
     // ── Check for existing account ────────────────────────────────────────────
     const existingUser = await prisma.user.findUnique({
