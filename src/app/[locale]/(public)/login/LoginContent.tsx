@@ -40,6 +40,38 @@ export default function LoginContent() {
     remember: false,
   });
 
+  // Forgot password state
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotSent, setForgotSent] = useState(false);
+  const [forgotError, setForgotError] = useState('');
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setForgotError('');
+    setForgotLoading(true);
+    try {
+      const res = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: forgotEmail }),
+      });
+      const data = await res.json();
+      if (res.status === 429) {
+        setForgotError('Too many requests. Please wait a few minutes and try again.');
+      } else if (data.success) {
+        setForgotSent(true);
+      } else {
+        setForgotError(data.error ?? 'Something went wrong. Please try again.');
+      }
+    } catch {
+      setForgotError('Network error. Please try again.');
+    } finally {
+      setForgotLoading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -321,7 +353,84 @@ export default function LoginContent() {
                   {t('remember')}
                 </span>
               </motion.label>
+              <button
+                type="button"
+                onClick={() => { setShowForgotPassword(true); setForgotSent(false); setForgotError(''); setForgotEmail(''); }}
+                className="text-sm text-[#2B7A78] font-semibold hover:underline"
+              >
+                Forgot password?
+              </button>
             </motion.div>
+
+            {/* Forgot Password Inline Panel */}
+            {showForgotPassword && (
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-gray-50 border border-gray-200 rounded-xl p-4"
+              >
+                {forgotSent ? (
+                  <div className="flex flex-col items-center gap-2 py-2 text-center">
+                    <CheckCircle className="w-8 h-8 text-green-500" />
+                    <p className="text-sm font-semibold text-gray-800">Check your inbox</p>
+                    <p className="text-xs text-gray-500">
+                      If an account with that email exists, a reset link has been sent. Check your spam folder too.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setShowForgotPassword(false)}
+                      className="mt-1 text-xs text-[#2B7A78] hover:underline"
+                    >
+                      Back to login
+                    </button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleForgotPassword} className="space-y-3">
+                    <div className="flex items-center justify-between mb-1">
+                      <p className="text-sm font-semibold text-gray-800">Reset your password</p>
+                      <button
+                        type="button"
+                        onClick={() => setShowForgotPassword(false)}
+                        className="text-xs text-gray-400 hover:text-gray-600"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                    <p className="text-xs text-gray-500">
+                      Enter your email and we&apos;ll send you a reset link.
+                    </p>
+                    {forgotError && (
+                      <div className="flex items-center gap-2 p-2 bg-red-50 border border-red-200 rounded-lg text-red-700 text-xs">
+                        <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                        {forgotError}
+                      </div>
+                    )}
+                    <div className="flex gap-2">
+                      <input
+                        type="email"
+                        required
+                        value={forgotEmail}
+                        onChange={(e) => setForgotEmail(e.target.value)}
+                        placeholder="your@email.com"
+                        className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2B7A78]/40"
+                      />
+                      <button
+                        type="submit"
+                        disabled={forgotLoading}
+                        className="px-4 py-2 bg-gradient-to-r from-[#2B7A78] to-[#1d5856] text-white text-sm font-semibold rounded-lg disabled:opacity-50 whitespace-nowrap"
+                      >
+                        {forgotLoading ? (
+                          <span className="flex items-center gap-1.5">
+                            <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin inline-block" />
+                            Sending…
+                          </span>
+                        ) : 'Send link'}
+                      </button>
+                    </div>
+                  </form>
+                )}
+              </motion.div>
+            )}
 
             {/* Submit */}
             <motion.button

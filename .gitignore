@@ -36,8 +36,7 @@ yarn-error.log*
 next-env.d.ts
 
 # prisma
-/prisma/migrations/*
-!/prisma/migrations/.gitkeep
+# migrations must be committed so `prisma migrate deploy` works on Vercel
 
 # IDE
 .vscode/
