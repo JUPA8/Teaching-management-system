@@ -8,6 +8,7 @@ type ScheduleBooking = Prisma.BookingGetPayload<{
     course: { select: { name: true; type: true } };
     teacher: { include: { user: { select: { name: true } } } };
     attendance: { select: { status: true } };
+    grades: { select: { score: true; maxScore: true } };
   };
 }>;
 
@@ -34,13 +35,17 @@ export default async function StudentSchedulePage() {
       course: { select: { name: true, type: true } },
       teacher: { include: { user: { select: { name: true } } } },
       attendance: { select: { status: true } },
+      grades: { select: { score: true, maxScore: true } },
     },
     orderBy: { scheduledAt: 'asc' },
   });
 
   const now = new Date();
   const upcoming = allBookings.filter(
-    (b: ScheduleBooking) => new Date(b.scheduledAt) >= now && b.status !== 'CANCELLED'
+    (b: ScheduleBooking) =>
+      new Date(b.scheduledAt) >= now &&
+      b.status !== 'CANCELLED' &&
+      b.status !== 'COMPLETED'
   );
   const past = allBookings.filter(
     (b: ScheduleBooking) => new Date(b.scheduledAt) < now || b.status === 'CANCELLED' || b.status === 'COMPLETED'
@@ -205,11 +210,15 @@ export default async function StudentSchedulePage() {
                   <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">
                     Attendance
                   </th>
+                  <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                    Grade
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {past.slice(0, 20).map((booking: ScheduleBooking) => {
-                  const sc = statusConfig[booking.status] ?? statusConfig.COMPLETED;
+                  const sc    = statusConfig[booking.status] ?? statusConfig.COMPLETED;
+                  const grade = booking.grades[0] ?? null;
                   return (
                     <tr key={booking.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4 text-sm font-medium text-gray-900">
@@ -242,6 +251,15 @@ export default async function StudentSchedulePage() {
                             }`}
                           >
                             {booking.attendance.status}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-gray-400">—</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4">
+                        {grade ? (
+                          <span className="text-sm font-semibold text-gray-800">
+                            {grade.score}/{grade.maxScore}
                           </span>
                         ) : (
                           <span className="text-xs text-gray-400">—</span>

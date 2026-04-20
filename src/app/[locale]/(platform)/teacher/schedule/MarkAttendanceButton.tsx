@@ -2,22 +2,26 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import { CheckCircle, XCircle, Loader2, Star } from 'lucide-react';
 
 interface Props {
   bookingId: string;
+  studentId: string;
+  courseId: string;
 }
 
-export default function MarkAttendanceButton({ bookingId }: Props) {
+export default function MarkAttendanceButton({ bookingId, studentId, courseId }: Props) {
   const router = useRouter();
   const [loading, setLoading] = useState<'PRESENT' | 'ABSENT' | null>(null);
   const [done, setDone] = useState<'PRESENT' | 'ABSENT' | null>(null);
+  const [score, setScore] = useState('');
   const [error, setError] = useState('');
 
   async function mark(status: 'PRESENT' | 'ABSENT') {
     setLoading(status);
     setError('');
     try {
+      // 1. Mark attendance
       const res = await fetch('/api/attendance', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -28,8 +32,25 @@ export default function MarkAttendanceButton({ bookingId }: Props) {
         setError(json.error ?? 'Failed to mark attendance');
         return;
       }
+
+      // 2. Record grade if a score was entered
+      const scoreNum = parseFloat(score.trim());
+      if (score.trim() !== '' && !isNaN(scoreNum) && scoreNum >= 0 && scoreNum <= 10) {
+        await fetch('/api/grades', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            studentId,
+            courseId,
+            bookingId,
+            score: scoreNum,
+            maxScore: 10,
+            label: 'Session Grade',
+          }),
+        });
+      }
+
       setDone(status);
-      // Refresh server component data — session moves to history
       router.refresh();
     } catch {
       setError('Network error. Please try again.');
@@ -50,7 +71,24 @@ export default function MarkAttendanceButton({ bookingId }: Props) {
   }
 
   return (
-    <div className="flex flex-col items-end gap-1">
+    <div className="flex flex-col items-end gap-2">
+      {/* Grade input */}
+      <div className="flex items-center gap-2">
+        <Star className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+        <input
+          type="number"
+          min={0}
+          max={10}
+          step={0.5}
+          value={score}
+          onChange={e => setScore(e.target.value)}
+          placeholder="Grade"
+          className="w-20 px-2 py-1 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#2B7A78]/40 text-center"
+        />
+        <span className="text-xs text-gray-400 whitespace-nowrap">/ 10 (opt.)</span>
+      </div>
+
+      {/* Attendance buttons */}
       <div className="flex gap-2">
         <button
           onClick={() => mark('PRESENT')}

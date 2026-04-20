@@ -6,9 +6,10 @@ import MarkAttendanceButton from './MarkAttendanceButton';
 
 type ScheduleBooking = Prisma.BookingGetPayload<{
   include: {
-    course: { select: { name: true } };
+    course: { select: { id: true; name: true } };
     student: { include: { user: { select: { name: true } } } };
     attendance: { select: { status: true } };
+    grades: { select: { score: true; maxScore: true } };
   };
 }>;
 
@@ -43,9 +44,10 @@ export default async function TeacherSchedulePage() {
       bookings: {
         orderBy: { scheduledAt: 'asc' },
         include: {
-          course: { select: { name: true } },
+          course: { select: { id: true, name: true } },
           student: { include: { user: { select: { name: true } } } },
           attendance: { select: { status: true } },
+          grades: { select: { score: true, maxScore: true } },
         },
       },
     },
@@ -130,8 +132,12 @@ export default async function TeacherSchedulePage() {
                     </div>
                   </div>
 
-                  {/* Attendance action */}
-                  <MarkAttendanceButton bookingId={booking.id} />
+                  {/* Attendance + grade action */}
+                  <MarkAttendanceButton
+                    bookingId={booking.id}
+                    studentId={booking.student.id}
+                    courseId={booking.course.id}
+                  />
                 </div>
               );
             })}
@@ -165,12 +171,14 @@ export default async function TeacherSchedulePage() {
                   <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Course</th>
                   <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Student</th>
                   <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Attendance</th>
+                  <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Grade</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {completed.map((booking: ScheduleBooking) => {
-                  const date = new Date(booking.scheduledAt);
-                  const att  = booking.attendance?.status ?? null;
+                  const date  = new Date(booking.scheduledAt);
+                  const att   = booking.attendance?.status ?? null;
+                  const grade = booking.grades[0] ?? null;
                   return (
                     <tr key={booking.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-5 py-3 text-gray-700 whitespace-nowrap">
@@ -190,6 +198,15 @@ export default async function TeacherSchedulePage() {
                           </span>
                         ) : (
                           <span className="text-gray-400 text-xs">Not recorded</span>
+                        )}
+                      </td>
+                      <td className="px-5 py-3">
+                        {grade ? (
+                          <span className="text-sm font-semibold text-gray-800">
+                            {grade.score}/{grade.maxScore}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400 text-xs">—</span>
                         )}
                       </td>
                     </tr>
