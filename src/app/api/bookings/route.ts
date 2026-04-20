@@ -3,15 +3,21 @@ export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
-import { requireAuth, getCurrentUser, requireAnyRole } from '@/lib/auth-helpers';
+import { requireAuth, requireAnyRole } from '@/lib/auth-helpers';
 import { UserRole } from '@prisma/client';
+import crypto from 'crypto';
 
 const createBookingSchema = z.object({
   courseId: z.string().cuid(),
-  studentId: z.string().cuid().optional(), // optional for STUDENT role — derived from session
+  // Single student (original behaviour)
+  studentId: z.string().cuid().optional(),
+  // Bulk: array of studentIds (admin-only)
+  studentIds: z.array(z.string().cuid()).optional(),
   teacherId: z.string().cuid(),
   scheduledAt: z.string().datetime(),
   notes: z.string().optional(),
+  // Recurring: how many additional weekly sessions to generate (0 = single)
+  recurrenceWeeks: z.number().int().min(0).max(52).optional(),
 });
 
 // GET /api/bookings - List bookings
@@ -29,33 +35,15 @@ export async function GET(request: NextRequest) {
 
     const where: any = {};
 
-    // Role-based filtering
     if (user.role === UserRole.STUDENT) {
-      // Students can only see their own bookings
-      const student = await prisma.student.findUnique({
-        where: { userId: user.id },
-      });
-      if (!student) {
-        return NextResponse.json(
-          { success: false, error: 'Student profile not found' },
-          { status: 404 }
-        );
-      }
+      const student = await prisma.student.findUnique({ where: { userId: user.id } });
+      if (!student) return NextResponse.json({ success: false, error: 'Student profile not found' }, { status: 404 });
       where.studentId = student.id;
     } else if (user.role === UserRole.TEACHER) {
-      // Teachers can only see their own bookings
-      const teacher = await prisma.teacher.findUnique({
-        where: { userId: user.id },
-      });
-      if (!teacher) {
-        return NextResponse.json(
-          { success: false, error: 'Teacher profile not found' },
-          { status: 404 }
-        );
-      }
+      const teacher = await prisma.teacher.findUnique({ where: { userId: user.id } });
+      if (!teacher) return NextResponse.json({ success: false, error: 'Teacher profile not found' }, { status: 404 });
       where.teacherId = teacher.id;
     } else {
-      // Admins can filter by studentId or teacherId
       if (studentId) where.studentId = studentId;
       if (teacherId) where.teacherId = teacherId;
     }
@@ -69,36 +57,9 @@ export async function GET(request: NextRequest) {
         take: limit,
         orderBy: { scheduledAt: 'desc' },
         include: {
-          course: {
-            select: {
-              id: true,
-              name: true,
-              type: true,
-              duration: true,
-            },
-          },
-          student: {
-            include: {
-              user: {
-                select: {
-                  id: true,
-                  name: true,
-                  email: true,
-                },
-              },
-            },
-          },
-          teacher: {
-            include: {
-              user: {
-                select: {
-                  id: true,
-                  name: true,
-                  email: true,
-                },
-              },
-            },
-          },
+          course: { select: { id: true, name: true, type: true, duration: true } },
+          student: { include: { user: { select: { id: true, name: true, email: true } } } },
+          teacher: { include: { user: { select: { id: true, name: true, email: true } } } },
         },
       }),
       prisma.booking.count({ where }),
@@ -106,15 +67,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: {
-        bookings,
-        pagination: {
-          page,
-          limit,
-          total,
-          totalPages: Math.ceil(total / limit),
-        },
-      },
+      data: { bookings, pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } },
     });
   } catch (error: any) {
     console.error('Error fetching bookings:', error);
@@ -125,10 +78,11 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/bookings - Create new booking
-// ADMIN: can book for any student/teacher
-// STUDENT: can only book for themselves; studentId in body is ignored and derived from session
-// TEACHER: cannot create bookings (only admin and students book)
+// POST /api/bookings - Create booking(s)
+// Supports:
+//   - Single booking:   { studentId, ... }
+//   - Bulk booking:     { studentIds: [...], ... }       (ADMIN only)
+//   - Recurring:        { ..., recurrenceWeeks: N }      generates N+1 weekly sessions
 export async function POST(request: NextRequest) {
   try {
     const user = await requireAnyRole([UserRole.ADMIN, UserRole.STUDENT]);
@@ -144,134 +98,120 @@ export async function POST(request: NextRequest) {
     }
 
     const data = validation.data;
+    const recurrenceWeeks = data.recurrenceWeeks ?? 0;
 
-    // ── Ownership enforcement ─────────────────────────────────────────────────
-    let resolvedStudentId: string;
+    // ── Resolve student IDs ────────────────────────────────────────────────────
+    let resolvedStudentIds: string[];
 
     if (user.role === UserRole.STUDENT) {
-      // Derive studentId from the authenticated session — never trust body
       const student = await prisma.student.findUnique({
         where: { userId: user.id },
         select: { id: true },
       });
-      if (!student) {
-        return NextResponse.json(
-          { success: false, error: 'Student profile not found' },
-          { status: 404 }
-        );
-      }
-      // Reject if body tries to book on behalf of a different student
+      if (!student) return NextResponse.json({ success: false, error: 'Student profile not found' }, { status: 404 });
       if (data.studentId && data.studentId !== student.id) {
-        return NextResponse.json(
-          { success: false, error: 'Forbidden: cannot book on behalf of another student' },
-          { status: 403 }
-        );
+        return NextResponse.json({ success: false, error: 'Forbidden: cannot book on behalf of another student' }, { status: 403 });
       }
-      resolvedStudentId = student.id;
+      resolvedStudentIds = [student.id];
     } else {
-      // ADMIN must supply studentId
-      if (!data.studentId) {
-        return NextResponse.json(
-          { success: false, error: 'studentId is required' },
-          { status: 400 }
-        );
+      // ADMIN: may supply studentIds (bulk) or single studentId
+      if (data.studentIds && data.studentIds.length > 0) {
+        resolvedStudentIds = data.studentIds;
+      } else if (data.studentId) {
+        resolvedStudentIds = [data.studentId];
+      } else {
+        return NextResponse.json({ success: false, error: 'studentId or studentIds is required' }, { status: 400 });
       }
-      resolvedStudentId = data.studentId;
     }
 
-    // Verify course exists
-    const course = await prisma.course.findUnique({
-      where: { id: data.courseId },
-    });
+    // ── Verify course ──────────────────────────────────────────────────────────
+    const course = await prisma.course.findUnique({ where: { id: data.courseId } });
+    if (!course) return NextResponse.json({ success: false, error: 'Course not found' }, { status: 404 });
+    if (!course.isActive) return NextResponse.json({ success: false, error: 'Course is not available' }, { status: 400 });
 
-    if (!course) {
-      return NextResponse.json(
-        { success: false, error: 'Course not found' },
-        { status: 404 }
-      );
-    }
-
-    if (!course.isActive) {
-      return NextResponse.json(
-        { success: false, error: 'Course is not available' },
-        { status: 400 }
-      );
-    }
-
-    // Verify teacher exists and is active
+    // ── Verify teacher ─────────────────────────────────────────────────────────
     const teacher = await prisma.teacher.findUnique({
       where: { id: data.teacherId },
       select: { id: true, isActive: true },
     });
     if (!teacher || !teacher.isActive) {
-      return NextResponse.json(
-        { success: false, error: 'Teacher not found or inactive' },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: 'Teacher not found or inactive' }, { status: 404 });
     }
 
-    // Calculate end time
-    const scheduledAt = new Date(data.scheduledAt);
-    const endTime = new Date(scheduledAt.getTime() + course.duration * 60000);
-
-    // Check for teacher conflicts
-    const teacherConflict = await prisma.booking.findFirst({
-      where: {
-        teacherId: data.teacherId,
-        status: { in: ['PENDING', 'CONFIRMED'] },
-        OR: [
-          { AND: [{ scheduledAt: { lte: scheduledAt } }, { endTime: { gt: scheduledAt } }] },
-          { AND: [{ scheduledAt: { lt: endTime } }, { endTime: { gte: endTime } }] },
-        ],
-      },
-    });
-
-    if (teacherConflict) {
-      return NextResponse.json(
-        { success: false, error: 'Teacher is not available at this time' },
-        { status: 409 }
-      );
+    // ── Build list of scheduled datetimes (weekly recurrence) ─────────────────
+    const baseTime = new Date(data.scheduledAt);
+    const sessionTimes: Date[] = [];
+    for (let week = 0; week <= recurrenceWeeks; week++) {
+      const t = new Date(baseTime.getTime() + week * 7 * 24 * 60 * 60 * 1000);
+      sessionTimes.push(t);
     }
 
-    // Create booking
-    const booking = await prisma.booking.create({
-      data: {
-        courseId: data.courseId,
-        studentId: resolvedStudentId,
-        teacherId: data.teacherId,
-        scheduledAt,
-        endTime,
-        notes: data.notes,
-        status: user.role === UserRole.ADMIN ? 'CONFIRMED' : 'PENDING',
-      },
-      include: {
-        course: true,
-        student: {
-          include: {
-            user: { select: { id: true, name: true, email: true } },
-          },
+    // ── Check teacher conflicts for all session slots ──────────────────────────
+    for (const start of sessionTimes) {
+      const end = new Date(start.getTime() + course.duration * 60000);
+      const conflict = await prisma.booking.findFirst({
+        where: {
+          teacherId: data.teacherId,
+          status: { in: ['PENDING', 'CONFIRMED'] },
+          OR: [
+            { AND: [{ scheduledAt: { lte: start } }, { endTime: { gt: start } }] },
+            { AND: [{ scheduledAt: { lt: end } }, { endTime: { gte: end } }] },
+          ],
         },
-        teacher: {
-          include: {
-            user: { select: { id: true, name: true, email: true } },
-          },
-        },
-      },
-    });
+        select: { scheduledAt: true },
+      });
+      if (conflict) {
+        return NextResponse.json(
+          { success: false, error: `Teacher is not available on ${start.toLocaleDateString()} at ${start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` },
+          { status: 409 }
+        );
+      }
+    }
 
-    return NextResponse.json({
-      success: true,
-      data: booking,
-      message: 'Booking created successfully',
-    }, { status: 201 });
+    // ── Create all bookings (bulk × recurrence) ────────────────────────────────
+    const isAdmin = user.role === UserRole.ADMIN;
+    const initialStatus = isAdmin ? 'CONFIRMED' : 'PENDING';
+
+    // Recurring series share a group ID so they can be managed together
+    const recurrenceGroupId = recurrenceWeeks > 0 ? crypto.randomUUID() : null;
+
+    const created: any[] = [];
+
+    for (const studentId of resolvedStudentIds) {
+      for (const start of sessionTimes) {
+        const end = new Date(start.getTime() + course.duration * 60000);
+        const booking = await prisma.booking.create({
+          data: {
+            courseId: data.courseId,
+            studentId,
+            teacherId: data.teacherId,
+            scheduledAt: start,
+            endTime: end,
+            notes: data.notes,
+            status: initialStatus,
+            recurrenceGroupId,
+          },
+          include: {
+            course: { select: { name: true } },
+            student: { include: { user: { select: { name: true, email: true } } } },
+            teacher: { include: { user: { select: { name: true } } } },
+          },
+        });
+        created.push(booking);
+      }
+    }
+
+    return NextResponse.json(
+      {
+        success: true,
+        data: created.length === 1 ? created[0] : created,
+        message: `${created.length} booking${created.length !== 1 ? 's' : ''} created successfully`,
+      },
+      { status: 201 }
+    );
   } catch (error: any) {
     console.error('Error creating booking:', error);
-    const status = error.message?.includes('Unauthorized') ? 401
-                 : error.message?.includes('One of') ? 403
-                 : 500;
-    return NextResponse.json(
-      { success: false, error: error.message || 'Failed to create booking' },
-      { status }
-    );
+    const status = error.message?.includes('Unauthorized') ? 401 : error.message?.includes('One of') ? 403 : 500;
+    return NextResponse.json({ success: false, error: error.message || 'Failed to create booking' }, { status });
   }
 }

@@ -317,6 +317,9 @@ model Booking {
   cancelledAt     DateTime?
   cancelReason    String?       @db.Text
 
+  // Recurrence — all sessions in the same series share this ID
+  recurrenceGroupId String?
+
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
 
@@ -451,6 +454,19 @@ model ProbestundeRequest {
   @@index([isContacted])
   @@index([createdAt])
   @@map("probestunde_requests")
+}
+
+// ============================================
+// SITE SETTINGS (Admin-editable global config)
+// ============================================
+
+model SiteSettings {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String   @db.Text
+  updatedAt DateTime @updatedAt
+
+  @@map("site_settings")
 }
 
 // ============================================

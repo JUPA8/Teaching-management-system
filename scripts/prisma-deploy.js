@@ -31,6 +31,7 @@ const MIGRATIONS = [
   '20260327000000_add_email_verification',
   '20260418000000_add_attendance_grades',
   '20260419000000_add_password_reset_tokens',
+  '20260420000000_add_recurrence_and_settings',
 ];
 
 function exec(cmd, opts = {}) {

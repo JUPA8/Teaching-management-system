@@ -91,24 +91,35 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Upsert attendance record
-    const record = await prisma.attendance.upsert({
+    // Upsert attendance record + mark booking as COMPLETED atomically
+    const [record] = await prisma.$transaction([
+      prisma.attendance.upsert({
+        where: { bookingId },
+        create: {
+          bookingId,
+          studentId: booking.studentId,
+          teacherId: booking.teacherId,
+          status,
+          notes,
+        },
+        update: { status, notes, updatedAt: new Date() },
+      }),
+      prisma.booking.update({
+        where: { id: bookingId },
+        data: { status: 'COMPLETED' },
+      }),
+    ]);
+
+    // Return the attendance record with related data
+    const fullRecord = await prisma.attendance.findUnique({
       where: { bookingId },
-      create: {
-        bookingId,
-        studentId: booking.studentId,
-        teacherId: booking.teacherId,
-        status,
-        notes,
-      },
-      update: { status, notes, updatedAt: new Date() },
       include: {
         booking: { select: { scheduledAt: true, course: { select: { name: true } } } },
         student: { include: { user: { select: { name: true } } } },
       },
     });
 
-    return NextResponse.json({ success: true, data: record });
+    return NextResponse.json({ success: true, data: fullRecord });
   } catch (error: any) {
     const status = error.message?.includes('Unauthorized') ? 401 : 500;
     return NextResponse.json({ success: false, error: error.message || 'Failed to save attendance' }, { status });
