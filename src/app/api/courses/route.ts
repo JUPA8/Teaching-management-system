@@ -1,7 +1,9 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
-import { requireAdmin } from '@/lib/auth-helpers';
+import { requireAdmin, getCurrentUser } from '@/lib/auth-helpers';
 
 const createCourseSchema = z.object({
   name: z.string().min(2),
@@ -27,6 +29,9 @@ const createCourseSchema = z.object({
 // GET /api/courses - List all courses
 export async function GET(request: NextRequest) {
   try {
+    const currentUser = await getCurrentUser();
+    const isAdmin = currentUser?.role === 'ADMIN';
+
     const { searchParams } = new URL(request.url);
     const type = searchParams.get('type');
     const isActive = searchParams.get('isActive');
@@ -53,7 +58,8 @@ export async function GET(request: NextRequest) {
                     select: {
                       id: true,
                       name: true,
-                      email: true,
+                      // Only expose email to authenticated admins
+                      ...(isAdmin ? { email: true } : {}),
                     },
                   },
                 },

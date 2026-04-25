@@ -1,8 +1,10 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { Prisma } from '@prisma/client';
-import { requireAdmin } from '@/lib/auth-helpers';
+import { requireAdmin, getCurrentUser } from '@/lib/auth-helpers';
 
 const updateCourseSchema = z.object({
   name: z.string().min(2).optional(),
@@ -31,6 +33,9 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    const currentUser = await getCurrentUser();
+    const isAdmin = currentUser?.role === 'ADMIN';
+
     const { id } = params;
 
     const course = await prisma.course.findUnique({
@@ -44,29 +49,31 @@ export async function GET(
                   select: {
                     id: true,
                     name: true,
-                    email: true,
                     image: true,
+                    // Emails only visible to admins
+                    ...(isAdmin ? { email: true } : {}),
                   },
                 },
               },
             },
           },
         },
-        enrollments: {
-          include: {
-            student: {
-              include: {
-                user: {
-                  select: {
-                    id: true,
-                    name: true,
-                    email: true,
+        // Enrollment list (with student PII) is admin-only
+        ...(isAdmin
+          ? {
+              enrollments: {
+                include: {
+                  student: {
+                    include: {
+                      user: {
+                        select: { id: true, name: true, email: true },
+                      },
+                    },
                   },
                 },
               },
-            },
-          },
-        },
+            }
+          : {}),
         _count: {
           select: {
             enrollments: true,

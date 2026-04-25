@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
+import { checkRateLimit, getClientIP, tooManyRequests } from '@/lib/rate-limit';
 
 // Validation schema matching frontend payload
 const studentSchema = z.object({
@@ -21,6 +22,11 @@ const probestundeSchema = z.object({
 type ProbestundeRequest = z.infer<typeof probestundeSchema>;
 
 export async function POST(request: NextRequest) {
+  // Rate limit: 3 submissions per IP per hour
+  const ip = getClientIP(request);
+  const rl = checkRateLimit(`probestunde:${ip}`, 3, 60 * 60 * 1000);
+  if (!rl.success) return tooManyRequests(rl.retryAfterSeconds);
+
   try {
     const body = await request.json();
     

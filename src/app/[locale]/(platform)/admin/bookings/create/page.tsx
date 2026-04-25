@@ -35,18 +35,15 @@ export default function CreateBookingPage() {
 
   async function fetchData() {
     try {
-      const [cr, ur] = await Promise.all([
+      const [cr, sr, tr] = await Promise.all([
         fetch('/api/courses?limit=100'),
-        fetch('/api/users?limit=200'),
+        fetch('/api/users?role=STUDENT&limit=500'),
+        fetch('/api/users?role=TEACHER&limit=500'),
       ]);
-      const cd = await cr.json();
-      const ud = await ur.json();
+      const [cd, sd, td] = await Promise.all([cr.json(), sr.json(), tr.json()]);
       if (cd.success) setCourses(cd.data.courses);
-      if (ud.success) {
-        const all: User[] = ud.data.users;
-        setStudents(all.filter(u => u.role === 'STUDENT' && u.student?.id) as User[]);
-        setTeachers(all.filter(u => u.role === 'TEACHER' && u.teacher?.id) as User[]);
-      }
+      if (sd.success) setStudents((sd.data.users as User[]).filter(u => u.student?.id));
+      if (td.success) setTeachers((td.data.users as User[]).filter(u => u.teacher?.id));
     } catch { setError('Failed to load data'); }
   }
 

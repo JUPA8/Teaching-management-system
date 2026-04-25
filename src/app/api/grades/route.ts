@@ -89,17 +89,37 @@ export async function POST(request: NextRequest) {
       if (!teacher) return NextResponse.json({ success: false, error: 'Teacher profile not found' }, { status: 404 });
       teacherDbId = teacher.id;
 
-      // Verify teacher has a booking with this student for this course
-      const bookingExists = await prisma.booking.findFirst({
-        where: {
-          teacherId: teacher.id,
-          studentId,
-          courseId,
-          status: { in: ['CONFIRMED', 'COMPLETED'] },
-        },
-      });
-      if (!bookingExists) {
-        return NextResponse.json({ success: false, error: 'Forbidden: no confirmed booking with this student for this course' }, { status: 403 });
+      // If a bookingId is provided, verify it belongs to this teacher, student, and course
+      if (bookingId) {
+        const specificBooking = await prisma.booking.findUnique({
+          where: { id: bookingId },
+          select: { teacherId: true, studentId: true, courseId: true, status: true },
+        });
+        if (
+          !specificBooking ||
+          specificBooking.teacherId !== teacher.id ||
+          specificBooking.studentId !== studentId ||
+          specificBooking.courseId !== courseId ||
+          !['CONFIRMED', 'COMPLETED'].includes(specificBooking.status)
+        ) {
+          return NextResponse.json(
+            { success: false, error: 'Forbidden: booking not found or does not belong to you' },
+            { status: 403 }
+          );
+        }
+      } else {
+        // No bookingId — verify teacher has at least one booking with this student for this course
+        const bookingExists = await prisma.booking.findFirst({
+          where: {
+            teacherId: teacher.id,
+            studentId,
+            courseId,
+            status: { in: ['CONFIRMED', 'COMPLETED'] },
+          },
+        });
+        if (!bookingExists) {
+          return NextResponse.json({ success: false, error: 'Forbidden: no confirmed booking with this student for this course' }, { status: 403 });
+        }
       }
     } else {
       // Admin can specify teacherId in body, or we pick first teacher for that course/student

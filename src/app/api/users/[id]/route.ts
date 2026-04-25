@@ -160,9 +160,9 @@ export async function PATCH(
       updateData.role = data.role;
     }
 
-    // Hash password if provided
+    // Hash password if provided (12 rounds, consistent with registration)
     if (data.password) {
-      updateData.password = await bcrypt.hash(data.password, 10);
+      updateData.password = await bcrypt.hash(data.password, 12);
     }
 
     const user = await prisma.user.update({
@@ -202,9 +202,33 @@ export async function DELETE(
 
     const { id } = params;
 
-    await prisma.user.delete({
+    // Block deletion if user has any bookings (as teacher or student)
+    const user = await prisma.user.findUnique({
       where: { id },
+      select: {
+        teacher: { select: { id: true, _count: { select: { bookings: true } } } },
+        student: { select: { id: true, _count: { select: { bookings: true } } } },
+      },
     });
+
+    if (!user) {
+      return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
+    }
+
+    const teacherBookings = user.teacher?._count?.bookings ?? 0;
+    const studentBookings = user.student?._count?.bookings ?? 0;
+
+    if (teacherBookings > 0 || studentBookings > 0) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: `Cannot delete user: they have ${teacherBookings + studentBookings} booking(s). Cancel or reassign bookings first.`,
+        },
+        { status: 409 }
+      );
+    }
+
+    await prisma.user.delete({ where: { id } });
 
     return NextResponse.json({
       success: true,

@@ -1,49 +1,50 @@
 import { prisma } from '@/lib/prisma';
+import { requireAdmin } from '@/lib/auth-helpers';
+import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import DeleteBookingButton from './DeleteBookingButton';
 
 export default async function AdminBookingsPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams?: { page?: string };
 }) {
   const { locale } = await params;
 
-  const bookings = await prisma.booking.findMany({
-    orderBy: { scheduledAt: 'desc' },
-    take: 50,
-    include: {
-      course: {
-        select: {
-          id: true,
-          name: true,
-          type: true,
+  // Auth guard — this page is admin-only
+  const admin = await requireAdmin().catch(() => null);
+  if (!admin) redirect(`/${locale}/login`);
+
+  const page = Math.max(1, parseInt(searchParams?.page ?? '1') || 1);
+  const pageSize = 30;
+
+  const [bookings, totalCount] = await Promise.all([
+    prisma.booking.findMany({
+      orderBy: { scheduledAt: 'desc' },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+      include: {
+        course: {
+          select: { id: true, name: true, type: true },
         },
-      },
-      student: {
-        include: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            },
+        student: {
+          include: {
+            user: { select: { id: true, name: true, email: true } },
+          },
+        },
+        teacher: {
+          include: {
+            user: { select: { id: true, name: true, email: true } },
           },
         },
       },
-      teacher: {
-        include: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            },
-          },
-        },
-      },
-    },
-  });
+    }),
+    prisma.booking.count(),
+  ]);
+
+  const totalPages = Math.ceil(totalCount / pageSize);
 
   return (
     <div>
@@ -191,6 +192,34 @@ export default async function AdminBookingsPage({
           >
             Create Your First Booking
           </Link>
+        </div>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="mt-6 flex items-center justify-between text-sm text-gray-600">
+          <span>{totalCount} total bookings</span>
+          <div className="flex gap-2">
+            {page > 1 && (
+              <Link
+                href={`/${locale}/admin/bookings?page=${page - 1}`}
+                className="px-4 py-2 bg-white border border-[#D9B574]/40 rounded-lg hover:bg-[#D9B574]/10 transition-colors"
+              >
+                ← Previous
+              </Link>
+            )}
+            <span className="px-4 py-2 font-medium">
+              Page {page} of {totalPages}
+            </span>
+            {page < totalPages && (
+              <Link
+                href={`/${locale}/admin/bookings?page=${page + 1}`}
+                className="px-4 py-2 bg-white border border-[#D9B574]/40 rounded-lg hover:bg-[#D9B574]/10 transition-colors"
+              >
+                Next →
+              </Link>
+            )}
+          </div>
         </div>
       )}
     </div>

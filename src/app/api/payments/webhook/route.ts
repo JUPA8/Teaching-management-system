@@ -4,11 +4,15 @@ import Stripe from 'stripe';
 import { stripe } from '@/lib/stripe';
 import { prisma } from '@/lib/prisma';
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
-
 // POST /api/payments/webhook - Handle Stripe webhooks
 export async function POST(request: NextRequest) {
   try {
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    if (!webhookSecret) {
+      console.error('STRIPE_WEBHOOK_SECRET is not configured');
+      return NextResponse.json({ error: 'Webhook not configured' }, { status: 503 });
+    }
+
     const body = await request.text();
     const signature = headers().get('stripe-signature');
 

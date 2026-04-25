@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 import { requireAdmin, getCurrentUser } from '@/lib/auth-helpers';
+import { validatePassword } from '@/lib/validation';
 
 // Validation schemas
 const createUserSchema = z.object({
@@ -97,6 +98,15 @@ export async function POST(request: NextRequest) {
 
     const data = validation.data;
 
+    // Enforce password strength
+    const pwCheck = validatePassword(data.password);
+    if (!pwCheck.isValid) {
+      return NextResponse.json(
+        { success: false, error: 'Password does not meet security requirements', details: pwCheck.failedRules },
+        { status: 400 }
+      );
+    }
+
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
       where: { email: data.email },
@@ -109,8 +119,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(data.password, 10);
+    // Hash password with 12 rounds (consistent with self-registration)
+    const hashedPassword = await bcrypt.hash(data.password, 12);
 
     // Admin-created accounts are always auto-verified — the admin has implicitly
     // confirmed the identity. Email verification is only required for self-registration.

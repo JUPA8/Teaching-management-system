@@ -146,60 +146,82 @@ export async function POST(request: NextRequest) {
       sessionTimes.push(t);
     }
 
-    // ── Check teacher conflicts for all session slots ──────────────────────────
+    // ── Check teacher + student conflicts for all session slots ──────────────────
+    // Correct overlap formula: existing starts before new ends AND existing ends after new starts.
+    // This single condition handles all cases: partial overlap, containment, and exact match.
     for (const start of sessionTimes) {
       const end = new Date(start.getTime() + course.duration * 60000);
-      const conflict = await prisma.booking.findFirst({
+      const dateLabel = `${start.toLocaleDateString()} at ${start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+
+      const teacherConflict = await prisma.booking.findFirst({
         where: {
           teacherId: data.teacherId,
           status: { in: ['PENDING', 'CONFIRMED'] },
-          OR: [
-            { AND: [{ scheduledAt: { lte: start } }, { endTime: { gt: start } }] },
-            { AND: [{ scheduledAt: { lt: end } }, { endTime: { gte: end } }] },
-          ],
+          scheduledAt: { lt: end },
+          endTime: { gt: start },
         },
         select: { scheduledAt: true },
       });
-      if (conflict) {
+      if (teacherConflict) {
         return NextResponse.json(
-          { success: false, error: `Teacher is not available on ${start.toLocaleDateString()} at ${start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` },
+          { success: false, error: `Teacher is not available on ${dateLabel}` },
           { status: 409 }
         );
       }
+
+      for (const studentId of resolvedStudentIds) {
+        const studentConflict = await prisma.booking.findFirst({
+          where: {
+            studentId,
+            status: { in: ['PENDING', 'CONFIRMED'] },
+            scheduledAt: { lt: end },
+            endTime: { gt: start },
+          },
+          select: { scheduledAt: true },
+        });
+        if (studentConflict) {
+          return NextResponse.json(
+            { success: false, error: `A student already has a booking on ${dateLabel}` },
+            { status: 409 }
+          );
+        }
+      }
     }
 
-    // ── Create all bookings (bulk × recurrence) ────────────────────────────────
+    // ── Create all bookings (bulk × recurrence) inside a transaction ──────────
     const isAdmin = user.role === UserRole.ADMIN;
     const initialStatus = isAdmin ? 'CONFIRMED' : 'PENDING';
 
     // Recurring series share a group ID so they can be managed together
     const recurrenceGroupId = recurrenceWeeks > 0 ? crypto.randomUUID() : null;
 
-    const created: any[] = [];
-
-    for (const studentId of resolvedStudentIds) {
-      for (const start of sessionTimes) {
-        const end = new Date(start.getTime() + course.duration * 60000);
-        const booking = await prisma.booking.create({
-          data: {
-            courseId: data.courseId,
-            studentId,
-            teacherId: data.teacherId,
-            scheduledAt: start,
-            endTime: end,
-            notes: data.notes,
-            status: initialStatus,
-            recurrenceGroupId,
-          },
-          include: {
-            course: { select: { name: true } },
-            student: { include: { user: { select: { name: true, email: true } } } },
-            teacher: { include: { user: { select: { name: true } } } },
-          },
-        });
-        created.push(booking);
+    const created = await prisma.$transaction(async (tx: typeof prisma) => {
+      const results: any[] = [];
+      for (const studentId of resolvedStudentIds) {
+        for (const start of sessionTimes) {
+          const end = new Date(start.getTime() + course.duration * 60000);
+          const booking = await tx.booking.create({
+            data: {
+              courseId: data.courseId,
+              studentId,
+              teacherId: data.teacherId,
+              scheduledAt: start,
+              endTime: end,
+              notes: data.notes,
+              status: initialStatus,
+              recurrenceGroupId,
+            },
+            include: {
+              course: { select: { name: true } },
+              student: { include: { user: { select: { name: true, email: true } } } },
+              teacher: { include: { user: { select: { name: true } } } },
+            },
+          });
+          results.push(booking);
+        }
       }
-    }
+      return results;
+    });
 
     return NextResponse.json(
       {
