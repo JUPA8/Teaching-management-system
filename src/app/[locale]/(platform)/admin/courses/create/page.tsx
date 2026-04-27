@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { Check } from 'lucide-react';
+import { Check, Upload, X } from 'lucide-react';
+import Image from 'next/image';
 
 interface UserOption {
   id: string;         // User.id
@@ -81,6 +82,12 @@ export default function CreateCoursePage() {
   const [selectedTeachers, setSelectedTeachers] = useState<string[]>([]);
   const [selectedStudents, setSelectedStudents] = useState<string[]>([]);
 
+  // Image upload state
+  const [imageUrl, setImageUrl] = useState('');
+  const [imageUploading, setImageUploading] = useState(false);
+  const [imageError, setImageError] = useState('');
+  const imageInputRef = useRef<HTMLInputElement>(null);
+
   const [formData, setFormData] = useState({
     name: '',
     nameAr: '',
@@ -122,6 +129,47 @@ export default function CreateCoursePage() {
     fetchUsers();
   }, []);
 
+  async function handleImageUpload(file: File) {
+    if (!file) return;
+    setImageUploading(true);
+    setImageError('');
+    try {
+      // 1. Get presigned URL
+      const signedRes = await fetch('/api/upload/signed-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fileName: file.name,
+          fileType: file.type,
+          fileSize: file.size,
+          folder: 'courses',
+        }),
+      });
+      const signedData = await signedRes.json();
+      if (!signedData.success) {
+        setImageError(signedData.error || 'Failed to get upload URL');
+        return;
+      }
+
+      // 2. Upload directly to S3
+      const uploadRes = await fetch(signedData.data.url, {
+        method: 'PUT',
+        body: file,
+        headers: { 'Content-Type': file.type },
+      });
+      if (!uploadRes.ok) {
+        setImageError('Upload to storage failed');
+        return;
+      }
+
+      setImageUrl(signedData.data.publicUrl || signedData.data.key);
+    } catch {
+      setImageError('Upload failed. Please try again.');
+    } finally {
+      setImageUploading(false);
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -138,6 +186,7 @@ export default function CreateCoursePage() {
           totalSessions: parseInt(formData.totalSessions),
           teacherIds: selectedTeachers,
           studentIds: selectedStudents,
+          image: imageUrl || undefined,
         }),
       });
 
@@ -348,6 +397,44 @@ export default function CreateCoursePage() {
                 Active — visible to students
               </span>
             </label>
+
+            {/* ── Course Image Upload ─────────────────────── */}
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Course Image</label>
+              <input
+                ref={imageInputRef}
+                type="file"
+                accept="image/jpeg,image/jpg,image/png,image/webp"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleImageUpload(file);
+                }}
+              />
+              {imageUrl ? (
+                <div className="relative w-40 h-28 rounded-xl overflow-hidden border border-gray-200">
+                  <Image src={imageUrl} alt="Course image" fill className="object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => { setImageUrl(''); if (imageInputRef.current) imageInputRef.current.value = ''; }}
+                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-0.5 hover:bg-red-600 transition-colors"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => imageInputRef.current?.click()}
+                  disabled={imageUploading}
+                  className="flex items-center gap-2 px-4 py-3 border-2 border-dashed border-gray-200 rounded-xl text-sm text-gray-500 hover:border-[#2B7A78] hover:text-[#2B7A78] disabled:opacity-50 transition-colors"
+                >
+                  <Upload className="w-4 h-4" />
+                  {imageUploading ? 'Uploading…' : 'Upload course image'}
+                </button>
+              )}
+              {imageError && <p className="text-xs text-red-600 mt-1">{imageError}</p>}
+            </div>
           </div>
 
           {/* ── Teacher & Student assignment ──────────────── */}

@@ -6,15 +6,20 @@ import { prisma } from '@/lib/prisma';
 import { requireAuth } from '@/lib/auth-helpers';
 import { UserRole } from '@prisma/client';
 
-const createSchema = z.object({
-  studentId: z.string().cuid(),
-  courseId: z.string().cuid(),
-  bookingId: z.string().cuid().optional(),
-  score: z.number().min(0).max(10000),
-  maxScore: z.number().min(1).max(10000).default(100),
-  label: z.string().max(200).optional(),
-  notes: z.string().max(1000).optional(),
-});
+const createSchema = z
+  .object({
+    studentId: z.string().cuid(),
+    courseId: z.string().cuid(),
+    bookingId: z.string().cuid().optional(),
+    score: z.number().min(0).max(10),
+    maxScore: z.number().min(0.1).max(10).default(10),
+    label: z.string().max(200).optional(),
+    notes: z.string().max(1000).optional(),
+  })
+  .refine((d) => d.score <= d.maxScore, {
+    message: 'score must not exceed maxScore',
+    path: ['score'],
+  });
 
 // GET /api/grades
 // TEACHER: their own grades, filterable by studentId/courseId
@@ -143,7 +148,7 @@ export async function POST(request: NextRequest) {
         courseId,
         bookingId: bookingId ?? null,
         score,
-        maxScore: maxScore ?? 100,
+        maxScore: maxScore ?? 10,
         label: label ?? null,
         notes: notes ?? null,
       },

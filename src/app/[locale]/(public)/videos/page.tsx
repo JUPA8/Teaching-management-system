@@ -1,75 +1,39 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Clock, Filter, PlayCircle, Sparkles, Calendar, Eye, BookOpen, Star } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 import Image from 'next/image';
 
-// Video data with translation keys and image paths
-const videoData = [
-  { 
-    id: '1', 
-    translationKey: 'tajweedIntro', 
-    duration: '15:30', 
-    views: 45000, 
-    category: 'tajweed',
-    image: '/video-tajweed-intro.png',
-    featured: true
-  },
-  { 
-    id: '2', 
-    translationKey: 'arabicAlphabet', 
-    duration: '22:45', 
-    views: 78000, 
-    category: 'arabic',
-    image: '/video-arabic-alphabet.png',
-    featured: false
-  },
-  { 
-    id: '3', 
-    translationKey: 'fatiha', 
-    duration: '35:20', 
-    views: 125000, 
-    category: 'quran',
-    image: '/video-surah-fatiha.png',
-    featured: true
-  },
-  { 
-    id: '4', 
-    translationKey: 'seerah', 
-    duration: '42:15', 
-    views: 89000, 
-    category: 'islamic',
-    image: '/video-seerah.png',
-    featured: false
-  },
-  { 
-    id: '5', 
-    translationKey: 'makharij', 
-    duration: '28:40', 
-    views: 56000, 
-    category: 'tajweed',
-    image: '/video-makharij.png',
-    featured: false
-  },
-  { 
-    id: '6', 
-    translationKey: 'kidsShortSurahs', 
-    duration: '18:30', 
-    views: 234000, 
-    category: 'quran',
-    image: '/video-kids-surahs.png',
-    featured: true
-  },
-] as const;
-
-type VideoItem = typeof videoData[number];
+type DbVideo = {
+  id: string;
+  title: string;
+  description: string;
+  duration: string;
+  views: number;
+  category: string;
+  image: string | null;
+  videoUrl: string | null;
+  featured: boolean;
+  isActive: boolean;
+  sortOrder: number;
+};
 
 export default function VideosPage() {
   const t = useTranslations('videos');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [videos, setVideos] = useState<DbVideo[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/videos')
+      .then((r) => r.json())
+      .then((d) => { if (d.success) setVideos(d.data); })
+      .catch(() => {})
+      .finally(() => setIsLoading(false));
+  }, []);
 
   const categories = [
     { id: 'all', label: t('all') },
@@ -81,8 +45,8 @@ export default function VideosPage() {
 
   const filteredVideos =
     selectedCategory === 'all'
-      ? videoData
-      : videoData.filter((video) => video.category === selectedCategory);
+      ? videos
+      : videos.filter((video) => video.category === selectedCategory);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -107,7 +71,6 @@ export default function VideosPage() {
     },
   };
 
-  // Helper to format view count
   const formatViews = (views: number) => {
     if (views >= 1000) {
       return `${(views / 1000).toFixed(1)}K`;
@@ -151,12 +114,12 @@ export default function VideosPage() {
           <motion.div
             className="absolute top-20 right-20 w-32 h-32 border-4 border-[#D9B574]/20 rounded-full"
             animate={{ rotate: 360, scale: [1, 1.1, 1] }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
           />
           <motion.div
             className="absolute bottom-20 left-20 w-24 h-24 border-4 border-[#D9B574]/30"
             animate={{ rotate: -360 }}
-            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+            transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
             style={{ clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)' }}
           />
         </div>
@@ -178,7 +141,7 @@ export default function VideosPage() {
               <PlayCircle className="w-5 h-5 text-[#D9B574]" fill="#D9B574" />
               <span className="text-sm font-semibold tracking-wide">{t('badgeLabel')}</span>
             </motion.div>
-            
+
             {/* Main Title */}
             <motion.h1
               className="text-5xl md:text-7xl font-bold mb-8 leading-tight"
@@ -188,7 +151,7 @@ export default function VideosPage() {
             >
               {t('title')}
             </motion.h1>
-            
+
             {/* Golden Divider */}
             <motion.div
               className="flex items-center justify-center gap-3 mb-8"
@@ -202,7 +165,7 @@ export default function VideosPage() {
               <div className="w-3 h-3 bg-[#D9B574] rounded-full rotate-45" />
               <div className="h-1 w-16 bg-gradient-to-l from-transparent to-[#D9B574] rounded-full" />
             </motion.div>
-            
+
             {/* Subtitle */}
             <motion.p
               className="text-xl md:text-2xl text-white/95 max-w-3xl mx-auto leading-relaxed font-light mb-12"
@@ -277,7 +240,7 @@ export default function VideosPage() {
               <div className="h-1 w-12 bg-gradient-to-l from-transparent to-[#D9B574] rounded-full" />
             </div>
           </div>
-          
+
           <div className="flex flex-wrap justify-center gap-3 md:gap-4">
             {categories.map((category, index) => (
               <motion.button
@@ -300,25 +263,34 @@ export default function VideosPage() {
           </div>
         </motion.div>
 
-        {/* Videos Grid */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={selectedCategory}
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            exit="hidden"
-          >
-            {filteredVideos.map((video, index) => (
-              <motion.div key={video.id} variants={itemVariants} layout>
-                <VideoCard video={video} t={t} index={index} translationKey={video.translationKey} formatViews={formatViews} />
-              </motion.div>
-            ))}
-          </motion.div>
-        </AnimatePresence>
+        {/* Loading State */}
+        {isLoading && (
+          <div className="flex justify-center py-20">
+            <div className="w-10 h-10 border-4 border-[#2B7A78] border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
 
-        {filteredVideos.length === 0 && (
+        {/* Videos Grid */}
+        {!isLoading && (
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={selectedCategory}
+              className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+            >
+              {filteredVideos.map((video, index) => (
+                <motion.div key={video.id} variants={itemVariants} layout>
+                  <VideoCard video={video} t={t} index={index} formatViews={formatViews} />
+                </motion.div>
+              ))}
+            </motion.div>
+          </AnimatePresence>
+        )}
+
+        {!isLoading && filteredVideos.length === 0 && (
           <motion.div
             className="text-center py-12"
             initial={{ opacity: 0, scale: 0.9 }}
@@ -339,26 +311,34 @@ export default function VideosPage() {
   );
 }
 
-function VideoCard({ video, t, index, translationKey, formatViews }: { video: typeof videoData[number]; t: any; index: number; translationKey: string; formatViews: (views: number) => string }) {
-  const title = t(`list.${translationKey}.title`);
-  const description = t(`list.${translationKey}.description`);
-
+function VideoCard({
+  video,
+  t,
+  index,
+  formatViews,
+}: {
+  video: DbVideo;
+  t: any;
+  index: number;
+  formatViews: (views: number) => string;
+}) {
   return (
     <motion.div
       className="group relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl border-2 border-gray-100 hover:border-[#2B7A78]/30 transition-all duration-500 cursor-pointer"
       whileHover={{ y: -12 }}
     >
-      {/* Enhanced Thumbnail with Real Image */}
+      {/* Enhanced Thumbnail */}
       <div className="relative h-64 bg-gradient-to-br from-[#2B7A78] via-[#236260] to-[#1a5856] overflow-hidden">
-        {/* Actual Image */}
-        <Image
-          src={video.image}
-          alt={title}
-          fill
-          className="object-cover group-hover:scale-110 transition-transform duration-700"
-          quality={95}
-        />
-        
+        {video.image && (
+          <Image
+            src={video.image}
+            alt={video.title}
+            fill
+            className="object-cover group-hover:scale-110 transition-transform duration-700"
+            quality={95}
+          />
+        )}
+
         {/* Enhanced Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
 
@@ -447,7 +427,7 @@ function VideoCard({ video, t, index, translationKey, formatViews }: { video: ty
           viewport={{ once: true }}
           transition={{ delay: 0.3 + index * 0.1 }}
         >
-          {title}
+          {video.title}
         </motion.h3>
         <motion.p
           className="text-sm text-gray-600 mb-6 line-clamp-3 leading-relaxed"
@@ -456,7 +436,7 @@ function VideoCard({ video, t, index, translationKey, formatViews }: { video: ty
           viewport={{ once: true }}
           transition={{ delay: 0.4 + index * 0.1 }}
         >
-          {description}
+          {video.description}
         </motion.p>
 
         {/* Divider */}
@@ -464,18 +444,30 @@ function VideoCard({ video, t, index, translationKey, formatViews }: { video: ty
 
         {/* Enhanced Actions */}
         <div className="flex items-center gap-3">
-          <motion.div 
-            whileHover={{ scale: 1.03 }} 
-            whileTap={{ scale: 0.97 }} 
+          <motion.div
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
             className="flex-1"
           >
-            <button className="w-full bg-gradient-to-r from-[#2B7A78] to-[#236260] hover:from-[#236260] hover:to-[#2B7A78] text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-lg hover:shadow-2xl flex items-center justify-center gap-2">
-              <Play className="w-5 h-5 fill-current" />
-              <span>{t('watchNow')}</span>
-            </button>
+            {video.videoUrl ? (
+              <a
+                href={video.videoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full bg-gradient-to-r from-[#2B7A78] to-[#236260] hover:from-[#236260] hover:to-[#2B7A78] text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-lg hover:shadow-2xl flex items-center justify-center gap-2"
+              >
+                <Play className="w-5 h-5 fill-current" />
+                <span>{t('watchNow')}</span>
+              </a>
+            ) : (
+              <button className="w-full bg-gradient-to-r from-[#2B7A78] to-[#236260] hover:from-[#236260] hover:to-[#2B7A78] text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-lg hover:shadow-2xl flex items-center justify-center gap-2">
+                <Play className="w-5 h-5 fill-current" />
+                <span>{t('watchNow')}</span>
+              </button>
+            )}
           </motion.div>
-          <motion.div 
-            whileHover={{ scale: 1.08 }} 
+          <motion.div
+            whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.95 }}
           >
             <Link
@@ -491,9 +483,7 @@ function VideoCard({ video, t, index, translationKey, formatViews }: { video: ty
       {/* Hover Glow Effect */}
       <motion.div
         className="absolute inset-0 rounded-3xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-        style={{
-          boxShadow: '0 0 40px rgba(43, 122, 120, 0.3)',
-        }}
+        style={{ boxShadow: '0 0 40px rgba(43, 122, 120, 0.3)' }}
       />
     </motion.div>
   );

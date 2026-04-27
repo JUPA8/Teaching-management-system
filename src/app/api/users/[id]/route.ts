@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 import { requireAdmin, getCurrentUser } from '@/lib/auth-helpers';
+import { validatePassword } from '@/lib/validation';
 
 const updateUserSchema = z.object({
   email: z.string().email().optional(),
@@ -160,8 +161,15 @@ export async function PATCH(
       updateData.role = data.role;
     }
 
-    // Hash password if provided (12 rounds, consistent with registration)
+    // Validate and hash password if provided (12 rounds, consistent with registration)
     if (data.password) {
+      const pwCheck = validatePassword(data.password);
+      if (!pwCheck.isValid) {
+        return NextResponse.json(
+          { success: false, error: 'Password does not meet requirements', failedRules: pwCheck.failedRules },
+          { status: 400 }
+        );
+      }
       updateData.password = await bcrypt.hash(data.password, 12);
     }
 

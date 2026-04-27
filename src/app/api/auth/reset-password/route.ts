@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
-import { checkRateLimit, tooManyRequests, getClientIP } from '@/lib/rate-limit';
+import { checkRateLimitAsync, tooManyRequests, getClientIP } from '@/lib/rate-limit';
 
 const schema = z.object({
   token: z.string().min(1),
@@ -17,7 +17,7 @@ const schema = z.object({
 export async function POST(request: NextRequest) {
   // Rate limit: 5 attempts per IP per 15 minutes
   const ip = getClientIP(request);
-  const rl = checkRateLimit(`reset-password:${ip}`, 5, 15 * 60 * 1000);
+  const rl = await checkRateLimitAsync(`reset-password:${ip}`, 5, 15 * 60 * 1000);
   if (!rl.success) {
     return tooManyRequests(rl.retryAfterSeconds!);
   }

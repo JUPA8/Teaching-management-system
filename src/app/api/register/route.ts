@@ -5,7 +5,7 @@ import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { sendVerificationEmail } from '@/lib/email';
 import { validatePassword, normalizeEmail } from '@/lib/validation';
-import { checkRateLimit, getClientIP, tooManyRequests } from '@/lib/rate-limit';
+import { checkRateLimitAsync, getClientIP, tooManyRequests } from '@/lib/rate-limit';
 
 // 5 registrations per IP per 15 minutes
 const RATE_LIMIT = 5;
@@ -53,7 +53,7 @@ const registerSchema = z.object({
 export async function POST(request: NextRequest) {
   // Rate limit: 5 attempts per IP per 15 minutes
   const ip = getClientIP(request);
-  const rl = checkRateLimit(`register:${ip}`, RATE_LIMIT, RATE_WINDOW_MS);
+  const rl = await checkRateLimitAsync(`register:${ip}`, RATE_LIMIT, RATE_WINDOW_MS);
   if (!rl.success) return tooManyRequests(rl.retryAfterSeconds);
 
   try {

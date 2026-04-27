@@ -3,7 +3,7 @@
 import { Link } from '@/i18n/routing';
 import { useTranslations, useLocale } from 'next-intl';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Users, Award, Globe, BookOpen } from 'lucide-react';
+import { Users, Globe, BookOpen, GraduationCap, Award } from 'lucide-react';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 
@@ -44,9 +44,10 @@ export default function Hero() {
 
   // Updated statistics
   const stats = [
-    { icon: Users, value: '10,000+', label: t('students') || 'Students' },
-    { icon: Award, value: '50+', label: t('teachers') || 'Teachers' },
-    { icon: Globe, value: '15+', label: t('countries') || 'Countries' },
+    { icon: GraduationCap, value: '18', label: t('teachers') || 'Qualifizierte Lehrer' },
+    { icon: Globe, value: '11', label: t('countries') || 'Länder' },
+    { icon: BookOpen, value: '10+', label: isArabic ? 'لغات' : locale === 'de' ? 'Sprachen' : 'Languages' },
+    { icon: Users, value: '460+', label: t('students') || 'Gesamte Schüler' },
   ];
 
   return (
@@ -230,7 +231,7 @@ export default function Hero() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1 }}
-              className="grid grid-cols-3 gap-6 pt-8"
+              className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-8"
             >
               {stats.map((stat, index) => (
                 <motion.div

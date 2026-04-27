@@ -8,14 +8,14 @@ import { s3Client, S3_BUCKET_NAME } from '@/lib/s3';
 import { requireAuth } from '@/lib/auth-helpers';
 import { UserRole } from '@prisma/client';
 
-// Admin-only folders: course images, user profile photos managed by admin
-const ADMIN_ONLY_FOLDERS = ['courses', 'users'] as const;
+// Admin-only folders: course images, user profile photos, video thumbnails managed by admin
+const ADMIN_ONLY_FOLDERS = ['courses', 'users', 'videos'] as const;
 
 const uploadRequestSchema = z.object({
   fileName: z.string().min(1).max(255),
   fileType: z.string().min(1),
   fileSize: z.number().positive().max(10 * 1024 * 1024), // Max 10MB
-  folder: z.enum(['courses', 'users', 'documents']).default('documents'),
+  folder: z.enum(['courses', 'users', 'videos', 'documents']).default('documents'),
 });
 
 // POST /api/upload/signed-url - Generate pre-signed URL for S3 upload

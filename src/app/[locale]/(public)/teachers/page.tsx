@@ -2,50 +2,47 @@
 
 import { useTranslations, useLocale } from 'next-intl';
 import { motion } from 'framer-motion';
-import { Users, Award, Globe, GraduationCap, BookOpen, Star, Calendar, Video, MessageCircle, CheckCircle, Clock } from 'lucide-react';
+import { Users, Award, Globe, GraduationCap, BookOpen, Star, Calendar, CheckCircle, Clock } from 'lucide-react';
 import Image from 'next/image';
 import { Link } from '@/i18n/routing';
+import { useState, useEffect } from 'react';
 
-const teacherKeys = ['ahmad', 'fatima', 'mariam', 'omar', 'ibrahim'] as const;
-const teacherExperience: Record<typeof teacherKeys[number], number> = {
-  ahmad: 15,
-  fatima: 12,
-  mariam: 8,
-  omar: 18,
-  ibrahim: 10,
+type DbTeacher = {
+  id: string;
+  bio: string | null;
+  gender: string;
+  specializations: string[];
+  languages: string[];
+  yearsExperience: number | null;
+  isActive: boolean;
+  user: { name: string | null; image: string | null };
 };
 
-// Gender mapping for teachers (to ensure proper imagery)
-const teacherGender: Record<typeof teacherKeys[number], 'male' | 'female'> = {
-  ahmad: 'male',
-  fatima: 'female',
-  mariam: 'female',
-  omar: 'male',
-  ibrahim: 'male',
-};
-
-// Islamic patterns for each teacher card background
-const teacherPatterns: Record<typeof teacherKeys[number], string> = {
-  ahmad: 'M25,25 L75,25 L75,75 L25,75 Z M35,35 L65,35 L65,65 L35,65 Z',
-  fatima: 'M50,20 L65,35 L65,65 L50,80 L35,65 L35,35 Z',
-  mariam: 'M30,30 Q50,15 70,30 T70,70 Q50,85 30,70 T30,30',
-  omar: 'M40,25 L60,25 L75,50 L60,75 L40,75 L25,50 Z',
-  ibrahim: 'M50,25 L60,40 L75,40 L65,50 L70,65 L50,55 L30,65 L35,50 L25,40 L40,40 Z',
-};
-
-const teacherColors: Record<typeof teacherKeys[number], { from: string; to: string; accent: string }> = {
-  ahmad: { from: '#2B7A78', to: '#1a5856', accent: '#D9B574' },
-  fatima: { from: '#D9B574', to: '#b8964d', accent: '#2B7A78' },
-  mariam: { from: '#8B4513', to: '#6b3410', accent: '#D9B574' },
-  omar: { from: '#2B7A78', to: '#1a5856', accent: '#8B4513' },
-  ibrahim: { from: '#5F9EA0', to: '#4a7c7e', accent: '#D9B574' },
-};
+// Color palettes assigned by teacher index — keeps visual variety
+const COLOR_PALETTES = [
+  { from: '#2B7A78', to: '#1a5856', accent: '#D9B574' },
+  { from: '#D9B574', to: '#b8964d', accent: '#2B7A78' },
+  { from: '#8B4513', to: '#6b3410', accent: '#D9B574' },
+  { from: '#2B7A78', to: '#1a5856', accent: '#8B4513' },
+  { from: '#5F9EA0', to: '#4a7c7e', accent: '#D9B574' },
+  { from: '#6B5B95', to: '#4a3e6b', accent: '#D9B574' },
+];
 
 export default function TeachersPage() {
   const t = useTranslations('teachers');
   const locale = useLocale();
 
-  // Helper function to convert numbers to Arabic numerals
+  const [teachers, setTeachers] = useState<DbTeacher[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/teachers')
+      .then((r) => r.json())
+      .then((d) => { if (d.success) setTeachers(d.data); })
+      .catch(() => {})
+      .finally(() => setIsLoading(false));
+  }, []);
+
   const toArabicNumerals = (num: string | number): string => {
     const str = num.toString();
     if (locale !== 'ar') return str;
@@ -184,7 +181,7 @@ export default function TeachersPage() {
             />
             {/* Gradient Overlay */}
             <div className="absolute inset-0 bg-gradient-to-l from-transparent via-[#2B7A78]/10 to-[#2B7A78]" />
-            
+
             {/* Floating Info Card */}
             <motion.div
               className="absolute bottom-12 left-12 right-12 bg-white/95 backdrop-blur-lg rounded-2xl p-6 shadow-2xl"
@@ -212,16 +209,15 @@ export default function TeachersPage() {
 
       {/* Premium Teachers Showcase */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-        {/* Section Header with Background */}
+        {/* Section Header */}
         <motion.div
           className="text-center mb-20 relative"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          {/* Background Decoration */}
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl h-48 bg-gradient-to-r from-[#2B7A78]/5 via-[#D9B574]/5 to-[#2B7A78]/5 rounded-full blur-3xl" />
-          
+
           <div className="relative z-10">
             <motion.div
               className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-[#2B7A78]/10 to-[#D9B574]/10 rounded-full mb-6"
@@ -238,7 +234,6 @@ export default function TeachersPage() {
               {t('meetScholars')}
             </h2>
 
-            {/* Decorative Divider */}
             <div className="flex items-center justify-center gap-3 mb-6">
               <div className="h-1 w-16 bg-gradient-to-r from-transparent to-[#2B7A78]" />
               <div className="w-3 h-3 bg-[#D9B574] rotate-45" />
@@ -253,176 +248,186 @@ export default function TeachersPage() {
           </div>
         </motion.div>
 
-        <motion.div
-          className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-100px' }}
-        >
-          {teacherKeys.map((key, index) => {
-            const name = t(`list.${key}.name`);
-            const title = t(`list.${key}.title`);
-            const bio = t(`list.${key}.bio`);
-            const languages = t.raw(`list.${key}.languages`) as string[];
-            const specializations = t.raw(`list.${key}.specializations`) as string[];
-            const experience = teacherExperience[key];
-            const colors = teacherColors[key];
-            const gender = teacherGender[key];
-            const pattern = teacherPatterns[key];
-            
-            // Select appropriate teacher image based on gender
-            const teacherImage = gender === 'male' ? '/teacher-male-scholar.png' : '/teacher-female-scholar.png';
+        {/* Loading state */}
+        {isLoading && (
+          <div className="flex justify-center py-20">
+            <div className="w-10 h-10 border-4 border-[#2B7A78] border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
 
-            return (
-              <motion.div
-                key={key}
-                variants={itemVariants}
-                whileHover={{ y: -12 }}
-                className="group relative bg-white rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 border-2 border-gray-100 hover:border-[#D9B574]/30"
-              >
-                {/* Premium Image Header */}
-                <div className="relative h-64 overflow-hidden">
-                  {/* Actual Teacher Image */}
-                  <Image
-                    src={teacherImage}
-                    alt={name}
-                    fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
-                  
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+        {/* Teachers Grid */}
+        {!isLoading && (
+          <motion.div
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-100px' }}
+          >
+            {teachers.map((teacher, index) => {
+              const colors = COLOR_PALETTES[index % COLOR_PALETTES.length];
+              // Use actual uploaded image if available, else fall back to gender-default scholar image
+              const teacherImage = teacher.user.image
+                ? teacher.user.image
+                : teacher.gender === 'MALE'
+                ? '/teacher-male-scholar.png'
+                : '/teacher-female-scholar.png';
+              const experience = teacher.yearsExperience ?? 0;
 
-                  {/* Top Badges Row */}
-                  <div className="absolute top-4 left-4 right-4 flex items-start justify-between">
-                    {/* Verified Badge */}
-                    <motion.div
-                      className="bg-white/95 backdrop-blur-md rounded-xl px-3 py-2 flex items-center gap-2 shadow-xl"
-                      whileHover={{ scale: 1.05 }}
-                    >
-                      <CheckCircle className="w-4 h-4 text-green-600" fill="currentColor" />
-                      <span className="text-xs font-bold text-gray-700">{t('certified')}</span>
-                    </motion.div>
-
-                    {/* Excellence Badge */}
-                    <motion.div
-                      className="relative w-12 h-12"
-                      whileHover={{ scale: 1.1, rotate: 180 }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      <Image
-                        src="/teacher-excellence-badge.png"
-                        alt={t('excellenceAlt')}
-                        fill
-                        className="object-contain drop-shadow-2xl"
-                      />
-                    </motion.div>
-                  </div>
-
-                  {/* Bottom Info Bar */}
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-6">
-                    <div className="flex items-center justify-between text-white">
-                      <div className="flex items-center gap-2">
-                        <Award className="w-5 h-5 text-[#D9B574]" />
-                        <span className="text-sm font-bold">
-                          {toArabicNumerals(experience)}+ {t('yearsExperience')}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Globe className="w-5 h-5 text-[#D9B574]" />
-                        <span className="text-sm font-bold">
-                          {toArabicNumerals(languages.length)} {t('languagesCount')}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="p-8">
-                  {/* Name and Title */}
-                  <div className="mb-6">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                      {name}
-                    </h3>
-                    <p 
-                      className="text-base font-semibold mb-4"
-                      style={{ color: colors.from }}
-                    >
-                      {title}
-                    </p>
-                    
-                    {/* Bio */}
-                    <p className="text-gray-600 text-sm leading-relaxed line-clamp-3">
-                      {bio}
-                    </p>
-                  </div>
-
-                  {/* Languages */}
-                  <div className="mb-6">
-                    <div className="flex items-center gap-2 text-xs font-bold text-gray-700 uppercase tracking-wide mb-3">
-                      <Globe className="w-4 h-4" style={{ color: colors.from }} />
-                      <span>{t('languages')}</span>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {languages.map((lang, idx) => (
-                        <motion.span
-                          key={lang}
-                          initial={{ opacity: 0, scale: 0 }}
-                          whileInView={{ opacity: 1, scale: 1 }}
-                          viewport={{ once: true }}
-                          transition={{ delay: 0.1 * idx }}
-                          whileHover={{ scale: 1.1, y: -2 }}
-                          className="px-3 py-1.5 bg-gray-50 hover:bg-gray-100 rounded-full text-xs font-semibold text-gray-700 cursor-default transition-all border border-gray-200"
-                        >
-                          {lang}
-                        </motion.span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Specializations */}
-                  <div className="mb-6">
-                    <div className="flex items-center gap-2 text-xs font-bold text-gray-700 uppercase tracking-wide mb-3">
-                      <BookOpen className="w-4 h-4" style={{ color: colors.from }} />
-                      <span>{t('specializations')}</span>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {specializations.map((spec, idx) => (
-                        <motion.span
-                          key={spec}
-                          initial={{ opacity: 0, x: -10 }}
-                          whileInView={{ opacity: 1, x: 0 }}
-                          viewport={{ once: true }}
-                          transition={{ delay: 0.1 * idx }}
-                          whileHover={{ scale: 1.05, y: -2 }}
-                          className="px-3 py-1.5 rounded-full text-xs font-semibold transition-all border"
-                          style={{
-                            background: `${colors.from}10`,
-                            borderColor: `${colors.from}30`,
-                            color: colors.from,
-                          }}
-                        >
-                          {spec}
-                        </motion.span>
-                      ))}
-                    </div>
-                  </div>
-
-                </div>
-
-                {/* Hover Glow Effect */}
+              return (
                 <motion.div
-                  className="absolute inset-0 rounded-3xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                  style={{
-                    boxShadow: `0 0 40px ${colors.from}40`,
-                  }}
-                />
-              </motion.div>
-            );
-          })}
-        </motion.div>
+                  key={teacher.id}
+                  variants={itemVariants}
+                  whileHover={{ y: -12 }}
+                  className="group relative bg-white rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 border-2 border-gray-100 hover:border-[#D9B574]/30"
+                >
+                  {/* Premium Image Header */}
+                  <div className="relative h-64 overflow-hidden">
+                    <Image
+                      src={teacherImage}
+                      alt={teacher.user.name || 'Teacher'}
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+
+                    {/* Top Badges Row */}
+                    <div className="absolute top-4 left-4 right-4 flex items-start justify-between">
+                      <motion.div
+                        className="bg-white/95 backdrop-blur-md rounded-xl px-3 py-2 flex items-center gap-2 shadow-xl"
+                        whileHover={{ scale: 1.05 }}
+                      >
+                        <CheckCircle className="w-4 h-4 text-green-600" fill="currentColor" />
+                        <span className="text-xs font-bold text-gray-700">{t('certified')}</span>
+                      </motion.div>
+
+                      <motion.div
+                        className="relative w-12 h-12"
+                        whileHover={{ scale: 1.1, rotate: 180 }}
+                        transition={{ duration: 0.5 }}
+                      >
+                        <Image
+                          src="/teacher-excellence-badge.png"
+                          alt={t('excellenceAlt')}
+                          fill
+                          className="object-contain drop-shadow-2xl"
+                        />
+                      </motion.div>
+                    </div>
+
+                    {/* Bottom Info Bar */}
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-6">
+                      <div className="flex items-center justify-between text-white">
+                        {experience > 0 && (
+                          <div className="flex items-center gap-2">
+                            <Award className="w-5 h-5 text-[#D9B574]" />
+                            <span className="text-sm font-bold">
+                              {toArabicNumerals(experience)}+ {t('yearsExperience')}
+                            </span>
+                          </div>
+                        )}
+                        {teacher.languages.length > 0 && (
+                          <div className="flex items-center gap-2">
+                            <Globe className="w-5 h-5 text-[#D9B574]" />
+                            <span className="text-sm font-bold">
+                              {toArabicNumerals(teacher.languages.length)} {t('languagesCount')}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-8">
+                    {/* Name */}
+                    <div className="mb-6">
+                      <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                        {teacher.user.name || '—'}
+                      </h3>
+
+                      {/* Bio */}
+                      {teacher.bio && (
+                        <p className="text-gray-600 text-sm leading-relaxed line-clamp-3">
+                          {teacher.bio}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Languages */}
+                    {teacher.languages.length > 0 && (
+                      <div className="mb-6">
+                        <div className="flex items-center gap-2 text-xs font-bold text-gray-700 uppercase tracking-wide mb-3">
+                          <Globe className="w-4 h-4" style={{ color: colors.from }} />
+                          <span>{t('languages')}</span>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {teacher.languages.map((lang, idx) => (
+                            <motion.span
+                              key={lang}
+                              initial={{ opacity: 0, scale: 0 }}
+                              whileInView={{ opacity: 1, scale: 1 }}
+                              viewport={{ once: true }}
+                              transition={{ delay: 0.1 * idx }}
+                              whileHover={{ scale: 1.1, y: -2 }}
+                              className="px-3 py-1.5 bg-gray-50 hover:bg-gray-100 rounded-full text-xs font-semibold text-gray-700 cursor-default transition-all border border-gray-200"
+                            >
+                              {lang}
+                            </motion.span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Specializations */}
+                    {teacher.specializations.length > 0 && (
+                      <div className="mb-6">
+                        <div className="flex items-center gap-2 text-xs font-bold text-gray-700 uppercase tracking-wide mb-3">
+                          <BookOpen className="w-4 h-4" style={{ color: colors.from }} />
+                          <span>{t('specializations')}</span>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {teacher.specializations.map((spec, idx) => (
+                            <motion.span
+                              key={spec}
+                              initial={{ opacity: 0, x: -10 }}
+                              whileInView={{ opacity: 1, x: 0 }}
+                              viewport={{ once: true }}
+                              transition={{ delay: 0.1 * idx }}
+                              whileHover={{ scale: 1.05, y: -2 }}
+                              className="px-3 py-1.5 rounded-full text-xs font-semibold transition-all border"
+                              style={{
+                                background: `${colors.from}10`,
+                                borderColor: `${colors.from}30`,
+                                color: colors.from,
+                              }}
+                            >
+                              {spec}
+                            </motion.span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Hover Glow Effect */}
+                  <motion.div
+                    className="absolute inset-0 rounded-3xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                    style={{ boxShadow: `0 0 40px ${colors.from}40` }}
+                  />
+                </motion.div>
+              );
+            })}
+
+            {!isLoading && teachers.length === 0 && (
+              <div className="col-span-3 text-center py-12 text-gray-500">
+                No teachers available at the moment.
+              </div>
+            )}
+          </motion.div>
+        )}
       </div>
 
       {/* Enhanced CTA Section */}
@@ -448,21 +453,19 @@ export default function TeachersPage() {
             </svg>
           </div>
 
-          {/* Decorative Corner Elements */}
           <motion.div
             className="absolute top-8 right-8 w-20 h-20 border-4 border-[#D9B574]/30 rounded-full"
             animate={{ rotate: 360, scale: [1, 1.1, 1] }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
           />
           <motion.div
             className="absolute bottom-8 left-8 w-16 h-16 border-4 border-[#D9B574]/20"
             animate={{ rotate: -360 }}
-            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+            transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
             style={{ clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)' }}
           />
 
           <div className="relative z-10 max-w-3xl mx-auto">
-            {/* Icon */}
             <motion.div
               initial={{ scale: 0, rotate: -180 }}
               whileInView={{ scale: 1, rotate: 0 }}
@@ -473,7 +476,6 @@ export default function TeachersPage() {
               <GraduationCap className="w-10 h-10 text-white" strokeWidth={2} />
             </motion.div>
 
-            {/* Heading */}
             <motion.h2
               className="text-4xl md:text-5xl font-bold mb-6 leading-tight"
               initial={{ opacity: 0, y: 20 }}
@@ -484,7 +486,6 @@ export default function TeachersPage() {
               {t('cta.title')}
             </motion.h2>
 
-            {/* Divider */}
             <motion.div
               className="flex items-center justify-center gap-2 mb-8"
               initial={{ opacity: 0, scale: 0 }}
@@ -497,7 +498,6 @@ export default function TeachersPage() {
               <div className="h-1 w-12 bg-[#D9B574]/50 rounded-full" />
             </motion.div>
 
-            {/* Subtitle */}
             <motion.p
               className="text-xl md:text-2xl text-white/95 mb-10 leading-relaxed font-light"
               initial={{ opacity: 0 }}
@@ -508,7 +508,6 @@ export default function TeachersPage() {
               {t('cta.subtitle')}
             </motion.p>
 
-            {/* CTA Button */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -517,7 +516,7 @@ export default function TeachersPage() {
             >
               <Link href="/probestunde">
                 <motion.button
-                  whileHover={{ scale: 1.05, boxShadow: "0 20px 40px rgba(217, 181, 116, 0.4)" }}
+                  whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(217, 181, 116, 0.4)' }}
                   whileTap={{ scale: 0.98 }}
                   className="group inline-flex items-center gap-3 px-10 py-5 bg-[#D9B574] hover:bg-[#C9A551] text-white font-bold text-lg rounded-2xl shadow-2xl transition-all duration-300"
                 >
@@ -533,7 +532,6 @@ export default function TeachersPage() {
               </Link>
             </motion.div>
 
-            {/* Trust Indicators */}
             <motion.div
               className="flex flex-wrap items-center justify-center gap-8 mt-12 text-sm text-white/80"
               initial={{ opacity: 0 }}

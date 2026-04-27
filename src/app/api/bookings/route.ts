@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { requireAuth, requireAnyRole } from '@/lib/auth-helpers';
-import { UserRole } from '@prisma/client';
+import { UserRole, Prisma } from '@prisma/client';
 import crypto from 'crypto';
 
 const createBookingSchema = z.object({
@@ -19,6 +19,14 @@ const createBookingSchema = z.object({
   // Recurring: how many additional weekly sessions to generate (0 = single)
   recurrenceWeeks: z.number().int().min(0).max(52).optional(),
 });
+
+// Custom error thrown inside the transaction to produce a 409 response
+class BookingConflictError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'BookingConflictError';
+  }
+}
 
 // GET /api/bookings - List bookings
 export async function GET(request: NextRequest) {
@@ -146,82 +154,80 @@ export async function POST(request: NextRequest) {
       sessionTimes.push(t);
     }
 
-    // ── Check teacher + student conflicts for all session slots ──────────────────
-    // Correct overlap formula: existing starts before new ends AND existing ends after new starts.
-    // This single condition handles all cases: partial overlap, containment, and exact match.
-    for (const start of sessionTimes) {
-      const end = new Date(start.getTime() + course.duration * 60000);
-      const dateLabel = `${start.toLocaleDateString()} at ${start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-
-      const teacherConflict = await prisma.booking.findFirst({
-        where: {
-          teacherId: data.teacherId,
-          status: { in: ['PENDING', 'CONFIRMED'] },
-          scheduledAt: { lt: end },
-          endTime: { gt: start },
-        },
-        select: { scheduledAt: true },
-      });
-      if (teacherConflict) {
-        return NextResponse.json(
-          { success: false, error: `Teacher is not available on ${dateLabel}` },
-          { status: 409 }
-        );
-      }
-
-      for (const studentId of resolvedStudentIds) {
-        const studentConflict = await prisma.booking.findFirst({
-          where: {
-            studentId,
-            status: { in: ['PENDING', 'CONFIRMED'] },
-            scheduledAt: { lt: end },
-            endTime: { gt: start },
-          },
-          select: { scheduledAt: true },
-        });
-        if (studentConflict) {
-          return NextResponse.json(
-            { success: false, error: `A student already has a booking on ${dateLabel}` },
-            { status: 409 }
-          );
-        }
-      }
-    }
-
-    // ── Create all bookings (bulk × recurrence) inside a transaction ──────────
     const isAdmin = user.role === UserRole.ADMIN;
     const initialStatus = isAdmin ? 'CONFIRMED' : 'PENDING';
-
-    // Recurring series share a group ID so they can be managed together
     const recurrenceGroupId = recurrenceWeeks > 0 ? crypto.randomUUID() : null;
+    const courseDuration = course.duration;
+    const courseId = data.courseId;
+    const teacherId = data.teacherId;
 
-    const created = await prisma.$transaction(async (tx: typeof prisma) => {
-      const results: any[] = [];
-      for (const studentId of resolvedStudentIds) {
+    // ── All conflict checks AND booking creation run inside a Serializable
+    //    transaction to prevent race conditions between concurrent requests.
+    const created = await prisma.$transaction(
+      async (tx: Prisma.TransactionClient) => {
+        // Check teacher + student conflicts for every session slot
         for (const start of sessionTimes) {
-          const end = new Date(start.getTime() + course.duration * 60000);
-          const booking = await tx.booking.create({
-            data: {
-              courseId: data.courseId,
-              studentId,
-              teacherId: data.teacherId,
-              scheduledAt: start,
-              endTime: end,
-              notes: data.notes,
-              status: initialStatus,
-              recurrenceGroupId,
+          const end = new Date(start.getTime() + courseDuration * 60000);
+          const dateLabel = `${start.toLocaleDateString()} at ${start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+
+          const teacherConflict = await tx.booking.findFirst({
+            where: {
+              teacherId,
+              status: { in: ['PENDING', 'CONFIRMED'] },
+              scheduledAt: { lt: end },
+              endTime: { gt: start },
             },
-            include: {
-              course: { select: { name: true } },
-              student: { include: { user: { select: { name: true, email: true } } } },
-              teacher: { include: { user: { select: { name: true } } } },
-            },
+            select: { scheduledAt: true },
           });
-          results.push(booking);
+          if (teacherConflict) {
+            throw new BookingConflictError(`Teacher is not available on ${dateLabel}`);
+          }
+
+          for (const studentId of resolvedStudentIds) {
+            const studentConflict = await tx.booking.findFirst({
+              where: {
+                studentId,
+                status: { in: ['PENDING', 'CONFIRMED'] },
+                scheduledAt: { lt: end },
+                endTime: { gt: start },
+              },
+              select: { scheduledAt: true },
+            });
+            if (studentConflict) {
+              throw new BookingConflictError(`A student already has a booking on ${dateLabel}`);
+            }
+          }
         }
-      }
-      return results;
-    });
+
+        // Create all bookings (bulk × recurrence)
+        const results: any[] = [];
+        for (const studentId of resolvedStudentIds) {
+          for (const start of sessionTimes) {
+            const end = new Date(start.getTime() + courseDuration * 60000);
+            const booking = await tx.booking.create({
+              data: {
+                courseId,
+                studentId,
+                teacherId,
+                scheduledAt: start,
+                endTime: end,
+                notes: data.notes,
+                status: initialStatus,
+                recurrenceGroupId,
+              },
+              include: {
+                course: { select: { name: true } },
+                student: { include: { user: { select: { name: true, email: true } } } },
+                teacher: { include: { user: { select: { name: true } } } },
+              },
+            });
+            results.push(booking);
+          }
+        }
+        return results;
+      },
+      { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }
+    );
 
     return NextResponse.json(
       {
@@ -232,6 +238,9 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error: any) {
+    if (error instanceof BookingConflictError) {
+      return NextResponse.json({ success: false, error: error.message }, { status: 409 });
+    }
     console.error('Error creating booking:', error);
     const status = error.message?.includes('Unauthorized') ? 401 : error.message?.includes('One of') ? 403 : 500;
     return NextResponse.json({ success: false, error: error.message || 'Failed to create booking' }, { status });

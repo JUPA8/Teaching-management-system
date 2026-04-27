@@ -1,28 +1,25 @@
 /**
- * Simple sliding-window rate limiter backed by an in-memory Map.
+ * Rate limiter with Upstash Redis support.
  *
- * In Vercel serverless each warm function instance shares this Map within
- * its own process lifetime. State does NOT persist across cold starts or
- * across parallel Vercel instances. This provides meaningful protection
- * against simple brute-force attacks from a single source hitting the same
- * warm instance. For fully distributed rate limiting, replace the store with
- * Redis/Upstash and use the same interface.
+ * If UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN are set, uses Upstash
+ * distributed rate limiting (works correctly across Vercel function instances).
+ * Otherwise, falls back to the in-memory sliding-window implementation.
+ *
+ * To enable Upstash:
+ *   npm install @upstash/ratelimit @upstash/redis
+ *   UPSTASH_REDIS_REST_URL=https://...
+ *   UPSTASH_REDIS_REST_TOKEN=...
  */
 
-interface Entry {
-  count: number;
-  resetAt: number;
-}
+// ── In-memory fallback ────────────────────────────────────────────────────────
 
+interface Entry { count: number; resetAt: number }
 const store = new Map<string, Entry>();
 
-/** Prune expired keys when store grows large to prevent unbounded memory use */
 function cleanup(): void {
   if (store.size < 2000) return;
   const now = Date.now();
-  store.forEach((entry, key) => {
-    if (entry.resetAt < now) store.delete(key);
-  });
+  store.forEach((entry, key) => { if (entry.resetAt < now) store.delete(key); });
 }
 
 export interface RateLimitResult {
@@ -32,46 +29,90 @@ export interface RateLimitResult {
   retryAfterSeconds: number;
 }
 
-/**
- * Check and increment the rate-limit counter for a given key.
- *
- * @param key      Unique string (e.g. IP address, or "ip:email")
- * @param limit    Max requests allowed per window
- * @param windowMs Window duration in milliseconds
- */
-export function checkRateLimit(
-  key: string,
-  limit: number,
-  windowMs: number
-): RateLimitResult {
+function checkRateLimitInMemory(key: string, limit: number, windowMs: number): RateLimitResult {
   cleanup();
   const now = Date.now();
   const entry = store.get(key);
-
   if (!entry || entry.resetAt < now) {
     const resetAt = now + windowMs;
     store.set(key, { count: 1, resetAt });
     return { success: true, remaining: limit - 1, resetAt, retryAfterSeconds: 0 };
   }
-
   if (entry.count >= limit) {
     const retryAfterSeconds = Math.ceil((entry.resetAt - now) / 1000);
     return { success: false, remaining: 0, resetAt: entry.resetAt, retryAfterSeconds };
   }
-
   entry.count++;
-  return {
-    success: true,
-    remaining: limit - entry.count,
-    resetAt: entry.resetAt,
-    retryAfterSeconds: 0,
-  };
+  return { success: true, remaining: limit - entry.count, resetAt: entry.resetAt, retryAfterSeconds: 0 };
 }
 
-/**
- * Extract caller IP from Next.js request headers.
- * Vercel sets x-forwarded-for; fall back to x-real-ip, then 'unknown'.
- */
+// ── Upstash Redis rate limiter (loaded lazily) ────────────────────────────────
+
+let upstashRatelimit: any = null;
+let upstashRedis: any = null;
+
+async function loadUpstash() {
+  if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
+    return false;
+  }
+  if (upstashRatelimit) return true;
+  try {
+    const [{ Ratelimit }, { Redis }] = await Promise.all([
+      import('@upstash/ratelimit'),
+      import('@upstash/redis'),
+    ]);
+    upstashRedis = new Redis({
+      url: process.env.UPSTASH_REDIS_REST_URL,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN,
+    });
+    upstashRatelimit = Ratelimit;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// Cache of Ratelimit instances per config
+const upstashLimiters = new Map<string, any>();
+
+async function checkRateLimitUpstash(key: string, limit: number, windowMs: number): Promise<RateLimitResult | null> {
+  const loaded = await loadUpstash();
+  if (!loaded) return null;
+  try {
+    const cacheKey = `${limit}:${windowMs}`;
+    if (!upstashLimiters.has(cacheKey)) {
+      upstashLimiters.set(cacheKey, new upstashRatelimit({
+        redis: upstashRedis,
+        limiter: upstashRatelimit.slidingWindow(limit, `${Math.ceil(windowMs / 1000)} s`),
+        prefix: 'rl',
+      }));
+    }
+    const limiter = upstashLimiters.get(cacheKey)!;
+    const result = await limiter.limit(key);
+    return {
+      success: result.success,
+      remaining: result.remaining,
+      resetAt: result.reset,
+      retryAfterSeconds: result.success ? 0 : Math.ceil((result.reset - Date.now()) / 1000),
+    };
+  } catch {
+    return null;
+  }
+}
+
+// ── Public API ────────────────────────────────────────────────────────────────
+
+export async function checkRateLimitAsync(key: string, limit: number, windowMs: number): Promise<RateLimitResult> {
+  const upstash = await checkRateLimitUpstash(key, limit, windowMs);
+  if (upstash !== null) return upstash;
+  return checkRateLimitInMemory(key, limit, windowMs);
+}
+
+/** Synchronous wrapper — uses in-memory only. Kept for backwards compatibility. */
+export function checkRateLimit(key: string, limit: number, windowMs: number): RateLimitResult {
+  return checkRateLimitInMemory(key, limit, windowMs);
+}
+
 export function getClientIP(request: Request): string {
   return (
     (request.headers.get('x-forwarded-for') ?? '').split(',')[0].trim() ||
@@ -80,19 +121,12 @@ export function getClientIP(request: Request): string {
   );
 }
 
-/** Build a standard 429 JSON response */
 export function tooManyRequests(retryAfterSeconds: number): Response {
   return new Response(
-    JSON.stringify({
-      success: false,
-      error: 'Too many requests. Please try again later.',
-    }),
+    JSON.stringify({ success: false, error: 'Too many requests. Please try again later.' }),
     {
       status: 429,
-      headers: {
-        'Content-Type': 'application/json',
-        'Retry-After': String(retryAfterSeconds),
-      },
+      headers: { 'Content-Type': 'application/json', 'Retry-After': String(retryAfterSeconds) },
     }
   );
 }

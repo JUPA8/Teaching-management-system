@@ -3,7 +3,7 @@ import { z } from 'zod';
 import crypto from 'crypto';
 import { prisma } from '@/lib/prisma';
 import { sendPasswordResetEmail } from '@/lib/email';
-import { checkRateLimit, tooManyRequests, getClientIP } from '@/lib/rate-limit';
+import { checkRateLimitAsync, tooManyRequests, getClientIP } from '@/lib/rate-limit';
 
 const schema = z.object({
   email: z.string().email(),
@@ -15,7 +15,7 @@ const schema = z.object({
 export async function POST(request: NextRequest) {
   // Rate limit: 3 requests per IP per 15 minutes
   const ip = getClientIP(request);
-  const rl = checkRateLimit(`forgot-password:${ip}`, 3, 15 * 60 * 1000);
+  const rl = await checkRateLimitAsync(`forgot-password:${ip}`, 3, 15 * 60 * 1000);
   if (!rl.success) {
     return tooManyRequests(rl.retryAfterSeconds!);
   }

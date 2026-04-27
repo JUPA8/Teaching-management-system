@@ -162,8 +162,9 @@ model Teacher {
   specializations String[]       // e.g., ["Tajweed", "Quranic Arabic", "Fiqh"]
   languages       String[]       // e.g., ["English", "Arabic", "German"]
   hourlyRate      Float?         // in EUR
+  yearsExperience Int?           @default(0)
   availability    Json?          // Store weekly availability schedule
-  
+
   isActive        Boolean        @default(true)
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
@@ -467,6 +468,32 @@ model SiteSettings {
   updatedAt DateTime @updatedAt
 
   @@map("site_settings")
+}
+
+// ============================================
+// VIDEOS (Admin-managed public video library)
+// ============================================
+
+model Video {
+  id          String   @id @default(cuid())
+  title       String
+  description String   @db.Text
+  duration    String   // e.g. "15:30"
+  views       Int      @default(0)
+  category    String   // 'quran' | 'tajweed' | 'arabic' | 'islamic'
+  image       String?  // S3 URL for thumbnail
+  videoUrl    String?  // link to the actual video (YouTube, Vimeo, etc.)
+  featured    Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+  @@index([isActive])
+  @@index([sortOrder])
+  @@map("videos")
 }
 
 // ============================================

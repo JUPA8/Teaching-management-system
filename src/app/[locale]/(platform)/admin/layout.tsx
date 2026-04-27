@@ -99,6 +99,20 @@ export default async function AdminLayout({
               <span className="ml-auto text-[#D9B574] opacity-0 group-hover:opacity-100 transition-opacity">→</span>
             </a>
             <a
+              href={`/${locale}/admin/teachers`}
+              className="group flex items-center gap-3 px-6 py-4 text-white/90 hover:bg-white/10 rounded-xl transition-all hover:translate-x-1 backdrop-blur-sm border border-white/0 hover:border-[#D9B574]/30"
+            >
+              <span className="font-semibold">Teachers</span>
+              <span className="ml-auto text-[#D9B574] opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+            </a>
+            <a
+              href={`/${locale}/admin/videos`}
+              className="group flex items-center gap-3 px-6 py-4 text-white/90 hover:bg-white/10 rounded-xl transition-all hover:translate-x-1 backdrop-blur-sm border border-white/0 hover:border-[#D9B574]/30"
+            >
+              <span className="font-semibold">Videos</span>
+              <span className="ml-auto text-[#D9B574] opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+            </a>
+            <a
               href={`/${locale}/admin/settings`}
               className="group flex items-center gap-3 px-6 py-4 text-white/90 hover:bg-white/10 rounded-xl transition-all hover:translate-x-1 backdrop-blur-sm border border-white/0 hover:border-[#D9B574]/30"
             >
