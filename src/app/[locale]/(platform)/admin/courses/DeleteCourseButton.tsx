@@ -3,35 +3,64 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-export default function DeleteCourseButton({ courseId }: { courseId: string }) {
+export default function DeleteCourseButton({ courseId, courseName }: { courseId: string; courseName?: string }) {
   const router = useRouter();
+  const [confirming, setConfirming] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleDelete = async () => {
-    if (!confirm('Are you sure you want to delete this course? This cannot be undone.')) return;
     setLoading(true);
+    setError('');
     try {
       const res = await fetch(`/api/courses/${courseId}`, { method: 'DELETE' });
       const data = await res.json();
       if (data.success) {
         router.refresh();
       } else {
-        alert(data.error || 'Failed to delete course');
+        setError(data.error || 'Failed to delete course');
+        setConfirming(false);
       }
     } catch {
-      alert('An error occurred. Please try again.');
+      setError('Network error. Please try again.');
+      setConfirming(false);
     } finally {
       setLoading(false);
     }
   };
 
+  if (confirming) {
+    return (
+      <div className="flex flex-col gap-1">
+        <div className="flex gap-1">
+          <button
+            onClick={handleDelete}
+            disabled={loading}
+            className="px-3 py-2 bg-red-600 text-white rounded-lg text-sm font-bold hover:bg-red-700 disabled:opacity-50 transition-all"
+          >
+            {loading ? '…' : 'Confirm'}
+          </button>
+          <button
+            onClick={() => { setConfirming(false); setError(''); }}
+            className="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-bold hover:bg-gray-300 transition-all"
+          >
+            No
+          </button>
+        </div>
+        {error && <p className="text-xs text-red-600 max-w-[200px] leading-snug">{error}</p>}
+      </div>
+    );
+  }
+
   return (
-    <button
-      onClick={handleDelete}
-      disabled={loading}
-      className="px-4 py-2 bg-gradient-to-r from-red-500 to-red-700 text-white rounded-lg hover:shadow-lg transition-all text-sm font-bold disabled:opacity-50"
-    >
-      {loading ? '...' : 'Delete'}
-    </button>
+    <div className="flex flex-col gap-1">
+      <button
+        onClick={() => setConfirming(true)}
+        className="px-4 py-2 bg-gradient-to-r from-red-500 to-red-700 text-white rounded-lg hover:shadow-lg transition-all text-sm font-bold"
+      >
+        Delete
+      </button>
+      {error && <p className="text-xs text-red-600 max-w-[200px] leading-snug">{error}</p>}
+    </div>
   );
 }

@@ -172,6 +172,8 @@ export async function PATCH(
 }
 
 // DELETE /api/courses/[id] - Delete course (Admin only)
+// Blocked if active bookings exist (data integrity). CourseTeacher and
+// CourseEnrollment rows are cascade-deleted by the DB automatically.
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -181,9 +183,29 @@ export async function DELETE(
 
     const { id } = params;
 
-    await prisma.course.delete({
+    const course = await prisma.course.findUnique({
       where: { id },
+      select: { id: true, name: true, _count: { select: { bookings: true } } },
     });
+
+    if (!course) {
+      return NextResponse.json(
+        { success: false, error: 'Course not found' },
+        { status: 404 }
+      );
+    }
+
+    if (course._count.bookings > 0) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: `Cannot delete "${course.name}": it has ${course._count.bookings} booking(s). Cancel or delete all bookings first.`,
+        },
+        { status: 409 }
+      );
+    }
+
+    await prisma.course.delete({ where: { id } });
 
     return NextResponse.json({
       success: true,

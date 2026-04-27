@@ -2,6 +2,15 @@
 
 import { useState, useEffect, useCallback } from 'react';
 
+async function bulkAction(action: string, ids: string[]): Promise<{ success: boolean; error?: string }> {
+  const res = await fetch('/api/admin/bulk', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ resource: 'videos', action, ids }),
+  });
+  return res.json();
+}
+
 type Video = {
   id: string;
   title: string;
@@ -39,6 +48,40 @@ export default function AdminVideosPage() {
   const [deleting, setDeleting] = useState<string | null>(null);
   const [message, setMessage] = useState('');
   const [form, setForm] = useState({ ...EMPTY_FORM });
+
+  // Bulk selection
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [bulkBusy, setBulkBusy] = useState(false);
+  const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
+
+  const showToast = (msg: string, ok: boolean) => {
+    setToast({ msg, ok });
+    setTimeout(() => setToast(null), 4000);
+  };
+
+  const allIds = videos.map((v) => v.id);
+  const allSelected = allIds.length > 0 && allIds.every((id) => selected.has(id));
+  const someSelected = selected.size > 0;
+
+  const toggleAll = () => { if (allSelected) setSelected(new Set()); else setSelected(new Set(allIds)); };
+  const toggleOne = (id: string) => {
+    setSelected((prev) => { const next = new Set(prev); next.has(id) ? next.delete(id) : next.add(id); return next; });
+  };
+
+  const runBulk = async (action: string, label: string) => {
+    if (selected.size === 0) return;
+    if (!confirm(`${label} ${selected.size} video(s)?`)) return;
+    setBulkBusy(true);
+    const result = await bulkAction(action, Array.from(selected));
+    setBulkBusy(false);
+    if (result.success) {
+      showToast(`${label} applied to ${selected.size} video(s).`, true);
+      setSelected(new Set());
+      await fetchVideos();
+    } else {
+      showToast(result.error || 'Action failed', false);
+    }
+  };
 
   const fetchVideos = useCallback(async () => {
     try {
@@ -151,6 +194,13 @@ export default function AdminVideosPage() {
 
   return (
     <div>
+      {/* Toast */}
+      {toast && (
+        <div className={`fixed top-6 right-6 z-50 px-5 py-3 rounded-xl shadow-2xl text-sm font-semibold ${toast.ok ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}`}>
+          {toast.msg}
+        </div>
+      )}
+
       <div className="flex justify-between items-center mb-8">
         <div className="flex items-center gap-3">
           <div className="h-1 w-16 bg-gradient-to-r from-[#D9B574] to-[#C4A565] rounded-full" />
@@ -174,6 +224,19 @@ export default function AdminVideosPage() {
           message.includes('!') ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'
         }`}>
           {message}
+        </div>
+      )}
+
+      {/* Bulk actions bar */}
+      {someSelected && (
+        <div className="mb-4 flex items-center gap-3 bg-white rounded-xl shadow-sm border border-[#D9B574]/30 px-5 py-3">
+          <span className="text-sm font-bold text-[#C4A565]">{selected.size} selected</span>
+          <div className="flex gap-2 ml-2">
+            <button onClick={() => runBulk('activate', 'Activate')} disabled={bulkBusy} className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-bold hover:bg-green-700 disabled:opacity-50 transition-all">Activate</button>
+            <button onClick={() => runBulk('deactivate', 'Deactivate')} disabled={bulkBusy} className="px-4 py-2 bg-yellow-600 text-white rounded-lg text-sm font-bold hover:bg-yellow-700 disabled:opacity-50 transition-all">Deactivate</button>
+            <button onClick={() => runBulk('delete', 'Delete')} disabled={bulkBusy} className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-bold hover:bg-red-700 disabled:opacity-50 transition-all">Delete selected</button>
+          </div>
+          <button onClick={() => setSelected(new Set())} className="ml-auto text-xs text-gray-400 hover:text-gray-600">Clear</button>
         </div>
       )}
 
@@ -316,6 +379,9 @@ export default function AdminVideosPage() {
           <table className="min-w-full divide-y-2 divide-[#D9B574]/20">
             <thead className="bg-gradient-to-r from-[#D9B574]/10 to-[#C4A565]/10">
               <tr>
+                <th className="px-4 py-4 w-10">
+                  <input type="checkbox" checked={allSelected} onChange={toggleAll} className="w-4 h-4 rounded border-gray-300 text-[#C4A565] cursor-pointer" />
+                </th>
                 {['Title', 'Category', 'Duration', 'Views', 'Status', 'Actions'].map((h) => (
                   <th key={h} className="px-6 py-4 text-left text-sm font-bold text-[#C4A565] uppercase tracking-wider">
                     {h}
@@ -327,8 +393,11 @@ export default function AdminVideosPage() {
               {videos.map((video, index) => (
                 <tr
                   key={video.id}
-                  className={`hover:bg-[#D9B574]/5 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}
+                  className={`hover:bg-[#D9B574]/5 transition-colors ${selected.has(video.id) ? 'bg-[#D9B574]/10' : index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}
                 >
+                  <td className="px-4 py-4">
+                    <input type="checkbox" checked={selected.has(video.id)} onChange={() => toggleOne(video.id)} className="w-4 h-4 rounded border-gray-300 text-[#C4A565] cursor-pointer" />
+                  </td>
                   <td className="px-6 py-4">
                     <div className="font-semibold text-gray-900 max-w-[200px] truncate">{video.title}</div>
                     {video.featured && (
