@@ -32,6 +32,8 @@ const MIGRATIONS = [
   '20260418000000_add_attendance_grades',
   '20260419000000_add_password_reset_tokens',
   '20260420000000_add_recurrence_and_settings',
+  '20260427093205_add_video_model_and_teacher_years_experience',
+  '20260530000000_add_post_model',
 ];
 
 function exec(cmd, opts = {}) {

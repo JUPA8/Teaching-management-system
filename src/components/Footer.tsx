@@ -18,6 +18,7 @@ export default function Footer() {
     { href: '/courses/quran-adults', label: common('quranAdults') },
     { href: '/teachers', label: common('teachers') },
     { href: '/videos', label: common('videos') },
+    { href: '/news', label: common('news') },
     { href: '/pricing', label: common('pricing') },
   ];
 

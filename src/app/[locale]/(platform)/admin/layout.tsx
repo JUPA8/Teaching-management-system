@@ -65,6 +65,7 @@ export default async function AdminLayout({
               { href: `/${locale}/admin/probestunde`, label: 'Trial Requests' },
               { href: `/${locale}/admin/teachers`, label: 'Teachers' },
               { href: `/${locale}/admin/videos`, label: 'Videos' },
+              { href: `/${locale}/admin/posts`, label: 'News & Announcements' },
               { href: `/${locale}/admin/settings`, label: 'Settings' },
             ].map(({ href, label }) => (
               <a

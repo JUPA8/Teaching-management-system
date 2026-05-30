@@ -497,6 +497,32 @@ model Video {
 }
 
 // ============================================
+// NEWS / POSTS / ANNOUNCEMENTS
+// ============================================
+
+model Post {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  excerpt     String?
+  content     String    @db.Text
+  image       String?
+  type        String    // NEWS, UPDATE, OFFER, EVENT, ANNOUNCEMENT
+  featured    Boolean   @default(false)
+  isPublished Boolean   @default(true)
+  sortOrder   Int       @default(0)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([isPublished])
+  @@index([type])
+  @@index([featured])
+  @@index([sortOrder])
+  @@map("posts")
+}
+
+// ============================================
 // NOTIFICATIONS & LOGS (Optional - Future)
 // ============================================
 

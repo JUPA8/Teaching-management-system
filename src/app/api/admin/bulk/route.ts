@@ -6,7 +6,7 @@ import { prisma } from '@/lib/prisma';
 import { requireAdmin } from '@/lib/auth-helpers';
 
 const bulkSchema = z.object({
-  resource: z.enum(['users', 'courses', 'bookings', 'teachers', 'videos']),
+  resource: z.enum(['users', 'courses', 'bookings', 'teachers', 'videos', 'posts']),
   action: z.enum(['delete', 'activate', 'deactivate', 'cancel']),
   ids: z.array(z.string().min(1)).min(1).max(200),
 });
@@ -135,6 +135,22 @@ export async function POST(request: NextRequest) {
           where: { id: { in: ids } },
           data: { isActive: action === 'activate' },
         });
+        return NextResponse.json({ success: true, affected: ids.length });
+      }
+    }
+
+    // ── Posts ─────────────────────────────────────────────────────────────────
+    if (resource === 'posts') {
+      if (action === 'delete') {
+        await prisma.post.deleteMany({ where: { id: { in: ids } } });
+        return NextResponse.json({ success: true, affected: ids.length });
+      }
+      if (action === 'activate') {
+        await prisma.post.updateMany({ where: { id: { in: ids } }, data: { isPublished: true } });
+        return NextResponse.json({ success: true, affected: ids.length });
+      }
+      if (action === 'deactivate') {
+        await prisma.post.updateMany({ where: { id: { in: ids } }, data: { isPublished: false } });
         return NextResponse.json({ success: true, affected: ids.length });
       }
     }
