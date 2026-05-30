@@ -23,6 +23,7 @@ export default async function AdminPaymentsPage({
           },
         },
       },
+      course: { select: { id: true, name: true } },
     },
   });
 
@@ -71,7 +72,7 @@ export default async function AdminPaymentsPage({
                   Amount
                 </th>
                 <th className="px-6 py-4 text-left text-sm font-bold text-purple-700 uppercase tracking-wider">
-                  Description
+                  Course
                 </th>
                 <th className="px-6 py-4 text-left text-sm font-bold text-purple-700 uppercase tracking-wider">
                   Status
@@ -124,7 +125,7 @@ export default async function AdminPaymentsPage({
                   </td>
                   <td className="px-6 py-4">
                     <div className="text-sm text-gray-900 bg-gray-100 px-3 py-2 rounded-lg">
-                      {payment.description || 'N/A'}
+                      {payment.course?.name || payment.description || 'N/A'}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">

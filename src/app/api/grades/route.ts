@@ -141,22 +141,36 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const grade = await prisma.grade.create({
-      data: {
-        studentId,
-        teacherId: teacherDbId,
-        courseId,
-        bookingId: bookingId ?? null,
-        score,
-        maxScore: maxScore ?? 10,
-        label: label ?? null,
-        notes: notes ?? null,
-      },
-      include: {
-        student: { include: { user: { select: { name: true } } } },
-        course: { select: { name: true } },
-      },
-    });
+    const gradeData = {
+      studentId,
+      teacherId: teacherDbId,
+      courseId,
+      score,
+      maxScore: maxScore ?? 10,
+      label: label ?? null,
+      notes: notes ?? null,
+    };
+
+    const gradeInclude = {
+      student: { include: { user: { select: { name: true } } } },
+      course: { select: { name: true } },
+    };
+
+    let grade;
+    if (bookingId) {
+      // Upsert: one grade per booking session (enforced by @unique on bookingId)
+      grade = await prisma.grade.upsert({
+        where: { bookingId },
+        create: { ...gradeData, bookingId },
+        update: { score, maxScore: maxScore ?? 10, label: label ?? null, notes: notes ?? null },
+        include: gradeInclude,
+      });
+    } else {
+      grade = await prisma.grade.create({
+        data: { ...gradeData, bookingId: null },
+        include: gradeInclude,
+      });
+    }
 
     return NextResponse.json({ success: true, data: grade }, { status: 201 });
   } catch (error: any) {

@@ -85,8 +85,6 @@ export async function POST(request: NextRequest) {
 // Handle successful checkout
 async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
   const paymentId = session.metadata?.paymentId;
-  const studentId = session.metadata?.studentId;
-  const courseId = session.metadata?.courseId;
 
   if (!paymentId) {
     console.error('No paymentId in checkout session metadata');
@@ -94,28 +92,29 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
   }
 
   try {
-    // Update payment status
-    await prisma.payment.update({
+    // Update payment status and fetch stored courseId / studentId from DB
+    const payment = await prisma.payment.update({
       where: { id: paymentId },
       data: {
         status: 'COMPLETED',
         paidAt: new Date(),
         stripePaymentIntentId: session.payment_intent as string,
       },
+      select: { studentId: true, courseId: true },
     });
 
-    // Enroll student in course if not already enrolled
-    if (studentId && courseId) {
+    // Enroll student in course using the typed FK on Payment (not metadata)
+    if (payment.studentId && payment.courseId) {
       await prisma.courseEnrollment.upsert({
         where: {
           courseId_studentId: {
-            courseId,
-            studentId,
+            courseId: payment.courseId,
+            studentId: payment.studentId,
           },
         },
         create: {
-          courseId,
-          studentId,
+          courseId: payment.courseId,
+          studentId: payment.studentId,
           isActive: true,
         },
         update: {
@@ -124,7 +123,6 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
       });
     }
 
-    // TODO: Send confirmation email to student
     console.log('Payment completed successfully:', paymentId);
   } catch (error) {
     console.error('Error handling checkout session completed:', error);

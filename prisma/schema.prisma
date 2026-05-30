@@ -251,6 +251,7 @@ model Course {
   enrollments     CourseEnrollment[]
   bookings        Booking[]
   grades          Grade[]
+  payments        Payment[]
 
   @@index([type])
   @@index([isActive])
@@ -366,7 +367,7 @@ model Grade {
   studentId   String
   teacherId   String
   courseId    String
-  bookingId   String?  // Optional: link to specific session
+  bookingId   String?  @unique  // One grade per session (NULL = standalone grade)
 
   student     Student  @relation(fields: [studentId], references: [id])
   teacher     Teacher  @relation(fields: [teacherId], references: [id])
@@ -393,10 +394,13 @@ model Grade {
 
 model Payment {
   id              String        @id @default(cuid())
-  
+
   studentId       String
   student         Student       @relation(fields: [studentId], references: [id])
-  
+
+  courseId        String?
+  course          Course?       @relation(fields: [courseId], references: [id], onDelete: SetNull)
+
   amount          Float         // Amount in EUR
   currency        String        @default("EUR")
   
@@ -416,6 +420,7 @@ model Payment {
   updatedAt       DateTime      @updatedAt
 
   @@index([studentId])
+  @@index([courseId])
   @@index([status])
   @@index([stripePaymentIntentId])
   @@map("payments")

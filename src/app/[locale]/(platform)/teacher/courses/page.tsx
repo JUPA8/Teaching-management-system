@@ -5,9 +5,7 @@ import { BookOpen, Clock, CheckCircle, XCircle, MinusCircle } from 'lucide-react
 
 type CourseAssignment = Prisma.CourseTeacherGetPayload<{
   include: {
-    course: {
-      include: { _count: { select: { bookings: true } } };
-    };
+    course: true;
   };
 }>;
 
@@ -47,13 +45,7 @@ export default async function TeacherCoursesPage() {
     where: { userId: user.id },
     include: {
       courses: {
-        include: {
-          course: {
-            include: {
-              _count: { select: { bookings: true } },
-            },
-          },
-        },
+        include: { course: true },
         orderBy: { assignedAt: 'desc' },
       },
     },
@@ -74,6 +66,26 @@ export default async function TeacherCoursesPage() {
   }) as CompletedBooking[];
 
   const courseAssignments = teacher.courses;
+
+  // Count teacher-specific completed/upcoming bookings per course
+  const courseBookingCounts: Record<string, number> = {};
+  for (const b of completedBookings) {
+    courseBookingCounts[b.course.id] = (courseBookingCounts[b.course.id] ?? 0) + 1;
+  }
+
+  const upcomingBookings = await prisma.booking.findMany({
+    where: {
+      teacherId: teacher.id,
+      status: { in: ['CONFIRMED', 'PENDING'] },
+      scheduledAt: { gte: new Date() },
+    },
+    select: { courseId: true },
+  });
+
+  const courseUpcomingCounts: Record<string, number> = {};
+  for (const b of upcomingBookings) {
+    courseUpcomingCounts[b.courseId] = (courseUpcomingCounts[b.courseId] ?? 0) + 1;
+  }
 
   return (
     <div className="space-y-10">
@@ -98,6 +110,8 @@ export default async function TeacherCoursesPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {(courseAssignments as CourseAssignment[]).map((assignment: CourseAssignment) => {
               const { course } = assignment;
+              const completed = courseBookingCounts[course.id] ?? 0;
+              const upcoming  = courseUpcomingCounts[course.id] ?? 0;
               return (
                 <div key={course.id} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
                   <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center mb-4">
@@ -109,7 +123,7 @@ export default async function TeacherCoursesPage() {
                   )}
                   <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
                     <span className="text-sm text-gray-500">
-                      {course._count.bookings} booking{course._count.bookings !== 1 ? 's' : ''}
+                      {completed} done · {upcoming} upcoming
                     </span>
                     <span className="text-sm font-semibold text-blue-600">€{course.price}</span>
                   </div>

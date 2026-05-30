@@ -125,9 +125,10 @@ async function main() {
   // ── Teachers ───────────────────────────────────────────────────────────────
   console.log('👨‍🏫 Teachers...');
 
+  // Teacher 1: Sheikh Ahmed — teaches Quran Kids + Arabic for Beginners
   const tusr1 = await prisma.user.create({
     data: {
-      email: 'sheikh.ahmed@salam-institut.com',
+      email: 'teacher.ahmed@salam-institut.com',
       password: PASS,
       name: 'Sheikh Ahmed Hassan',
       role: UserRole.TEACHER,
@@ -140,7 +141,7 @@ async function main() {
       userId: tusr1.id,
       gender: 'MALE',
       bio: 'Sheikh Ahmed Hassan holds an ijazah in Quran recitation and has been teaching Tajweed and Quranic sciences for over 10 years. Fluent in Arabic, English, and German.',
-      specializations: ['Tajweed', 'Quran Recitation', 'Islamic Studies', 'Fiqh'],
+      specializations: ['Tajweed', 'Quran Recitation', 'Islamic Studies', 'Arabic Language'],
       languages: ['Arabic', 'English', 'German'],
       hourlyRate: 25,
       yearsExperience: 10,
@@ -154,11 +155,12 @@ async function main() {
       },
     },
   });
-  console.log('   ✅ Sheikh Ahmed Hassan (MALE, Tajweed/Quran)');
+  console.log('   ✅ Sheikh Ahmed Hassan  (teacher.ahmed@salam-institut.com)');
 
+  // Teacher 2: Ustazah Maryam — teaches Tajweed + Quran Kids
   const tusr2 = await prisma.user.create({
     data: {
-      email: 'ustazah.maryam@salam-institut.com',
+      email: 'teacher.maryam@salam-institut.com',
       password: PASS,
       name: 'Ustazah Maryam Ali',
       role: UserRole.TEACHER,
@@ -171,7 +173,7 @@ async function main() {
       userId: tusr2.id,
       gender: 'FEMALE',
       bio: 'Ustazah Maryam Ali is a certified Arabic language instructor and Quran teacher with 7 years of experience. She specialises in teaching children and adult beginners.',
-      specializations: ['Arabic Language', 'Quran for Kids', 'Quran Recitation'],
+      specializations: ['Tajweed', 'Quran for Kids', 'Quran Recitation'],
       languages: ['Arabic', 'English'],
       hourlyRate: 22,
       yearsExperience: 7,
@@ -184,11 +186,12 @@ async function main() {
       },
     },
   });
-  console.log('   ✅ Ustazah Maryam Ali (FEMALE, Arabic/Quran Kids)\n');
+  console.log('   ✅ Ustazah Maryam Ali   (teacher.maryam@salam-institut.com)\n');
 
   // ── Students ───────────────────────────────────────────────────────────────
   console.log('🎓 Students...');
 
+  // Student 1: Omar — Quran Reading for Kids (teacher: Ahmed)
   const susr1 = await prisma.user.create({
     data: {
       email: 'omar.hassan@example.com',
@@ -207,8 +210,9 @@ async function main() {
       country: 'Germany',
     },
   });
-  console.log('   ✅ Omar Hassan (adult, Berlin)');
+  console.log('   ✅ Omar Hassan  → Quran Reading for Kids  (Berlin)');
 
+  // Student 2: Aisha — Tajweed Basics (teacher: Maryam)
   const susr2 = await prisma.user.create({
     data: {
       email: 'aisha.khan@example.com',
@@ -227,8 +231,9 @@ async function main() {
       country: 'Germany',
     },
   });
-  console.log('   ✅ Aisha Khan (adult, Munich)');
+  console.log('   ✅ Aisha Khan   → Tajweed Basics          (Munich)');
 
+  // Student 3: Yusuf — Arabic for Beginners (teacher: Ahmed)
   const susr3 = await prisma.user.create({
     data: {
       email: 'yusuf.ali@example.com',
@@ -249,11 +254,12 @@ async function main() {
       parentEmail: 'ali.hassan@example.com',
     },
   });
-  console.log('   ✅ Yusuf Ali (child, Hamburg, with parent info)\n');
+  console.log('   ✅ Yusuf Ali    → Arabic for Beginners    (Hamburg, parent info)\n');
 
   // ── Courses ────────────────────────────────────────────────────────────────
   console.log('📚 Courses...');
 
+  // Course 1: Quran Reading for Kids — taught by Ahmed + Maryam
   const course1 = await prisma.course.create({
     data: {
       name: 'Quran Reading for Kids',
@@ -276,6 +282,7 @@ async function main() {
   });
   console.log('   ✅ Quran Reading for Kids  (45 min, 12 sessions, €99.99)');
 
+  // Course 2: Tajweed Basics — taught by Maryam + Ahmed
   const course2 = await prisma.course.create({
     data: {
       name: 'Tajweed Basics',
@@ -298,6 +305,7 @@ async function main() {
   });
   console.log('   ✅ Tajweed Basics           (60 min, 16 sessions, €149.99)');
 
+  // Course 3: Arabic for Beginners — taught by Ahmed
   const course3 = await prisma.course.create({
     data: {
       name: 'Arabic for Beginners',
@@ -321,42 +329,47 @@ async function main() {
   console.log('   ✅ Arabic for Beginners     (60 min, 20 sessions, €129.99)\n');
 
   // ── CourseTeacher assignments ──────────────────────────────────────────────
+  // Ahmed   → Quran Reading for Kids + Arabic for Beginners
+  // Maryam  → Tajweed Basics + Quran Reading for Kids
   console.log('🔗 Assigning teachers to courses...');
   await prisma.courseTeacher.createMany({
     data: [
-      { courseId: course1.id, teacherId: teacher1.id }, // Sheikh Ahmed → Quran Kids
-      { courseId: course2.id, teacherId: teacher1.id }, // Sheikh Ahmed → Tajweed
-      { courseId: course1.id, teacherId: teacher2.id }, // Ustazah Maryam → Quran Kids
-      { courseId: course3.id, teacherId: teacher2.id }, // Ustazah Maryam → Arabic
+      { courseId: course1.id, teacherId: teacher1.id }, // Ahmed  → Quran Kids
+      { courseId: course3.id, teacherId: teacher1.id }, // Ahmed  → Arabic
+      { courseId: course2.id, teacherId: teacher2.id }, // Maryam → Tajweed
+      { courseId: course1.id, teacherId: teacher2.id }, // Maryam → Quran Kids
     ],
   });
-  console.log('   ✅ Sheikh Ahmed  → Quran Reading for Kids, Tajweed Basics');
-  console.log('   ✅ Ustazah Maryam → Quran Reading for Kids, Arabic for Beginners\n');
+  console.log('   ✅ Sheikh Ahmed  → Quran Reading for Kids, Arabic for Beginners');
+  console.log('   ✅ Ustazah Maryam → Tajweed Basics, Quran Reading for Kids\n');
 
   // ── CourseEnrollments ──────────────────────────────────────────────────────
+  // Omar   → Quran Reading for Kids  (1/12 completed = 8%)
+  // Aisha  → Tajweed Basics          (1/16 COMPLETED bookings = 6%, but ABSENT)
+  // Yusuf  → Arabic for Beginners    (1/20 completed = 5%)
   console.log('📋 Enrollments...');
   await prisma.courseEnrollment.createMany({
     data: [
-      { courseId: course2.id, studentId: student1.id, progress: 30 }, // Omar → Tajweed
-      { courseId: course3.id, studentId: student2.id, progress: 20 }, // Aisha → Arabic
-      { courseId: course1.id, studentId: student3.id, progress: 50 }, // Yusuf → Quran Kids
+      { courseId: course1.id, studentId: student1.id, progress: 8  }, // Omar  → Quran Kids
+      { courseId: course2.id, studentId: student2.id, progress: 6  }, // Aisha → Tajweed
+      { courseId: course3.id, studentId: student3.id, progress: 5  }, // Yusuf → Arabic
     ],
   });
-  console.log('   ✅ Omar  → Tajweed Basics           (30% progress)');
-  console.log('   ✅ Aisha → Arabic for Beginners     (20% progress)');
-  console.log('   ✅ Yusuf → Quran Reading for Kids   (50% progress)\n');
+  console.log('   ✅ Omar  → Quran Reading for Kids  (8% progress)');
+  console.log('   ✅ Aisha → Tajweed Basics          (6% progress)');
+  console.log('   ✅ Yusuf → Arabic for Beginners    (5% progress)\n');
 
   // ── Past / completed sessions ──────────────────────────────────────────────
   console.log('📅 Past sessions (COMPLETED)...');
 
-  // Session 1 — Omar + Sheikh Ahmed + Tajweed, 3 weeks ago
+  // Session 1 — Omar + Ahmed + Quran Kids, 3 weeks ago (PRESENT, grade 8/10)
   const b1 = await prisma.booking.create({
     data: {
-      courseId: course2.id,
+      courseId: course1.id,
       studentId: student1.id,
       teacherId: teacher1.id,
-      scheduledAt: new Date('2026-05-09T10:00:00.000Z'),
-      endTime:     new Date('2026-05-09T11:00:00.000Z'),
+      scheduledAt: new Date('2026-05-09T09:00:00.000Z'),
+      endTime:     new Date('2026-05-09T09:45:00.000Z'),
       status: BookingStatus.COMPLETED,
       meetingLink: 'https://meet.google.com/demo-past-1',
     },
@@ -365,25 +378,25 @@ async function main() {
     data: {
       bookingId: b1.id, studentId: student1.id, teacherId: teacher1.id,
       status: 'PRESENT',
-      notes: 'Great progress with makharij al-huruf.',
-      markedAt: new Date('2026-05-09T11:05:00.000Z'),
+      notes: 'Good recitation of Al-Fatiha. Ready for Al-Ikhlas next session.',
+      markedAt: new Date('2026-05-09T09:50:00.000Z'),
     },
   });
   await prisma.grade.create({
     data: {
-      studentId: student1.id, teacherId: teacher1.id, courseId: course2.id, bookingId: b1.id,
-      score: 78, maxScore: 100,
-      label: 'Session 1 — Tajweed Assessment',
-      notes: 'Good understanding of nun sakinah rules. Needs more work on qalqalah.',
-      gradedAt: new Date('2026-05-09T11:10:00.000Z'),
+      studentId: student1.id, teacherId: teacher1.id, courseId: course1.id, bookingId: b1.id,
+      score: 8, maxScore: 10,
+      label: 'Session 1 — Al-Fatiha Recitation',
+      notes: 'Strong pronunciation. Minor tajweed corrections needed on madd letters.',
+      gradedAt: new Date('2026-05-09T09:55:00.000Z'),
     },
   });
-  console.log('   ✅ Omar  — Tajweed Basics (May 9,  PRESENT, grade 78/100)');
+  console.log('   ✅ Omar  — Quran Kids (May 9,  PRESENT, grade 8/10, teacher: Ahmed)');
 
-  // Session 2 — Aisha + Ustazah Maryam + Arabic, 2 weeks ago
+  // Session 2 — Aisha + Maryam + Tajweed, 2 weeks ago (ABSENT, no grade)
   const b2 = await prisma.booking.create({
     data: {
-      courseId: course3.id,
+      courseId: course2.id,
       studentId: student2.id,
       teacherId: teacher2.id,
       scheduledAt: new Date('2026-05-16T14:00:00.000Z'),
@@ -395,30 +408,22 @@ async function main() {
   await prisma.attendance.create({
     data: {
       bookingId: b2.id, studentId: student2.id, teacherId: teacher2.id,
-      status: 'PRESENT',
-      notes: 'Excellent retention of vocabulary from last session.',
+      status: 'ABSENT',
+      notes: 'Student did not attend. No prior notice given.',
       markedAt: new Date('2026-05-16T15:05:00.000Z'),
     },
   });
-  await prisma.grade.create({
-    data: {
-      studentId: student2.id, teacherId: teacher2.id, courseId: course3.id, bookingId: b2.id,
-      score: 85, maxScore: 100,
-      label: 'Session 1 — Alphabet & Basic Vocabulary',
-      notes: 'Strong grasp of the alphabet. Ready to move to basic vocabulary unit.',
-      gradedAt: new Date('2026-05-16T15:10:00.000Z'),
-    },
-  });
-  console.log('   ✅ Aisha — Arabic for Beginners (May 16, PRESENT, grade 85/100)');
+  // No grade for absent session
+  console.log('   ✅ Aisha — Tajweed Basics (May 16, ABSENT, no grade, teacher: Maryam)');
 
-  // Session 3 — Yusuf + Sheikh Ahmed + Quran Kids, 1 week ago
+  // Session 3 — Yusuf + Ahmed + Arabic, 1 week ago (PRESENT, grade 9/10)
   const b3 = await prisma.booking.create({
     data: {
-      courseId: course1.id,
+      courseId: course3.id,
       studentId: student3.id,
       teacherId: teacher1.id,
-      scheduledAt: new Date('2026-05-23T11:00:00.000Z'),
-      endTime:     new Date('2026-05-23T11:45:00.000Z'),
+      scheduledAt: new Date('2026-05-23T17:00:00.000Z'),
+      endTime:     new Date('2026-05-23T18:00:00.000Z'),
       status: BookingStatus.COMPLETED,
       meetingLink: 'https://meet.google.com/demo-past-3',
     },
@@ -427,109 +432,118 @@ async function main() {
     data: {
       bookingId: b3.id, studentId: student3.id, teacherId: teacher1.id,
       status: 'PRESENT',
-      notes: 'Yusuf recited Surah Al-Fatiha perfectly. Mashallah.',
-      markedAt: new Date('2026-05-23T11:50:00.000Z'),
+      notes: 'Excellent progress — memorised all 28 letters and their forms.',
+      markedAt: new Date('2026-05-23T18:05:00.000Z'),
     },
   });
   await prisma.grade.create({
     data: {
-      studentId: student3.id, teacherId: teacher1.id, courseId: course1.id, bookingId: b3.id,
-      score: 92, maxScore: 100,
-      label: 'Surah Al-Fatiha Recitation',
-      notes: 'Excellent pronunciation and memory. Ready for Surah Al-Ikhlas next session.',
-      gradedAt: new Date('2026-05-23T11:55:00.000Z'),
+      studentId: student3.id, teacherId: teacher1.id, courseId: course3.id, bookingId: b3.id,
+      score: 9, maxScore: 10,
+      label: 'Session 1 — Arabic Alphabet',
+      notes: 'Outstanding retention. Ready for basic vocabulary unit.',
+      gradedAt: new Date('2026-05-23T18:10:00.000Z'),
     },
   });
-  console.log('   ✅ Yusuf — Quran Reading for Kids (May 23, PRESENT, grade 92/100)\n');
+  console.log('   ✅ Yusuf — Arabic (May 23, PRESENT, grade 9/10, teacher: Ahmed)\n');
 
   // ── Upcoming individual sessions (CONFIRMED) ───────────────────────────────
   console.log('📅 Upcoming sessions (CONFIRMED)...');
 
   await prisma.booking.create({
     data: {
-      courseId: course2.id, studentId: student1.id, teacherId: teacher1.id,
-      scheduledAt: new Date('2026-06-06T10:00:00.000Z'),
-      endTime:     new Date('2026-06-06T11:00:00.000Z'),
+      courseId: course1.id, studentId: student1.id, teacherId: teacher1.id,
+      scheduledAt: new Date('2026-06-06T09:00:00.000Z'),
+      endTime:     new Date('2026-06-06T09:45:00.000Z'),
       status: BookingStatus.CONFIRMED,
       meetingLink: 'https://meet.google.com/demo-upcoming-1',
     },
   });
-  console.log('   ✅ Omar  — Tajweed Basics (Jun 6,  10:00–11:00)');
+  console.log('   ✅ Omar  — Quran Kids (Jun 6,  09:00–09:45, teacher: Ahmed)');
 
   await prisma.booking.create({
     data: {
-      courseId: course3.id, studentId: student2.id, teacherId: teacher2.id,
+      courseId: course2.id, studentId: student2.id, teacherId: teacher2.id,
       scheduledAt: new Date('2026-06-13T14:00:00.000Z'),
       endTime:     new Date('2026-06-13T15:00:00.000Z'),
       status: BookingStatus.CONFIRMED,
       meetingLink: 'https://meet.google.com/demo-upcoming-2',
     },
   });
-  console.log('   ✅ Aisha — Arabic for Beginners (Jun 13, 14:00–15:00)');
+  console.log('   ✅ Aisha — Tajweed (Jun 13, 14:00–15:00, teacher: Maryam)');
 
   await prisma.booking.create({
     data: {
-      courseId: course1.id, studentId: student3.id, teacherId: teacher1.id,
-      scheduledAt: new Date('2026-06-20T11:00:00.000Z'),
-      endTime:     new Date('2026-06-20T11:45:00.000Z'),
+      courseId: course3.id, studentId: student3.id, teacherId: teacher1.id,
+      scheduledAt: new Date('2026-06-20T17:00:00.000Z'),
+      endTime:     new Date('2026-06-20T18:00:00.000Z'),
       status: BookingStatus.CONFIRMED,
       meetingLink: 'https://meet.google.com/demo-upcoming-3',
     },
   });
-  console.log('   ✅ Yusuf — Quran Reading for Kids (Jun 20, 11:00–11:45)\n');
+  console.log('   ✅ Yusuf — Arabic (Jun 20, 17:00–18:00, teacher: Ahmed)\n');
 
-  // ── Recurring booking series (4 Fridays × 2 students = 8 rows) ────────────
-  console.log('🔄 Recurring series (4 Fridays, Omar + Aisha, Tajweed with Sheikh Ahmed)...');
-  const recurGroupId = `recur-demo-${Date.now()}`;
+  // ── Recurring booking series ───────────────────────────────────────────────
+  // Series A: Omar in Quran Kids with Ahmed (4 Saturdays 10:00-10:45)
+  // Series B: Aisha in Tajweed with Maryam  (4 Wednesdays 15:00-16:00)
+  // = 8 total recurring bookings
+  console.log('🔄 Recurring series...');
 
-  const fridays = ['2026-06-05', '2026-06-12', '2026-06-19', '2026-06-26'];
+  const recurGroupA = `recur-demo-A-${Date.now()}`;
+  const saturdays   = ['2026-06-07', '2026-06-14', '2026-06-21', '2026-06-28'];
   await prisma.booking.createMany({
-    data: fridays.flatMap((d) => [
-      {
-        courseId: course2.id, studentId: student1.id, teacherId: teacher1.id,
-        scheduledAt: new Date(`${d}T17:00:00.000Z`),
-        endTime:     new Date(`${d}T18:00:00.000Z`),
-        status: BookingStatus.CONFIRMED,
-        meetingLink: 'https://meet.google.com/demo-recurring',
-        recurrenceGroupId: recurGroupId,
-      },
-      {
-        courseId: course2.id, studentId: student2.id, teacherId: teacher1.id,
-        scheduledAt: new Date(`${d}T18:00:00.000Z`),
-        endTime:     new Date(`${d}T19:00:00.000Z`),
-        status: BookingStatus.CONFIRMED,
-        meetingLink: 'https://meet.google.com/demo-recurring',
-        recurrenceGroupId: recurGroupId,
-      },
-    ]),
+    data: saturdays.map((d) => ({
+      courseId: course1.id, studentId: student1.id, teacherId: teacher1.id,
+      scheduledAt: new Date(`${d}T10:00:00.000Z`),
+      endTime:     new Date(`${d}T10:45:00.000Z`),
+      status: BookingStatus.CONFIRMED,
+      meetingLink: 'https://meet.google.com/demo-recurring-a',
+      recurrenceGroupId: recurGroupA,
+    })),
   });
-  console.log(`   ✅ 8 bookings created (group: ${recurGroupId})\n`);
+  console.log(`   ✅ Omar  — Quran Kids × 4 Saturdays (Ahmed, group A)`);
 
-  // ── Payments ───────────────────────────────────────────────────────────────
+  const recurGroupB = `recur-demo-B-${Date.now() + 1}`;
+  const wednesdays  = ['2026-06-04', '2026-06-11', '2026-06-18', '2026-06-25'];
+  await prisma.booking.createMany({
+    data: wednesdays.map((d) => ({
+      courseId: course2.id, studentId: student2.id, teacherId: teacher2.id,
+      scheduledAt: new Date(`${d}T15:00:00.000Z`),
+      endTime:     new Date(`${d}T16:00:00.000Z`),
+      status: BookingStatus.CONFIRMED,
+      meetingLink: 'https://meet.google.com/demo-recurring-b',
+      recurrenceGroupId: recurGroupB,
+    })),
+  });
+  console.log(`   ✅ Aisha — Tajweed × 4 Wednesdays (Maryam, group B)\n`);
+
+  // ── Payments (with typed courseId FK) ──────────────────────────────────────
   console.log('💳 Payments...');
   await prisma.payment.create({
     data: {
       studentId: student1.id,
-      amount: 149.99, currency: 'EUR',
+      courseId:  course1.id,
+      amount: 99.99, currency: 'EUR',
       status: 'COMPLETED',
-      description: 'Tajweed Basics — full course enrollment',
+      description: 'Quran Reading for Kids — full course enrollment',
       paidAt: new Date('2026-05-01T09:00:00.000Z'),
-      metadata: { course: 'Tajweed Basics', sessions: 16 },
+      metadata: { course: 'Quran Reading for Kids', sessions: 12 },
     },
   });
-  console.log('   ✅ Omar  — €149.99 COMPLETED (May 1)');
+  console.log('   ✅ Omar  — €99.99 COMPLETED (May 1, Quran Kids)');
 
   await prisma.payment.create({
     data: {
       studentId: student2.id,
-      amount: 129.99, currency: 'EUR',
+      courseId:  course2.id,
+      amount: 149.99, currency: 'EUR',
       status: 'COMPLETED',
-      description: 'Arabic for Beginners — full course enrollment',
+      description: 'Tajweed Basics — full course enrollment',
       paidAt: new Date('2026-05-03T11:00:00.000Z'),
-      metadata: { course: 'Arabic for Beginners', sessions: 20 },
+      metadata: { course: 'Tajweed Basics', sessions: 16 },
     },
   });
-  console.log('   ✅ Aisha — €129.99 COMPLETED (May 3)\n');
+  console.log('   ✅ Aisha — €149.99 COMPLETED (May 3, Tajweed Basics)\n');
 
   // ── Videos ─────────────────────────────────────────────────────────────────
   console.log('🎬 Videos...');
@@ -658,19 +672,21 @@ async function main() {
   console.log('');
   console.log('🔑 Login credentials (password for all: TestPass123!)');
   console.log('   Admin:    admin@salam-institut.com');
-  console.log('   Teacher:  sheikh.ahmed@salam-institut.com');
-  console.log('   Teacher:  ustazah.maryam@salam-institut.com');
-  console.log('   Student:  omar.hassan@example.com');
-  console.log('   Student:  aisha.khan@example.com');
-  console.log('   Student:  yusuf.ali@example.com');
+  console.log('   Teacher:  teacher.ahmed@salam-institut.com    (Quran Kids + Arabic)');
+  console.log('   Teacher:  teacher.maryam@salam-institut.com   (Tajweed + Quran Kids)');
+  console.log('   Student:  omar.hassan@example.com             (Quran Kids)');
+  console.log('   Student:  aisha.khan@example.com              (Tajweed)');
+  console.log('   Student:  yusuf.ali@example.com               (Arabic)');
   console.log('');
   console.log('📊 Data summary:');
   console.log('   Users:          6  (1 admin, 2 teachers, 3 students)');
   console.log('   Courses:        3');
-  console.log('   Bookings:      14  (3 past COMPLETED + 3 upcoming CONFIRMED + 8 recurring CONFIRMED)');
-  console.log('   Attendance:     3  (one per completed session, all PRESENT)');
-  console.log('   Grades:         3  (78, 85, 92 out of 100)');
-  console.log('   Payments:       2  (€149.99 + €129.99, COMPLETED)');
+  console.log('   CourseTeacher:  4  (Ahmed→Kids+Arabic, Maryam→Tajweed+Kids)');
+  console.log('   Enrollments:    3  (Omar→Kids 8%, Aisha→Tajweed 6%, Yusuf→Arabic 5%)');
+  console.log('   Bookings:      14  (3 COMPLETED + 3 upcoming CONFIRMED + 8 recurring CONFIRMED)');
+  console.log('   Attendance:     3  (Omar PRESENT, Aisha ABSENT, Yusuf PRESENT)');
+  console.log('   Grades:         2  (Omar 8/10, Yusuf 9/10 — Aisha absent so no grade)');
+  console.log('   Payments:       2  (€99.99 Omar, €149.99 Aisha, both COMPLETED with courseId)');
   console.log('   Videos:         2  (1 featured)');
   console.log('   Posts:          3  (1 featured OFFER, 1 NEWS, 1 ANNOUNCEMENT)');
   console.log('   Site Settings:  8');

@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { requireAuth } from '@/lib/auth-helpers';
 import { UserRole } from '@prisma/client';
+import { logActivity } from '@/lib/activityLog';
 
 const upsertSchema = z.object({
   bookingId: z.string().cuid(),
@@ -79,7 +80,7 @@ export async function POST(request: NextRequest) {
     // Verify booking exists
     const booking = await prisma.booking.findUnique({
       where: { id: bookingId },
-      select: { id: true, teacherId: true, studentId: true },
+      select: { id: true, teacherId: true, studentId: true, courseId: true },
     });
     if (!booking) return NextResponse.json({ success: false, error: 'Booking not found' }, { status: 404 });
 
@@ -109,6 +110,37 @@ export async function POST(request: NextRequest) {
         data: { status: 'COMPLETED' },
       }),
     ]);
+
+    // ── Update CourseEnrollment progress ──────────────────────────────────────
+    const courseId = booking.courseId;
+    const studentId = booking.studentId;
+
+    const [completedCount, course] = await Promise.all([
+      prisma.booking.count({
+        where: { courseId, studentId, status: 'COMPLETED' },
+      }),
+      prisma.course.findUnique({
+        where: { id: courseId },
+        select: { totalSessions: true },
+      }),
+    ]);
+
+    if (course && course.totalSessions > 0) {
+      const progress = Math.min(100, Math.round((completedCount / course.totalSessions) * 100));
+      await prisma.courseEnrollment.updateMany({
+        where: { courseId, studentId },
+        data: { progress },
+      });
+    }
+
+    // ── Log activity ───────────────────────────────────────────────────────────
+    await logActivity({
+      userId: user.id,
+      action: 'ATTENDANCE_MARKED',
+      entityType: 'Booking',
+      entityId: bookingId,
+      metadata: { status, studentId, courseId },
+    });
 
     // Return the attendance record with related data
     const fullRecord = await prisma.attendance.findUnique({

@@ -146,6 +146,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Teacher not found or inactive' }, { status: 404 });
     }
 
+    // ── Verify teacher is assigned to course ───────────────────────────────────
+    const courseTeacher = await prisma.courseTeacher.findUnique({
+      where: { courseId_teacherId: { courseId: data.courseId, teacherId: data.teacherId } },
+    });
+    if (!courseTeacher) {
+      return NextResponse.json({ success: false, error: 'Teacher is not assigned to this course' }, { status: 400 });
+    }
+
     // ── Build list of scheduled datetimes (weekly recurrence) ─────────────────
     const baseTime = new Date(data.scheduledAt);
     const sessionTimes: Date[] = [];
@@ -227,6 +235,17 @@ export async function POST(request: NextRequest) {
         return results;
       },
       { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }
+    );
+
+    // ── Upsert CourseEnrollment for each student ───────────────────────────────
+    await Promise.all(
+      resolvedStudentIds.map((sid) =>
+        prisma.courseEnrollment.upsert({
+          where: { courseId_studentId: { courseId, studentId: sid } },
+          create: { courseId, studentId: sid, isActive: true },
+          update: { isActive: true },
+        })
+      )
     );
 
     return NextResponse.json(
