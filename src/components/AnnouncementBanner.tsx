@@ -17,34 +17,66 @@ async function getFeaturedBanner() {
   }
 }
 
-const TYPE_ICON: Record<string, string> = {
-  OFFER: '🎉',
-  ANNOUNCEMENT: '📢',
+const TYPE_CONFIG: Record<string, { icon: string; label: string; pill: string }> = {
+  OFFER:        { icon: '🎉', label: 'Special Offer',   pill: 'bg-[#D9B574] text-white' },
+  ANNOUNCEMENT: { icon: '📢', label: 'Announcement',    pill: 'bg-white/20 text-white border border-white/40' },
 };
 
 export default async function AnnouncementBanner({ locale }: { locale: string }) {
   const post = await getFeaturedBanner();
   if (!post) return null;
 
-  const icon = TYPE_ICON[post.type] ?? '📢';
+  const config = TYPE_CONFIG[post.type] ?? TYPE_CONFIG.ANNOUNCEMENT;
 
   return (
-    <div className="bg-gradient-to-r from-[#2B7A78] via-[#1d5856] to-[#2B7A78] text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-        <div className="flex items-center justify-center gap-3 flex-wrap text-sm">
-          <span className="text-lg">{icon}</span>
-          <span className="font-semibold">{post.title}</span>
-          {post.excerpt && (
-            <span className="text-white/80 hidden sm:inline">— {post.excerpt}</span>
-          )}
+    <div className="relative overflow-hidden bg-gradient-to-r from-[#1d5856] via-[#2B7A78] to-[#1d5856]">
+      {/* Islamic geometric background pattern */}
+      <div
+        className="absolute inset-0 opacity-[0.07] pointer-events-none"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23D9B574' stroke-width='1'%3E%3Cpath d='M40 10 L55 25 L55 55 L40 70 L25 55 L25 25 Z'/%3E%3Cpath d='M40 20 L50 30 L50 50 L40 60 L30 50 L30 30 Z'/%3E%3Ccircle cx='40' cy='40' r='8'/%3E%3C/g%3E%3C/svg%3E")`,
+          backgroundSize: '80px 80px',
+        }}
+      />
+      {/* Gold top accent line */}
+      <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#D9B574] to-transparent" />
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          {/* Left: icon + text */}
+          <div className="flex items-start sm:items-center gap-4 text-center sm:text-left">
+            <span className="text-3xl flex-shrink-0 hidden sm:block">{config.icon}</span>
+            <div>
+              <div className="flex items-center gap-2 mb-1 justify-center sm:justify-start">
+                <span className="text-xl sm:hidden">{config.icon}</span>
+                <span className={`text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full ${config.pill}`}>
+                  {config.label}
+                </span>
+              </div>
+              <p className="text-white font-bold text-lg sm:text-xl leading-snug">
+                {post.title}
+              </p>
+              {post.excerpt && (
+                <p className="text-white/75 text-sm mt-0.5 max-w-xl">
+                  {post.excerpt}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Right: CTA button */}
           <Link
             href={`/${locale}/news/${post.slug}`}
-            className="inline-flex items-center gap-1 px-4 py-1.5 bg-[#D9B574] hover:bg-[#C4A565] text-white rounded-full text-xs font-bold transition-colors ml-2"
+            className="flex-shrink-0 inline-flex items-center gap-2 px-6 py-3 bg-[#D9B574] hover:bg-[#C4A565] text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all text-sm whitespace-nowrap"
           >
-            Read More →
+            Read More
+            <span className="text-base">→</span>
           </Link>
         </div>
       </div>
+
+      {/* Gold bottom accent line */}
+      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#D9B574] to-transparent" />
     </div>
   );
 }

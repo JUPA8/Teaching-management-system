@@ -16,14 +16,18 @@ export default async function HomePage({
 
   return (
     <>
+      {/* Featured offer/announcement banner — prominent, full-width, right below header */}
       <AnnouncementBanner locale={locale} />
+
       <Hero />
+
+      {/* News section immediately after hero — high-visibility position */}
+      <NewsSection locale={locale} />
+
       <IslamicDivider />
       <Features />
       <IslamicDivider />
       <CoursesSection />
-      <IslamicDivider />
-      <NewsSection locale={locale} />
       <IslamicDivider />
       <Testimonials />
       <IslamicDivider />
