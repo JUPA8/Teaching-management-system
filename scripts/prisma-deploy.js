@@ -35,6 +35,7 @@ const MIGRATIONS = [
   '20260427093205_add_video_model_and_teacher_years_experience',
   '20260530000000_add_post_model',
   '20260530100000_architecture_refactor',
+  '20260530200000_multilingual_posts',
 ];
 
 function exec(cmd, opts = {}) {

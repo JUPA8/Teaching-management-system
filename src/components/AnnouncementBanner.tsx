@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
+import { localizePost } from '@/lib/postLocale';
 
 async function getFeaturedBanner() {
   try {
@@ -10,22 +11,31 @@ async function getFeaturedBanner() {
         type: { in: ['OFFER', 'ANNOUNCEMENT'] },
       },
       orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
-      select: { id: true, title: true, slug: true, excerpt: true, type: true },
+      select: {
+        id: true,
+        title: true, slug: true, excerpt: true, content: true,
+        titleDe: true, slugDe: true, excerptDe: true, contentDe: true,
+        titleAr: true, slugAr: true, excerptAr: true, contentAr: true,
+        type: true,
+      },
     });
   } catch {
     return null;
   }
 }
 
-const TYPE_CONFIG: Record<string, { icon: string; label: string; pill: string }> = {
-  OFFER:        { icon: '🎉', label: 'Special Offer',   pill: 'bg-[#D9B574] text-white' },
-  ANNOUNCEMENT: { icon: '📢', label: 'Announcement',    pill: 'bg-white/20 text-white border border-white/40' },
+const TYPE_CONFIG: Record<string, { icon: string; label: Record<string, string>; pill: string }> = {
+  OFFER:        { icon: '🎉', label: { en: 'Special Offer', de: 'Sonderangebot', ar: 'عرض خاص' },   pill: 'bg-[#D9B574] text-white' },
+  ANNOUNCEMENT: { icon: '📢', label: { en: 'Announcement', de: 'Ankündigung',   ar: 'إعلان' }, pill: 'bg-white/20 text-white border border-white/40' },
 };
+
+const READ_MORE: Record<string, string> = { en: 'Read More', de: 'Mehr lesen', ar: 'اقرأ المزيد' };
 
 export default async function AnnouncementBanner({ locale }: { locale: string }) {
   const post = await getFeaturedBanner();
   if (!post) return null;
 
+  const loc    = localizePost(post, locale);
   const config = TYPE_CONFIG[post.type] ?? TYPE_CONFIG.ANNOUNCEMENT;
 
   return (
@@ -50,15 +60,15 @@ export default async function AnnouncementBanner({ locale }: { locale: string })
               <div className="flex items-center gap-2 mb-1 justify-center sm:justify-start">
                 <span className="text-xl sm:hidden">{config.icon}</span>
                 <span className={`text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full ${config.pill}`}>
-                  {config.label}
+                  {config.label[locale] ?? config.label.en}
                 </span>
               </div>
               <p className="text-white font-bold text-lg sm:text-xl leading-snug">
-                {post.title}
+                {loc.title}
               </p>
-              {post.excerpt && (
+              {loc.excerpt && (
                 <p className="text-white/75 text-sm mt-0.5 max-w-xl">
-                  {post.excerpt}
+                  {loc.excerpt}
                 </p>
               )}
             </div>
@@ -66,10 +76,10 @@ export default async function AnnouncementBanner({ locale }: { locale: string })
 
           {/* Right: CTA button */}
           <Link
-            href={`/${locale}/news/${post.slug}`}
+            href={`/${locale}/news/${loc.slug}`}
             className="flex-shrink-0 inline-flex items-center gap-2 px-6 py-3 bg-[#D9B574] hover:bg-[#C4A565] text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all text-sm whitespace-nowrap"
           >
-            Read More
+            {READ_MORE[locale] ?? READ_MORE.en}
             <span className="text-base">→</span>
           </Link>
         </div>

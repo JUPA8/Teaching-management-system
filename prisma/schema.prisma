@@ -507,10 +507,26 @@ model Video {
 
 model Post {
   id          String    @id @default(cuid())
+
+  // English (primary) — required
   title       String
   slug        String    @unique
   excerpt     String?
   content     String    @db.Text
+
+  // German — optional
+  titleDe     String?
+  slugDe      String?   @unique
+  excerptDe   String?
+  contentDe   String?   @db.Text
+
+  // Arabic — optional
+  titleAr     String?
+  slugAr      String?   @unique
+  excerptAr   String?
+  contentAr   String?   @db.Text
+
+  // Common fields
   image       String?
   type        String    // NEWS, UPDATE, OFFER, EVENT, ANNOUNCEMENT
   featured    Boolean   @default(false)

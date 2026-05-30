@@ -104,23 +104,28 @@ async function main() {
 
   await clearData();
 
-  // Pre-hash password once — all demo accounts share TestPass123!
-  const PASS = await bcrypt.hash('TestPass123!', 12);
+  // Unique passwords per account
+  const PASS_ADMIN   = await bcrypt.hash('AdminPass123!',    12);
+  const PASS_AHMED   = await bcrypt.hash('TeacherAhmed123!', 12);
+  const PASS_MARYAM  = await bcrypt.hash('TeacherMaryam123!',12);
+  const PASS_OMAR    = await bcrypt.hash('StudentOmar123!',  12);
+  const PASS_AISHA   = await bcrypt.hash('StudentAisha123!', 12);
+  const PASS_YUSUF   = await bcrypt.hash('StudentYusuf123!', 12);
 
   // ── Admin ──────────────────────────────────────────────────────────────────
   console.log('👤 Admin...');
   await prisma.user.upsert({
     where: { email: 'admin@salam-institut.com' },
-    update: { password: PASS, isVerified: true, name: 'Admin User', role: UserRole.ADMIN },
+    update: { password: PASS_ADMIN, isVerified: true, name: 'Admin User', role: UserRole.ADMIN },
     create: {
       email: 'admin@salam-institut.com',
-      password: PASS,
+      password: PASS_ADMIN,
       name: 'Admin User',
       role: UserRole.ADMIN,
       isVerified: true,
     },
   });
-  console.log('   ✅ admin@salam-institut.com\n');
+  console.log('   ✅ admin@salam-institut.com  /  AdminPass123!\n');
 
   // ── Teachers ───────────────────────────────────────────────────────────────
   console.log('👨‍🏫 Teachers...');
@@ -129,7 +134,7 @@ async function main() {
   const tusr1 = await prisma.user.create({
     data: {
       email: 'teacher.ahmed@salam-institut.com',
-      password: PASS,
+      password: PASS_AHMED,
       name: 'Sheikh Ahmed Hassan',
       role: UserRole.TEACHER,
       isVerified: true,
@@ -155,13 +160,13 @@ async function main() {
       },
     },
   });
-  console.log('   ✅ Sheikh Ahmed Hassan  (teacher.ahmed@salam-institut.com)');
+  console.log('   ✅ Sheikh Ahmed Hassan  (teacher.ahmed@salam-institut.com  /  TeacherAhmed123!)');
 
   // Teacher 2: Ustazah Maryam — teaches Tajweed + Quran Kids
   const tusr2 = await prisma.user.create({
     data: {
       email: 'teacher.maryam@salam-institut.com',
-      password: PASS,
+      password: PASS_MARYAM,
       name: 'Ustazah Maryam Ali',
       role: UserRole.TEACHER,
       isVerified: true,
@@ -186,7 +191,7 @@ async function main() {
       },
     },
   });
-  console.log('   ✅ Ustazah Maryam Ali   (teacher.maryam@salam-institut.com)\n');
+  console.log('   ✅ Ustazah Maryam Ali   (teacher.maryam@salam-institut.com  /  TeacherMaryam123!)\n');
 
   // ── Students ───────────────────────────────────────────────────────────────
   console.log('🎓 Students...');
@@ -194,8 +199,8 @@ async function main() {
   // Student 1: Omar — Quran Reading for Kids (teacher: Ahmed)
   const susr1 = await prisma.user.create({
     data: {
-      email: 'omar.hassan@example.com',
-      password: PASS,
+      email: 'student.omar@salam-institut.com',
+      password: PASS_OMAR,
       name: 'Omar Hassan',
       role: UserRole.STUDENT,
       isVerified: true,
@@ -210,13 +215,13 @@ async function main() {
       country: 'Germany',
     },
   });
-  console.log('   ✅ Omar Hassan  → Quran Reading for Kids  (Berlin)');
+  console.log('   ✅ Omar Hassan  (student.omar@salam-institut.com  /  StudentOmar123!)');
 
   // Student 2: Aisha — Tajweed Basics (teacher: Maryam)
   const susr2 = await prisma.user.create({
     data: {
-      email: 'aisha.khan@example.com',
-      password: PASS,
+      email: 'student.aisha@salam-institut.com',
+      password: PASS_AISHA,
       name: 'Aisha Khan',
       role: UserRole.STUDENT,
       isVerified: true,
@@ -231,13 +236,13 @@ async function main() {
       country: 'Germany',
     },
   });
-  console.log('   ✅ Aisha Khan   → Tajweed Basics          (Munich)');
+  console.log('   ✅ Aisha Khan   (student.aisha@salam-institut.com  /  StudentAisha123!)');
 
   // Student 3: Yusuf — Arabic for Beginners (teacher: Ahmed)
   const susr3 = await prisma.user.create({
     data: {
-      email: 'yusuf.ali@example.com',
-      password: PASS,
+      email: 'student.yusuf@salam-institut.com',
+      password: PASS_YUSUF,
       name: 'Yusuf Ali',
       role: UserRole.STUDENT,
       isVerified: true,
@@ -254,7 +259,7 @@ async function main() {
       parentEmail: 'ali.hassan@example.com',
     },
   });
-  console.log('   ✅ Yusuf Ali    → Arabic for Beginners    (Hamburg, parent info)\n');
+  console.log('   ✅ Yusuf Ali    (student.yusuf@salam-institut.com  /  StudentYusuf123!)\n');
 
   // ── Courses ────────────────────────────────────────────────────────────────
   console.log('📚 Courses...');
@@ -344,9 +349,6 @@ async function main() {
   console.log('   ✅ Ustazah Maryam → Tajweed Basics, Quran Reading for Kids\n');
 
   // ── CourseEnrollments ──────────────────────────────────────────────────────
-  // Omar   → Quran Reading for Kids  (1/12 completed = 8%)
-  // Aisha  → Tajweed Basics          (1/16 COMPLETED bookings = 6%, but ABSENT)
-  // Yusuf  → Arabic for Beginners    (1/20 completed = 5%)
   console.log('📋 Enrollments...');
   await prisma.courseEnrollment.createMany({
     data: [
@@ -413,7 +415,6 @@ async function main() {
       markedAt: new Date('2026-05-16T15:05:00.000Z'),
     },
   });
-  // No grade for absent session
   console.log('   ✅ Aisha — Tajweed Basics (May 16, ABSENT, no grade, teacher: Maryam)');
 
   // Session 3 — Yusuf + Ahmed + Arabic, 1 week ago (PRESENT, grade 9/10)
@@ -484,9 +485,6 @@ async function main() {
   console.log('   ✅ Yusuf — Arabic (Jun 20, 17:00–18:00, teacher: Ahmed)\n');
 
   // ── Recurring booking series ───────────────────────────────────────────────
-  // Series A: Omar in Quran Kids with Ahmed (4 Saturdays 10:00-10:45)
-  // Series B: Aisha in Tajweed with Maryam  (4 Wednesdays 15:00-16:00)
-  // = 8 total recurring bookings
   console.log('🔄 Recurring series...');
 
   const recurGroupA = `recur-demo-A-${Date.now()}`;
@@ -517,7 +515,7 @@ async function main() {
   });
   console.log(`   ✅ Aisha — Tajweed × 4 Wednesdays (Maryam, group B)\n`);
 
-  // ── Payments (with typed courseId FK) ──────────────────────────────────────
+  // ── Payments ──────────────────────────────────────────────────────────────
   console.log('💳 Payments...');
   await prisma.payment.create({
     data: {
@@ -577,21 +575,44 @@ async function main() {
   });
   console.log('   ✅ Arabic Alphabet for Beginners (arabic)\n');
 
-  // ── Posts ──────────────────────────────────────────────────────────────────
-  console.log('📰 Posts...');
+  // ── Posts (multilingual EN / DE / AR) ─────────────────────────────────────
+  console.log('📰 Posts (EN/DE/AR)...');
 
+  // Post 1: Summer Offer — featured OFFER
   await prisma.post.create({
     data: {
-      title: 'Summer Special: 20% Off Your First Month',
-      slug: 'summer-special-20-off-first-month',
-      excerpt:
-        'Start your Quran or Arabic journey this summer with an exclusive 20% discount on your first full month of classes. Limited places available — enrol today.',
+      // English
+      title:   'Summer Special: 20% Off Your First Month',
+      slug:    'summer-special-20-off-first-month',
+      excerpt: 'Start your Quran or Arabic journey this summer with an exclusive 20% discount on your first full month of classes. Limited places available — enrol today.',
       content: [
         'We are delighted to announce our Summer Special offer for new students joining Salam Institute.',
         'From 1 June to 31 August 2026, all new students receive 20% off their first full month of classes across any of our programmes — Quran for Kids, Tajweed Basics, or Arabic for Beginners.',
         'How to claim: Complete your free trial session, enrol in your chosen course, and the discount is applied automatically at checkout.',
         'Places are limited. Our teachers keep a maximum of 12 students each, ensuring personalised attention for every learner.',
         'We look forward to welcoming you to the Salam Institute family this summer. May Allah bless your learning journey.',
+      ].join('\n\n'),
+      // German
+      titleDe:   'Sommerangebot: 20% Rabatt auf Ihren ersten Monat',
+      slugDe:    'sommerangebot-20-prozent-rabatt',
+      excerptDe: 'Starten Sie Ihre Koran- oder Arabisch-Reise diesen Sommer mit exklusiven 20% Rabatt auf Ihren ersten vollen Unterrichtsmonat. Begrenzte Plätze — melden Sie sich noch heute an.',
+      contentDe: [
+        'Wir freuen uns, unser Sommerangebot für neue Studenten des Salam Instituts anzukündigen.',
+        'Vom 1. Juni bis 31. August 2026 erhalten alle neuen Studenten 20% Rabatt auf ihren ersten vollen Monat in einem unserer Programme — Koran für Kinder, Tajweed-Grundlagen oder Arabisch für Anfänger.',
+        'So profitieren Sie: Absolvieren Sie Ihre kostenlose Probestunde, melden Sie sich für Ihren Kurs an, und der Rabatt wird automatisch an der Kasse angewendet.',
+        'Die Plätze sind begrenzt. Unsere Lehrer betreuen maximal 12 Schüler, um jedem Lernenden persönliche Aufmerksamkeit zu gewährleisten.',
+        'Wir freuen uns darauf, Sie diesen Sommer in der Salam-Institut-Familie willkommen zu heißen. Möge Allah Ihren Lernweg segnen.',
+      ].join('\n\n'),
+      // Arabic
+      titleAr:   'عرض الصيف: خصم 20% على شهرك الأول',
+      slugAr:    'summer-special-ar',
+      excerptAr: 'ابدأ رحلتك في تعلم القرآن أو اللغة العربية هذا الصيف بخصم حصري 20% على شهرك الأول الكامل. أماكن محدودة — سجّل اليوم.',
+      contentAr: [
+        'يسعدنا الإعلان عن عرضنا الصيفي الخاص للطلاب الجدد في معهد سلام.',
+        'من 1 يونيو حتى 31 أغسطس 2026، يحصل جميع الطلاب الجدد على خصم 20% على شهرهم الأول الكامل في أي من برامجنا — القرآن للأطفال، أساسيات التجويد، أو العربية للمبتدئين.',
+        'كيفية الاستفادة: أكمل حصتك التجريبية المجانية، سجّل في الدورة التي تختارها، وسيُطبَّق الخصم تلقائيًا عند الدفع.',
+        'الأماكن محدودة. يحرص معلمونا على ألا يتجاوز عدد الطلاب 12 طالبًا لكل معلم، ضمانًا للاهتمام الشخصي بكل متعلم.',
+        'نتطلع إلى الترحيب بكم في عائلة معهد سلام هذا الصيف. بارك الله في مسيرتكم التعليمية.',
       ].join('\n\n'),
       type: 'OFFER',
       featured: true,
@@ -600,19 +621,40 @@ async function main() {
       publishedAt: new Date('2026-06-01T08:00:00.000Z'),
     },
   });
-  console.log('   ✅ Summer Special 20% Off (OFFER, featured, sortOrder 0)');
+  console.log('   ✅ Summer Special 20% Off   (OFFER, featured, EN+DE+AR, sortOrder 0)');
 
+  // Post 2: New Classes — NEWS
   await prisma.post.create({
     data: {
-      title: 'New Classes Starting June 2026',
-      slug: 'new-classes-june-2026',
-      excerpt:
-        'We are expanding our schedule for June 2026 with new slots for Tajweed Basics and Arabic for Beginners. Book your place now.',
+      // English
+      title:   'New Classes Starting June 2026',
+      slug:    'new-classes-june-2026',
+      excerpt: 'We are expanding our schedule for June 2026 with new slots for Tajweed Basics and Arabic for Beginners. Book your place now.',
       content: [
         'We are excited to announce the launch of new class cohorts starting June 2026 at Salam Institute.',
         'New cohorts available:\n- Tajweed Basics — Monday and Thursday evenings, 18:00–19:00\n- Arabic for Beginners — Tuesday and Friday afternoons, 14:00–15:00\n- Quran for Kids — Saturday mornings, 09:00–09:45',
         'All classes are delivered online via Google Meet, making it convenient for students across Germany and beyond.',
         'To book your place or arrange a free trial session, contact us via WhatsApp or visit our website.',
+      ].join('\n\n'),
+      // German
+      titleDe:   'Neue Kurse ab Juni 2026',
+      slugDe:    'neue-kurse-juni-2026',
+      excerptDe: 'Wir erweitern unseren Stundenplan für Juni 2026 mit neuen Plätzen für Tajweed-Grundlagen und Arabisch für Anfänger. Sichern Sie sich jetzt Ihren Platz.',
+      contentDe: [
+        'Wir freuen uns, den Start neuer Kurs-Kohorten ab Juni 2026 im Salam Institut bekannt zu geben.',
+        'Neue Kohorten verfügbar:\n- Tajweed-Grundlagen — Montag und Donnerstagabend, 18:00–19:00 Uhr\n- Arabisch für Anfänger — Dienstag und Freitagnachmittag, 14:00–15:00 Uhr\n- Koran für Kinder — Samstagmorgen, 09:00–09:45 Uhr',
+        'Alle Kurse werden online über Google Meet abgehalten, sodass Studenten aus ganz Deutschland und darüber hinaus bequem teilnehmen können.',
+        'Um Ihren Platz zu buchen oder eine kostenlose Probestunde zu vereinbaren, kontaktieren Sie uns per WhatsApp oder besuchen Sie unsere Website.',
+      ].join('\n\n'),
+      // Arabic
+      titleAr:   'دروس جديدة تبدأ في يونيو 2026',
+      slugAr:    'new-classes-june-2026-ar',
+      excerptAr: 'نوسّع جدولنا الزمني ليونيو 2026 بمواعيد جديدة لأساسيات التجويد والعربية للمبتدئين. احجز مكانك الآن.',
+      contentAr: [
+        'يسعدنا الإعلان عن إطلاق مجموعات دراسية جديدة تبدأ في يونيو 2026 في معهد سلام.',
+        'المجموعات الجديدة المتاحة:\n- أساسيات التجويد — مساء الاثنين والخميس، من 18:00 إلى 19:00\n- العربية للمبتدئين — بعد ظهر الثلاثاء والجمعة، من 14:00 إلى 15:00\n- القرآن للأطفال — صباح السبت، من 09:00 إلى 09:45',
+        'تُقدَّم جميع الدروس عبر الإنترنت باستخدام Google Meet، مما يسهّل المشاركة على الطلاب في جميع أنحاء ألمانيا وما وراءها.',
+        'لحجز مكانك أو ترتيب حصة تجريبية مجانية، تواصل معنا عبر WhatsApp أو قم بزيارة موقعنا الإلكتروني.',
       ].join('\n\n'),
       type: 'NEWS',
       featured: false,
@@ -621,19 +663,40 @@ async function main() {
       publishedAt: new Date('2026-05-20T10:00:00.000Z'),
     },
   });
-  console.log('   ✅ New Classes June 2026 (NEWS, sortOrder 1)');
+  console.log('   ✅ New Classes June 2026     (NEWS, EN+DE+AR, sortOrder 1)');
 
+  // Post 3: Ramadan Schedule — ANNOUNCEMENT
   await prisma.post.create({
     data: {
-      title: 'Ramadan & Eid Holiday Schedule',
-      slug: 'ramadan-eid-holiday-schedule-2026',
-      excerpt:
-        'Important: adjusted class schedule during Ramadan and Eid Al-Adha. Evening sessions shift, and make-up classes are provided.',
+      // English
+      title:   'Ramadan & Eid Holiday Schedule',
+      slug:    'ramadan-eid-holiday-schedule-2026',
+      excerpt: 'Important: adjusted class schedule during Ramadan and Eid Al-Adha. Evening sessions shift, and make-up classes are provided.',
       content: [
         'Assalamu Alaykum dear students and families,',
         'During Ramadan, evening classes will run from 20:00–21:00 instead of 18:00–19:00 to accommodate tarawih prayers.',
         'Eid Al-Adha: All classes will be suspended for the week of Eid (exact dates confirmed nearer the time). Make-up sessions are offered the following week.',
         'Jazakumullahu Khayran for your understanding. Wishing you and your families a blessed Ramadan and Eid.',
+      ].join('\n\n'),
+      // German
+      titleDe:   'Ramadan & Eid Ferienplan',
+      slugDe:    'ramadan-eid-ferienplan-2026',
+      excerptDe: 'Wichtig: Angepasster Unterrichtsplan während Ramadan und Eid Al-Adha. Abendkurse verschieben sich, Nachholstunden werden angeboten.',
+      contentDe: [
+        'Assalamu Alaykum liebe Studenten und Familien,',
+        'Während des Ramadans werden die Abendkurse von 20:00–21:00 Uhr statt 18:00–19:00 Uhr abgehalten, um die Tarawih-Gebete zu berücksichtigen.',
+        'Eid Al-Adha: Alle Kurse werden für die Eid-Woche ausgesetzt (genaue Daten werden rechtzeitig bekannt gegeben). Nachholstunden werden in der darauffolgenden Woche angeboten.',
+        'Jazakumullahu Khayran für Ihr Verständnis. Wir wünschen Ihnen und Ihren Familien einen gesegneten Ramadan und ein frohes Eid.',
+      ].join('\n\n'),
+      // Arabic
+      titleAr:   'جدول رمضان والعيد',
+      slugAr:    'ramadan-eid-schedule-ar',
+      excerptAr: 'هام: جدول دروس معدَّل خلال رمضان وعيد الأضحى. تتغير مواعيد الدروس المسائية، وتُقدَّم حصص تعويضية.',
+      contentAr: [
+        'السلام عليكم ورحمة الله وبركاته أيها الطلاب والعائلات الكرام،',
+        'خلال شهر رمضان المبارك، ستُقام الدروس المسائية من 20:00 إلى 21:00 بدلًا من 18:00 إلى 19:00، وذلك لإتاحة المجال لأداء صلاة التراويح.',
+        'عيد الأضحى: ستُعلَّق جميع الدروس طوال أسبوع العيد (سيتم تأكيد المواعيد الدقيقة قريبًا). تُقدَّم حصص تعويضية في الأسبوع التالي.',
+        'جزاكم الله خيرًا على تفهّمكم. نتمنى لكم ولعائلاتكم رمضانًا مباركًا وعيدًا سعيدًا.',
       ].join('\n\n'),
       type: 'ANNOUNCEMENT',
       featured: false,
@@ -642,7 +705,7 @@ async function main() {
       publishedAt: new Date('2026-05-15T09:00:00.000Z'),
     },
   });
-  console.log('   ✅ Ramadan & Eid Holiday Schedule (ANNOUNCEMENT, sortOrder 2)\n');
+  console.log('   ✅ Ramadan & Eid Schedule    (ANNOUNCEMENT, EN+DE+AR, sortOrder 2)\n');
 
   // ── Site Settings ───────────────────────────────────────────────────────────
   console.log('⚙️  Site Settings...');
@@ -665,18 +728,72 @@ async function main() {
   }
   console.log(`   ✅ ${settings.length} settings upserted\n`);
 
+  // ── DB Verification ─────────────────────────────────────────────────────────
+  console.log('🔍 Verifying accounts in DB...');
+  const accounts = [
+    { email: 'admin@salam-institut.com',          expectedRole: 'ADMIN'   },
+    { email: 'teacher.ahmed@salam-institut.com',  expectedRole: 'TEACHER' },
+    { email: 'teacher.maryam@salam-institut.com', expectedRole: 'TEACHER' },
+    { email: 'student.omar@salam-institut.com',   expectedRole: 'STUDENT' },
+    { email: 'student.aisha@salam-institut.com',  expectedRole: 'STUDENT' },
+    { email: 'student.yusuf@salam-institut.com',  expectedRole: 'STUDENT' },
+  ];
+
+  let allOk = true;
+  console.log('');
+  console.log('   EMAIL                                   ROLE      VERIFIED  PROFILE');
+  console.log('   ' + '─'.repeat(70));
+
+  for (const acct of accounts) {
+    const user = await prisma.user.findUnique({
+      where: { email: acct.email },
+      include: { student: true, teacher: true },
+    });
+
+    if (!user) {
+      console.log(`   ❌ ${acct.email.padEnd(40)} NOT FOUND`);
+      allOk = false;
+      continue;
+    }
+
+    const roleOk      = user.role === acct.expectedRole;
+    const verifiedOk  = user.isVerified === true;
+    const hasProfile  =
+      acct.expectedRole === 'STUDENT' ? user.student !== null :
+      acct.expectedRole === 'TEACHER' ? user.teacher !== null :
+      true; // admin has no profile
+
+    const loginReady = roleOk && verifiedOk && hasProfile;
+
+    const roleStr    = user.role.padEnd(9);
+    const verStr     = verifiedOk  ? 'YES      ' : 'NO ⚠️   ';
+    const profStr    = hasProfile  ? 'YES' : 'NO ⚠️';
+    const mark       = loginReady  ? '✅' : '❌';
+
+    console.log(`   ${mark} ${user.email.padEnd(40)} ${roleStr} ${verStr} ${profStr}`);
+
+    if (!loginReady) allOk = false;
+  }
+
+  console.log('');
+  if (allOk) {
+    console.log('   ✅ All 6 accounts verified and login-ready\n');
+  } else {
+    console.log('   ⚠️  One or more accounts have issues — check above\n');
+  }
+
   // ── Summary ────────────────────────────────────────────────────────────────
   console.log('═'.repeat(60));
   console.log('  ✅  DEMO SEED COMPLETE');
   console.log('═'.repeat(60));
   console.log('');
-  console.log('🔑 Login credentials (password for all: TestPass123!)');
-  console.log('   Admin:    admin@salam-institut.com');
-  console.log('   Teacher:  teacher.ahmed@salam-institut.com    (Quran Kids + Arabic)');
-  console.log('   Teacher:  teacher.maryam@salam-institut.com   (Tajweed + Quran Kids)');
-  console.log('   Student:  omar.hassan@example.com             (Quran Kids)');
-  console.log('   Student:  aisha.khan@example.com              (Tajweed)');
-  console.log('   Student:  yusuf.ali@example.com               (Arabic)');
+  console.log('🔑 Login credentials (each account has a unique password):');
+  console.log('   admin@salam-institut.com           /  AdminPass123!');
+  console.log('   teacher.ahmed@salam-institut.com   /  TeacherAhmed123!');
+  console.log('   teacher.maryam@salam-institut.com  /  TeacherMaryam123!');
+  console.log('   student.omar@salam-institut.com    /  StudentOmar123!');
+  console.log('   student.aisha@salam-institut.com   /  StudentAisha123!');
+  console.log('   student.yusuf@salam-institut.com   /  StudentYusuf123!');
   console.log('');
   console.log('📊 Data summary:');
   console.log('   Users:          6  (1 admin, 2 teachers, 3 students)');
@@ -685,10 +802,10 @@ async function main() {
   console.log('   Enrollments:    3  (Omar→Kids 8%, Aisha→Tajweed 6%, Yusuf→Arabic 5%)');
   console.log('   Bookings:      14  (3 COMPLETED + 3 upcoming CONFIRMED + 8 recurring CONFIRMED)');
   console.log('   Attendance:     3  (Omar PRESENT, Aisha ABSENT, Yusuf PRESENT)');
-  console.log('   Grades:         2  (Omar 8/10, Yusuf 9/10 — Aisha absent so no grade)');
-  console.log('   Payments:       2  (€99.99 Omar, €149.99 Aisha, both COMPLETED with courseId)');
+  console.log('   Grades:         2  (Omar 8/10, Yusuf 9/10)');
+  console.log('   Payments:       2  (€99.99 Omar, €149.99 Aisha, both COMPLETED)');
   console.log('   Videos:         2  (1 featured)');
-  console.log('   Posts:          3  (1 featured OFFER, 1 NEWS, 1 ANNOUNCEMENT)');
+  console.log('   Posts:          3  (all trilingual EN+DE+AR, 1 featured OFFER)');
   console.log('   Site Settings:  8');
   console.log('');
   console.log('🌐 Admin dashboard → http://localhost:3000/en/admin');

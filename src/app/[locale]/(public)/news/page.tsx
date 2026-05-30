@@ -1,15 +1,20 @@
 export const dynamic = 'force-dynamic';
 
 import Link from 'next/link';
+import type { Post } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
-import type { Prisma, Post } from '@prisma/client';
+import { localizePost } from '@/lib/postLocale';
 
-const TYPE_LABELS: Record<string, string> = {
-  NEWS: 'News',
-  UPDATE: 'Update',
-  OFFER: 'Offer',
-  EVENT: 'Event',
-  ANNOUNCEMENT: 'Announcement',
+const TYPE_LABELS: Record<string, Record<string, string>> = {
+  en: { NEWS: 'News', UPDATE: 'Update', OFFER: 'Offer', EVENT: 'Event', ANNOUNCEMENT: 'Announcement', ALL: 'All' },
+  de: { NEWS: 'Neuigkeit', UPDATE: 'Update', OFFER: 'Angebot', EVENT: 'Veranstaltung', ANNOUNCEMENT: 'Ankündigung', ALL: 'Alle' },
+  ar: { NEWS: 'خبر', UPDATE: 'تحديث', OFFER: 'عرض', EVENT: 'حدث', ANNOUNCEMENT: 'إعلان', ALL: 'الكل' },
+};
+
+const PAGE_COPY: Record<string, { heading: string; subheading: string; readMore: string; noPostsTitle: string; noPostsText: string; backHome: string }> = {
+  en: { heading: 'News & Announcements', subheading: 'The latest updates, offers, events, and announcements from Salam Institute.', readMore: 'Read More →', noPostsTitle: 'No posts yet', noPostsText: 'Check back soon for news and updates from Salam Institute.', backHome: '← Back to Home' },
+  de: { heading: 'Neuigkeiten & Ankündigungen', subheading: 'Die neuesten Updates, Angebote, Veranstaltungen und Ankündigungen vom Salam Institut.', readMore: 'Mehr lesen →', noPostsTitle: 'Noch keine Beiträge', noPostsText: 'Schauen Sie bald wieder vorbei für Neuigkeiten vom Salam Institut.', backHome: '← Zurück zur Startseite' },
+  ar: { heading: 'الأخبار والإعلانات', subheading: 'آخر التحديثات والعروض والفعاليات والإعلانات من معهد سلام.', readMore: 'اقرأ المزيد →', noPostsTitle: 'لا توجد منشورات بعد', noPostsText: 'تفقد قريبًا للأخبار والتحديثات من معهد سلام.', backHome: '← العودة إلى الرئيسية' },
 };
 
 const TYPE_COLORS: Record<string, string> = {
@@ -20,8 +25,8 @@ const TYPE_COLORS: Record<string, string> = {
   ANNOUNCEMENT: 'bg-red-100 text-red-700',
 };
 
-async function getAllPosts(type?: string) {
-  const where: Prisma.PostWhereInput = { isPublished: true };
+async function getAllPosts(type?: string): Promise<Post[]> {
+  const where: { isPublished: boolean; type?: string } = { isPublished: true };
   if (type && type !== 'all') where.type = type;
   return prisma.post.findMany({
     where,
@@ -40,9 +45,12 @@ export default async function NewsPage({
   const { type } = await searchParams;
   const posts = await getAllPosts(type);
   const POST_TYPES = ['NEWS', 'UPDATE', 'OFFER', 'EVENT', 'ANNOUNCEMENT'];
+  const labels = TYPE_LABELS[locale] ?? TYPE_LABELS.en;
+  const copy   = PAGE_COPY[locale]  ?? PAGE_COPY.en;
+  const isRTL  = locale === 'ar';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#F5F0E8] via-white to-[#E8F5F0]">
+    <div className="min-h-screen bg-gradient-to-br from-[#F5F0E8] via-white to-[#E8F5F0]" dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Hero */}
       <div className="bg-gradient-to-r from-[#2B7A78] to-[#1d5856] text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -51,10 +59,8 @@ export default async function NewsPage({
             <span className="text-[#D9B574] font-semibold text-sm uppercase tracking-widest">Salam Institute</span>
             <div className="h-px w-12 bg-[#D9B574]/60" />
           </div>
-          <h1 className="text-5xl md:text-6xl font-bold mb-4">News & Announcements</h1>
-          <p className="text-white/80 text-xl max-w-2xl mx-auto">
-            The latest updates, offers, events, and announcements from Salam Institute.
-          </p>
+          <h1 className="text-5xl md:text-6xl font-bold mb-4">{copy.heading}</h1>
+          <p className="text-white/80 text-xl max-w-2xl mx-auto">{copy.subheading}</p>
         </div>
       </div>
 
@@ -69,7 +75,7 @@ export default async function NewsPage({
                 : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
             }`}
           >
-            All
+            {labels.ALL}
           </Link>
           {POST_TYPES.map((t) => (
             <Link
@@ -81,7 +87,7 @@ export default async function NewsPage({
                   : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
               }`}
             >
-              {TYPE_LABELS[t]}
+              {labels[t]}
             </Link>
           ))}
         </div>
@@ -89,24 +95,24 @@ export default async function NewsPage({
         {posts.length === 0 ? (
           <div className="text-center py-24">
             <div className="text-7xl mb-6">📭</div>
-            <h2 className="text-2xl font-bold text-gray-700 mb-3">No posts yet</h2>
-            <p className="text-gray-500">Check back soon for news and updates from Salam Institute.</p>
+            <h2 className="text-2xl font-bold text-gray-700 mb-3">{copy.noPostsTitle}</h2>
+            <p className="text-gray-500">{copy.noPostsText}</p>
             <Link
               href={`/${locale}`}
               className="mt-8 inline-flex items-center gap-2 px-6 py-3 bg-[#2B7A78] text-white rounded-xl font-semibold hover:bg-[#1d5856] transition-colors"
             >
-              ← Back to Home
+              {copy.backHome}
             </Link>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {posts.map((post: Post) => {
+            {posts.map((post) => {
+              const loc = localizePost(post, locale);
               const date = post.publishedAt ?? post.createdAt;
-              const formattedDate = new Date(date).toLocaleDateString('en-GB', {
-                day: '2-digit',
-                month: 'long',
-                year: 'numeric',
-              });
+              const formattedDate = new Date(date).toLocaleDateString(
+                locale === 'ar' ? 'ar-EG' : locale === 'de' ? 'de-DE' : 'en-GB',
+                { day: '2-digit', month: 'long', year: 'numeric' }
+              );
 
               return (
                 <article
@@ -117,7 +123,7 @@ export default async function NewsPage({
                     <div className="relative h-52 overflow-hidden">
                       <img
                         src={post.image}
-                        alt={post.title}
+                        alt={loc.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     </div>
@@ -130,27 +136,27 @@ export default async function NewsPage({
                   <div className="p-6 flex flex-col flex-1">
                     <div className="flex items-center gap-3 mb-3">
                       <span className={`px-3 py-1 rounded-full text-xs font-bold ${TYPE_COLORS[post.type] || 'bg-gray-100 text-gray-700'}`}>
-                        {TYPE_LABELS[post.type] || post.type}
+                        {labels[post.type] || post.type}
                       </span>
                       <span className="text-xs text-gray-400">{formattedDate}</span>
                     </div>
 
                     <h2 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-[#2B7A78] transition-colors line-clamp-2">
-                      {post.title}
+                      {loc.title}
                     </h2>
 
-                    {post.excerpt && (
+                    {loc.excerpt && (
                       <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3 flex-1">
-                        {post.excerpt}
+                        {loc.excerpt}
                       </p>
                     )}
 
                     <div className="mt-auto pt-4">
                       <Link
-                        href={`/${locale}/news/${post.slug}`}
+                        href={`/${locale}/news/${loc.slug}`}
                         className="inline-flex items-center gap-2 text-[#2B7A78] font-semibold text-sm hover:gap-3 transition-all"
                       >
-                        Read More →
+                        {copy.readMore}
                       </Link>
                     </div>
                   </div>

@@ -7,16 +7,30 @@ import { requireAdmin } from '@/lib/auth-helpers';
 
 const POST_TYPES = ['NEWS', 'UPDATE', 'OFFER', 'EVENT', 'ANNOUNCEMENT'] as const;
 
+const multilingualText = (max = 10000) => z.string().max(max).optional().or(z.literal(''));
+
 const updatePostSchema = z.object({
-  title: z.string().min(1).max(300).optional(),
-  slug: z.string().min(1).max(300).regex(/^[a-z0-9-]+$/).optional(),
+  // English
+  title:   z.string().min(1).max(300).optional(),
+  slug:    z.string().min(1).max(300).regex(/^[a-z0-9-]+$/).optional(),
   excerpt: z.string().max(500).optional().or(z.literal('')),
   content: z.string().min(1).optional(),
-  image: z.string().url().optional().or(z.literal('')),
-  type: z.enum(POST_TYPES).optional(),
-  featured: z.boolean().optional(),
+  // German
+  titleDe:   multilingualText(300),
+  slugDe:    z.string().max(300).regex(/^[a-z0-9-]*$/).optional().or(z.literal('')),
+  excerptDe: multilingualText(500),
+  contentDe: multilingualText(),
+  // Arabic
+  titleAr:   multilingualText(300),
+  slugAr:    z.string().max(300).regex(/^[a-zA-Z0-9-]*$/).optional().or(z.literal('')),
+  excerptAr: multilingualText(500),
+  contentAr: multilingualText(),
+  // Common
+  image:       z.string().url().optional().or(z.literal('')),
+  type:        z.enum(POST_TYPES).optional(),
+  featured:    z.boolean().optional(),
   isPublished: z.boolean().optional(),
-  sortOrder: z.number().int().min(0).optional(),
+  sortOrder:   z.number().int().min(0).optional(),
   publishedAt: z.string().datetime().optional().or(z.literal('')),
 });
 
@@ -43,31 +57,45 @@ export async function PATCH(
       );
     }
 
-    const data = validation.data;
+    const d = validation.data;
 
-    // Check slug uniqueness if slug is being changed
-    if (data.slug && data.slug !== existing.slug) {
-      const slugConflict = await prisma.post.findUnique({ where: { slug: data.slug } });
-      if (slugConflict) {
-        return NextResponse.json({ success: false, error: 'A post with this slug already exists.' }, { status: 409 });
-      }
+    // Slug uniqueness checks
+    if (d.slug && d.slug !== existing.slug) {
+      const conflict = await prisma.post.findUnique({ where: { slug: d.slug } });
+      if (conflict) return NextResponse.json({ success: false, error: 'A post with this slug already exists.' }, { status: 409 });
+    }
+    const slugDeVal = d.slugDe !== undefined ? (d.slugDe?.trim() || null) : undefined;
+    if (slugDeVal && slugDeVal !== existing.slugDe) {
+      const conflict = await prisma.post.findUnique({ where: { slugDe: slugDeVal } });
+      if (conflict) return NextResponse.json({ success: false, error: 'German slug already used.' }, { status: 409 });
+    }
+    const slugArVal = d.slugAr !== undefined ? (d.slugAr?.trim() || null) : undefined;
+    if (slugArVal && slugArVal !== existing.slugAr) {
+      const conflict = await prisma.post.findUnique({ where: { slugAr: slugArVal } });
+      if (conflict) return NextResponse.json({ success: false, error: 'Arabic slug already used.' }, { status: 409 });
     }
 
     const post = await prisma.post.update({
       where: { id },
       data: {
-        ...(data.title !== undefined && { title: data.title }),
-        ...(data.slug !== undefined && { slug: data.slug }),
-        ...(data.excerpt !== undefined && { excerpt: data.excerpt || null }),
-        ...(data.content !== undefined && { content: data.content }),
-        ...(data.image !== undefined && { image: data.image || null }),
-        ...(data.type !== undefined && { type: data.type }),
-        ...(data.featured !== undefined && { featured: data.featured }),
-        ...(data.isPublished !== undefined && { isPublished: data.isPublished }),
-        ...(data.sortOrder !== undefined && { sortOrder: data.sortOrder }),
-        ...(data.publishedAt !== undefined && {
-          publishedAt: data.publishedAt ? new Date(data.publishedAt) : null,
-        }),
+        ...(d.title     !== undefined && { title:     d.title }),
+        ...(d.slug      !== undefined && { slug:      d.slug }),
+        ...(d.excerpt   !== undefined && { excerpt:   d.excerpt || null }),
+        ...(d.content   !== undefined && { content:   d.content }),
+        ...(d.titleDe   !== undefined && { titleDe:   d.titleDe?.trim() || null }),
+        ...(slugDeVal   !== undefined && { slugDe:    slugDeVal }),
+        ...(d.excerptDe !== undefined && { excerptDe: d.excerptDe?.trim() || null }),
+        ...(d.contentDe !== undefined && { contentDe: d.contentDe?.trim() || null }),
+        ...(d.titleAr   !== undefined && { titleAr:   d.titleAr?.trim() || null }),
+        ...(slugArVal   !== undefined && { slugAr:    slugArVal }),
+        ...(d.excerptAr !== undefined && { excerptAr: d.excerptAr?.trim() || null }),
+        ...(d.contentAr !== undefined && { contentAr: d.contentAr?.trim() || null }),
+        ...(d.image       !== undefined && { image:       d.image || null }),
+        ...(d.type        !== undefined && { type:        d.type }),
+        ...(d.featured    !== undefined && { featured:    d.featured }),
+        ...(d.isPublished !== undefined && { isPublished: d.isPublished }),
+        ...(d.sortOrder   !== undefined && { sortOrder:   d.sortOrder }),
+        ...(d.publishedAt !== undefined && { publishedAt: d.publishedAt ? new Date(d.publishedAt) : null }),
       },
     });
 
@@ -80,7 +108,7 @@ export async function PATCH(
   }
 }
 
-// DELETE /api/posts/[id] — Admin only: delete a post
+// DELETE /api/posts/[id] — Admin only
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }

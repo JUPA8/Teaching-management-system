@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 
 const POST_TYPES = ['NEWS', 'UPDATE', 'OFFER', 'EVENT', 'ANNOUNCEMENT'] as const;
 type PostType = typeof POST_TYPES[number];
+type LangTab = 'en' | 'de' | 'ar';
 
 type Post = {
   id: string;
@@ -11,6 +12,14 @@ type Post = {
   slug: string;
   excerpt: string | null;
   content: string;
+  titleDe: string | null;
+  slugDe: string | null;
+  excerptDe: string | null;
+  contentDe: string | null;
+  titleAr: string | null;
+  slugAr: string | null;
+  excerptAr: string | null;
+  contentAr: string | null;
   image: string | null;
   type: PostType;
   featured: boolean;
@@ -29,10 +38,13 @@ const TYPE_COLORS: Record<PostType, string> = {
 };
 
 const EMPTY_FORM = {
-  title: '',
-  slug: '',
-  excerpt: '',
-  content: '',
+  // English (required)
+  title: '', slug: '', excerpt: '', content: '',
+  // German (optional)
+  titleDe: '', slugDe: '', excerptDe: '', contentDe: '',
+  // Arabic (optional)
+  titleAr: '', slugAr: '', excerptAr: '', contentAr: '',
+  // Common
   image: '',
   type: 'NEWS' as PostType,
   featured: false,
@@ -69,6 +81,7 @@ export default function AdminPostsPage() {
   const [message, setMessage] = useState('');
   const [form, setForm] = useState({ ...EMPTY_FORM });
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
+  const [langTab, setLangTab] = useState<LangTab>('en');
 
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [bulkBusy, setBulkBusy] = useState(false);
@@ -123,6 +136,7 @@ export default function AdminPostsPage() {
     setShowForm(true);
     setMessage('');
     setSlugManuallyEdited(false);
+    setLangTab('en');
   }
 
   function startEdit(p: Post) {
@@ -131,6 +145,14 @@ export default function AdminPostsPage() {
       slug: p.slug,
       excerpt: p.excerpt ?? '',
       content: p.content,
+      titleDe: p.titleDe ?? '',
+      slugDe: p.slugDe ?? '',
+      excerptDe: p.excerptDe ?? '',
+      contentDe: p.contentDe ?? '',
+      titleAr: p.titleAr ?? '',
+      slugAr: p.slugAr ?? '',
+      excerptAr: p.excerptAr ?? '',
+      contentAr: p.contentAr ?? '',
       image: p.image ?? '',
       type: p.type,
       featured: p.featured,
@@ -142,6 +164,7 @@ export default function AdminPostsPage() {
     setShowForm(true);
     setMessage('');
     setSlugManuallyEdited(true);
+    setLangTab('en');
   }
 
   function cancelForm() {
@@ -163,10 +186,11 @@ export default function AdminPostsPage() {
   }
 
   async function handleSave() {
-    if (!form.title.trim()) { setMessage('Title is required.'); return; }
-    if (!form.slug.trim()) { setMessage('Slug is required.'); return; }
-    if (!form.content.trim()) { setMessage('Content is required.'); return; }
+    if (!form.title.trim()) { setMessage('English title is required.'); return; }
+    if (!form.slug.trim()) { setMessage('English slug is required.'); return; }
+    if (!form.content.trim()) { setMessage('English content is required.'); return; }
     if (!/^[a-z0-9-]+$/.test(form.slug)) { setMessage('Slug must contain only lowercase letters, numbers, and hyphens.'); return; }
+    if (form.slugDe && !/^[a-z0-9-]+$/.test(form.slugDe)) { setMessage('German slug must contain only lowercase letters, numbers, and hyphens.'); return; }
 
     setSaving(true);
     setMessage('');
@@ -177,9 +201,23 @@ export default function AdminPostsPage() {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...form,
+          title:   form.title.trim(),
+          slug:    form.slug.trim(),
           excerpt: form.excerpt.trim() || undefined,
-          image: form.image.trim() || undefined,
+          content: form.content.trim(),
+          titleDe:   form.titleDe.trim() || undefined,
+          slugDe:    form.slugDe.trim() || undefined,
+          excerptDe: form.excerptDe.trim() || undefined,
+          contentDe: form.contentDe.trim() || undefined,
+          titleAr:   form.titleAr.trim() || undefined,
+          slugAr:    form.slugAr.trim() || undefined,
+          excerptAr: form.excerptAr.trim() || undefined,
+          contentAr: form.contentAr.trim() || undefined,
+          image:       form.image.trim() || undefined,
+          type:        form.type,
+          featured:    form.featured,
+          isPublished: form.isPublished,
+          sortOrder:   form.sortOrder,
           publishedAt: form.publishedAt ? new Date(form.publishedAt).toISOString() : undefined,
         }),
       });
@@ -263,6 +301,12 @@ export default function AdminPostsPage() {
     );
   }
 
+  const LANG_TABS: { id: LangTab; label: string; flag: string }[] = [
+    { id: 'en', label: 'English', flag: '🇬🇧' },
+    { id: 'de', label: 'Deutsch', flag: '🇩🇪' },
+    { id: 'ar', label: 'العربية', flag: '🇸🇦' },
+  ];
+
   return (
     <div>
       {/* Toast */}
@@ -316,126 +360,257 @@ export default function AdminPostsPage() {
       {showForm && (
         <div className="mb-8 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
           <h2 className="text-xl font-bold text-gray-900 mb-6">{editingId ? 'Edit Post' : 'Add New Post'}</h2>
+
+          {/* Language tabs */}
+          <div className="flex gap-1 mb-6 border-b border-gray-200">
+            {LANG_TABS.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setLangTab(tab.id)}
+                className={`px-5 py-2.5 text-sm font-semibold rounded-t-lg transition-all ${
+                  langTab === tab.id
+                    ? 'bg-[#2B7A78] text-white border-b-2 border-[#2B7A78]'
+                    : 'text-gray-500 hover:text-gray-800 hover:bg-gray-50'
+                }`}
+              >
+                {tab.flag} {tab.label}
+                {tab.id === 'en' && <span className="ml-1 text-xs opacity-70">*</span>}
+              </button>
+            ))}
+          </div>
+
           <div className="space-y-4">
-            {/* Title + Type */}
-            <div className="grid md:grid-cols-3 gap-4">
-              <div className="md:col-span-2">
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Title *</label>
-                <input
-                  type="text"
-                  value={form.title}
-                  onChange={(e) => handleTitleChange(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2B7A78]/30 focus:border-[#2B7A78] outline-none text-sm"
-                  placeholder="Summer Offer — 20% Discount"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Type *</label>
-                <select
-                  value={form.type}
-                  onChange={(e) => field('type', e.target.value as PostType)}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2B7A78]/30 focus:border-[#2B7A78] outline-none text-sm"
-                >
-                  {POST_TYPES.map((t) => (
-                    <option key={t} value={t}>{t.charAt(0) + t.slice(1).toLowerCase()}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
+            {/* English tab */}
+            {langTab === 'en' && (
+              <>
+                <div className="grid md:grid-cols-3 gap-4">
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Title (English) *</label>
+                    <input
+                      type="text"
+                      value={form.title}
+                      onChange={(e) => handleTitleChange(e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2B7A78]/30 focus:border-[#2B7A78] outline-none text-sm"
+                      placeholder="New Quran Course Registration Open"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Type *</label>
+                    <select
+                      value={form.type}
+                      onChange={(e) => field('type', e.target.value as PostType)}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2B7A78]/30 focus:border-[#2B7A78] outline-none text-sm"
+                    >
+                      {POST_TYPES.map((t) => (
+                        <option key={t} value={t}>{t.charAt(0) + t.slice(1).toLowerCase()}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
 
-            {/* Slug + Image */}
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Slug *</label>
-                <input
-                  type="text"
-                  value={form.slug}
-                  onChange={(e) => { setSlugManuallyEdited(true); field('slug', e.target.value.toLowerCase()); }}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2B7A78]/30 focus:border-[#2B7A78] outline-none text-sm font-mono"
-                  placeholder="summer-offer-2026"
-                />
-                <p className="text-xs text-gray-400 mt-1">Auto-generated from title. Lowercase, numbers, hyphens only.</p>
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Cover Image URL</label>
-                <input
-                  type="url"
-                  value={form.image}
-                  onChange={(e) => field('image', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2B7A78]/30 focus:border-[#2B7A78] outline-none text-sm"
-                  placeholder="https://…"
-                />
-              </div>
-            </div>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Slug (English) *</label>
+                    <input
+                      type="text"
+                      value={form.slug}
+                      onChange={(e) => { setSlugManuallyEdited(true); field('slug', e.target.value.toLowerCase()); }}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2B7A78]/30 focus:border-[#2B7A78] outline-none text-sm font-mono"
+                      placeholder="new-quran-course-2026"
+                    />
+                    <p className="text-xs text-gray-400 mt-1">Auto-generated from title. Lowercase, numbers, hyphens only.</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Cover Image URL</label>
+                    <input
+                      type="url"
+                      value={form.image}
+                      onChange={(e) => field('image', e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2B7A78]/30 focus:border-[#2B7A78] outline-none text-sm"
+                      placeholder="https://…"
+                    />
+                  </div>
+                </div>
 
-            {/* Excerpt */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Excerpt</label>
-              <input
-                type="text"
-                value={form.excerpt}
-                onChange={(e) => field('excerpt', e.target.value)}
-                maxLength={500}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2B7A78]/30 focus:border-[#2B7A78] outline-none text-sm"
-                placeholder="Short summary shown in cards and previews…"
-              />
-            </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Excerpt (English)</label>
+                  <input
+                    type="text"
+                    value={form.excerpt}
+                    onChange={(e) => field('excerpt', e.target.value)}
+                    maxLength={500}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2B7A78]/30 focus:border-[#2B7A78] outline-none text-sm"
+                    placeholder="Short summary shown in cards…"
+                  />
+                </div>
 
-            {/* Content */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Full Content *</label>
-              <textarea
-                rows={8}
-                value={form.content}
-                onChange={(e) => field('content', e.target.value)}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2B7A78]/30 focus:border-[#2B7A78] outline-none text-sm resize-y"
-                placeholder="Write the full post content here…"
-              />
-            </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Content (English) *</label>
+                  <textarea
+                    rows={8}
+                    value={form.content}
+                    onChange={(e) => field('content', e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2B7A78]/30 focus:border-[#2B7A78] outline-none text-sm resize-y"
+                    placeholder="Write the full post content here…"
+                  />
+                </div>
+              </>
+            )}
 
-            {/* Publish Date + Sort Order */}
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Publish Date</label>
-                <input
-                  type="datetime-local"
-                  value={form.publishedAt}
-                  onChange={(e) => field('publishedAt', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2B7A78]/30 focus:border-[#2B7A78] outline-none text-sm"
-                />
+            {/* German tab */}
+            {langTab === 'de' && (
+              <>
+                <p className="text-xs text-gray-400 -mt-2 mb-2">Leave blank to fall back to the English version.</p>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Titel (Deutsch)</label>
+                    <input
+                      type="text"
+                      value={form.titleDe}
+                      onChange={(e) => field('titleDe', e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2B7A78]/30 focus:border-[#2B7A78] outline-none text-sm"
+                      placeholder="Neue Koran-Kurs Anmeldung"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Slug (Deutsch)</label>
+                    <input
+                      type="text"
+                      value={form.slugDe}
+                      onChange={(e) => field('slugDe', e.target.value.toLowerCase())}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2B7A78]/30 focus:border-[#2B7A78] outline-none text-sm font-mono"
+                      placeholder="neuer-koran-kurs-2026"
+                    />
+                    <p className="text-xs text-gray-400 mt-1">Lowercase, numbers, hyphens only.</p>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Auszug (Deutsch)</label>
+                  <input
+                    type="text"
+                    value={form.excerptDe}
+                    onChange={(e) => field('excerptDe', e.target.value)}
+                    maxLength={500}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2B7A78]/30 focus:border-[#2B7A78] outline-none text-sm"
+                    placeholder="Kurze Zusammenfassung für Karten…"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Inhalt (Deutsch)</label>
+                  <textarea
+                    rows={8}
+                    value={form.contentDe}
+                    onChange={(e) => field('contentDe', e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2B7A78]/30 focus:border-[#2B7A78] outline-none text-sm resize-y"
+                    placeholder="Vollständiger Beitragsinhalt auf Deutsch…"
+                  />
+                </div>
+              </>
+            )}
+
+            {/* Arabic tab */}
+            {langTab === 'ar' && (
+              <>
+                <p className="text-xs text-gray-400 -mt-2 mb-2">Leave blank to fall back to the English version.</p>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">العنوان (عربي)</label>
+                    <input
+                      type="text"
+                      dir="rtl"
+                      value={form.titleAr}
+                      onChange={(e) => field('titleAr', e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2B7A78]/30 focus:border-[#2B7A78] outline-none text-sm"
+                      placeholder="تسجيل دورة القرآن الجديدة"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Slug (Arabic)</label>
+                    <input
+                      type="text"
+                      value={form.slugAr}
+                      onChange={(e) => field('slugAr', e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2B7A78]/30 focus:border-[#2B7A78] outline-none text-sm font-mono"
+                      placeholder="new-quran-course-ar"
+                    />
+                    <p className="text-xs text-gray-400 mt-1">Latin characters, numbers, hyphens only (used in URL).</p>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">مقتطف (عربي)</label>
+                  <input
+                    type="text"
+                    dir="rtl"
+                    value={form.excerptAr}
+                    onChange={(e) => field('excerptAr', e.target.value)}
+                    maxLength={500}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2B7A78]/30 focus:border-[#2B7A78] outline-none text-sm"
+                    placeholder="ملخص قصير للبطاقات…"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">المحتوى (عربي)</label>
+                  <textarea
+                    rows={8}
+                    dir="rtl"
+                    value={form.contentAr}
+                    onChange={(e) => field('contentAr', e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2B7A78]/30 focus:border-[#2B7A78] outline-none text-sm resize-y"
+                    placeholder="المحتوى الكامل للمنشور بالعربية…"
+                  />
+                </div>
+              </>
+            )}
+
+            {/* Common fields (always visible) */}
+            <div className="border-t border-gray-100 pt-4 mt-2">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Common Settings</p>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Publish Date</label>
+                  <input
+                    type="datetime-local"
+                    value={form.publishedAt}
+                    onChange={(e) => field('publishedAt', e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2B7A78]/30 focus:border-[#2B7A78] outline-none text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Sort Order</label>
+                  <input
+                    type="number"
+                    min={0}
+                    value={form.sortOrder}
+                    onChange={(e) => field('sortOrder', parseInt(e.target.value) || 0)}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2B7A78]/30 focus:border-[#2B7A78] outline-none text-sm"
+                  />
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Sort Order</label>
-                <input
-                  type="number"
-                  min={0}
-                  value={form.sortOrder}
-                  onChange={(e) => field('sortOrder', parseInt(e.target.value) || 0)}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2B7A78]/30 focus:border-[#2B7A78] outline-none text-sm"
-                />
-              </div>
-            </div>
 
-            {/* Toggles */}
-            <div className="flex gap-6">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={form.featured}
-                  onChange={(e) => field('featured', e.target.checked)}
-                  className="w-5 h-5 rounded border-gray-300 text-[#2B7A78]"
-                />
-                <span className="text-sm font-medium text-gray-700">Featured (shown in banner)</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={form.isPublished}
-                  onChange={(e) => field('isPublished', e.target.checked)}
-                  className="w-5 h-5 rounded border-gray-300 text-[#2B7A78]"
-                />
-                <span className="text-sm font-medium text-gray-700">Published (visible to public)</span>
-              </label>
+              <div className="flex gap-6 mt-4">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={form.featured}
+                    onChange={(e) => field('featured', e.target.checked)}
+                    className="w-5 h-5 rounded border-gray-300 text-[#2B7A78]"
+                  />
+                  <span className="text-sm font-medium text-gray-700">Featured (shown in banner)</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={form.isPublished}
+                    onChange={(e) => field('isPublished', e.target.checked)}
+                    className="w-5 h-5 rounded border-gray-300 text-[#2B7A78]"
+                  />
+                  <span className="text-sm font-medium text-gray-700">Published (visible to public)</span>
+                </label>
+              </div>
             </div>
 
             {/* Actions */}
@@ -468,7 +643,7 @@ export default function AdminPostsPage() {
                 <th className="px-4 py-4 w-10">
                   <input type="checkbox" checked={allSelected} onChange={toggleAll} className="w-4 h-4 rounded border-gray-300 text-[#C4A565] cursor-pointer" />
                 </th>
-                {['Title / Slug', 'Type', 'Featured', 'Status', 'Date', 'Actions'].map((h) => (
+                {['Title / Slug', 'Langs', 'Type', 'Featured', 'Status', 'Date', 'Actions'].map((h) => (
                   <th key={h} className="px-4 py-4 text-left text-sm font-bold text-[#C4A565] uppercase tracking-wider">
                     {h}
                   </th>
@@ -487,6 +662,13 @@ export default function AdminPostsPage() {
                   <td className="px-4 py-4 max-w-[220px]">
                     <div className="font-semibold text-gray-900 truncate">{post.title}</div>
                     <div className="text-xs text-gray-400 font-mono truncate">/{post.slug}</div>
+                  </td>
+                  <td className="px-4 py-4">
+                    <div className="flex gap-1">
+                      <span className="text-xs px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 font-bold">EN</span>
+                      {post.titleDe && <span className="text-xs px-1.5 py-0.5 rounded bg-gray-50 text-gray-600 font-bold">DE</span>}
+                      {post.titleAr && <span className="text-xs px-1.5 py-0.5 rounded bg-orange-50 text-orange-600 font-bold">AR</span>}
+                    </div>
                   </td>
                   <td className="px-4 py-4">
                     <span className={`px-2 py-1 text-xs font-bold rounded-full ${TYPE_COLORS[post.type]}`}>
