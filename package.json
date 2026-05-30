@@ -12,6 +12,8 @@
     "db:migrate": "prisma migrate dev",
     "db:migrate:deploy": "prisma migrate deploy",
     "db:seed": "tsx prisma/seed.ts",
+    "seed:demo": "tsx scripts/reset-and-seed-demo.ts",
+    "reset:demo": "tsx scripts/reset-and-seed-demo.ts",
     "db:studio": "prisma studio",
     "db:reset": "prisma migrate reset",
     "test:e2e": "playwright test",
