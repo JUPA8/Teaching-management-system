@@ -3,9 +3,9 @@ import { prisma } from '@/lib/prisma';
 export default async function AdminDashboard({
   params,
 }: {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
-  const locale = params.locale;
+  const { locale } = await params;
 
   // Fetch statistics
   const [

@@ -35,22 +35,38 @@ export default function ContactPage() {
     message: '',
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    setIsSubmitted(true);
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({ name: '', email: '', subject: '', message: '' });
-    }, 3000);
+    setIsSubmitting(true);
+    setSubmitError('');
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setIsSubmitted(true);
+        setFormData({ name: '', email: '', subject: '', message: '' });
+      } else {
+        setSubmitError(data.error || 'Failed to send. Please try again.');
+      }
+    } catch {
+      setSubmitError('Network error. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const contactInfo = [
     {
       icon: Mail,
       title: contact('info.email.title'),
-      info: 'info@salaminstitute.com',
+      info: 'info@salam-institut.com',
       description: contact('info.email.description'),
       gradient: 'from-[#2B7A78] to-[#236260]',
     },
@@ -566,21 +582,31 @@ export default function ContactPage() {
                         />
                       </div>
 
+                      {/* Error message */}
+                      {submitError && (
+                        <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-medium">
+                          {submitError}
+                        </div>
+                      )}
+
                       {/* Submit Button */}
                       <motion.button
                         type="submit"
-                        className="group w-full bg-gradient-to-r from-[#2B7A78] to-[#1a5856] hover:from-[#236260] hover:to-[#1a5856] text-white font-bold py-5 px-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all flex items-center justify-center gap-3 text-lg"
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
+                        disabled={isSubmitting}
+                        className="group w-full bg-gradient-to-r from-[#2B7A78] to-[#1a5856] hover:from-[#236260] hover:to-[#1a5856] text-white font-bold py-5 px-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all flex items-center justify-center gap-3 text-lg disabled:opacity-60 disabled:cursor-not-allowed"
+                        whileHover={{ scale: isSubmitting ? 1 : 1.02 }}
+                        whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
                       >
                         <Send className="w-6 h-6" />
-                        {contact('form.send')}
-                        <motion.div
-                          animate={{ x: [0, 5, 0] }}
-                          transition={{ duration: 1.5, repeat: Infinity }}
-                        >
-                          <ArrowRight className="w-6 h-6" />
-                        </motion.div>
+                        {isSubmitting ? 'Sending…' : contact('form.send')}
+                        {!isSubmitting && (
+                          <motion.div
+                            animate={{ x: [0, 5, 0] }}
+                            transition={{ duration: 1.5, repeat: Infinity }}
+                          >
+                            <ArrowRight className="w-6 h-6" />
+                          </motion.div>
+                        )}
                       </motion.button>
 
                       {/* Privacy Note */}

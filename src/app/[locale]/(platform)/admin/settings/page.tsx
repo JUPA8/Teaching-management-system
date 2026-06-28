@@ -8,11 +8,12 @@ type Settings = Record<string, string>;
 interface Testimonial { name: string; text: string; role: string }
 
 const FIELD_LABELS: Record<string, string> = {
-  school_name:   'School Name',
-  phone:         'Phone Number',
-  whatsapp:      'WhatsApp Number',
-  email_contact: 'Contact Email',
-  website:       'Website URL',
+  site_name:        'School Name',
+  contact_phone:    'Phone Number',
+  whatsapp_number:  'WhatsApp Number',
+  contact_email:    'Contact Email',
+  social_instagram: 'Instagram URL',
+  social_facebook:  'Facebook URL',
 };
 
 export default function AdminSettingsPage() {
@@ -62,6 +63,8 @@ export default function AdminSettingsPage() {
         ...Object.fromEntries(
           Object.entries(FIELD_LABELS).map(([k]) => [k, settings[k] ?? ''])
         ),
+        booking_enabled:   settings['booking_enabled']   ?? 'true',
+        trial_class_price: settings['trial_class_price'] ?? '0',
         testimonials: JSON.stringify(testimonials),
       };
       const res  = await fetch('/api/settings', {
@@ -120,7 +123,7 @@ export default function AdminSettingsPage() {
           <div key={key}>
             <label className="block text-sm font-semibold text-gray-700 mb-1.5">{label}</label>
             <input
-              type={key === 'email_contact' ? 'email' : key === 'website' ? 'url' : 'text'}
+              type={key === 'contact_email' ? 'email' : (key === 'social_instagram' || key === 'social_facebook') ? 'url' : 'text'}
               value={settings[key] ?? ''}
               onChange={e => updateField(key, e.target.value)}
               className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#2B7A78]/30 focus:border-[#2B7A78] outline-none"

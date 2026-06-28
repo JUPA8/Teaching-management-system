@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return {
     title: copy.heading,
     description: copy.subheading,
-    alternates: { canonical: `https://salam-institut.com/${locale}/news` },
+    alternates: { canonical: locale === 'en' ? 'https://salam-institut.com/news' : `https://salam-institut.com/${locale}/news` },
     openGraph: { title: copy.heading, description: copy.subheading, type: 'website' },
   };
 }

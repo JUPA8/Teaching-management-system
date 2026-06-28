@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { checkRateLimitAsync, getClientIP, tooManyRequests } from '@/lib/rate-limit';
+import nodemailer from 'nodemailer';
 
 // Validation schema matching frontend payload
 const studentSchema = z.object({
@@ -71,10 +72,46 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // TODO: Send email notification to admin
-    // await sendAdminNotification(probestundeRequest);
-    
-    console.log('New Probestunde Request saved:', probestundeRequest.id);
+    console.log('[Probestunde] New request saved:', probestundeRequest.id);
+
+    // Send admin notification email if SMTP is configured
+    if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
+      try {
+        const transporter = nodemailer.createTransport({
+          host: process.env.SMTP_HOST,
+          port: parseInt(process.env.SMTP_PORT || '587'),
+          secure: process.env.SMTP_PORT === '465',
+          auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+          connectionTimeout: 8_000,
+          socketTimeout: 20_000,
+        });
+        const adminEmail = process.env.SMTP_FROM || process.env.SMTP_USER;
+        const studentList = (data.students as { name: string; age: string }[])
+          .map((s, i) => `Student ${i + 1}: ${s.name} (age ${s.age})`)
+          .join('\n');
+        await transporter.sendMail({
+          from: `"Salam Institut" <${adminEmail}>`,
+          to: adminEmail,
+          subject: `[Trial Request] New Probestunde from ${data.email}`,
+          text: [
+            'A new trial class request was submitted via the website.',
+            '',
+            `Email: ${data.email}`,
+            `Phone: ${data.phone}`,
+            `Contact via: ${data.contactMethod}`,
+            `Teacher preference: ${data.teacherPreference}`,
+            `Number of students: ${data.numStudents}`,
+            '',
+            studentList,
+            '',
+            `Submitted: ${new Date().toUTCString()}`,
+            `Request ID: ${probestundeRequest.id}`,
+          ].join('\n'),
+        });
+      } catch (emailErr: any) {
+        console.error('[Probestunde] Admin notification email failed:', emailErr?.message);
+      }
+    }
 
     return NextResponse.json({
       success: true,

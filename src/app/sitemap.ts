@@ -5,7 +5,7 @@ const LOCALES = ['en', 'de', 'ar'] as const;
 
 function localizedUrls(path: string, priority: number, changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency']): MetadataRoute.Sitemap {
   return LOCALES.map((locale) => ({
-    url: `${BASE_URL}/${locale}${path}`,
+    url: locale === 'en' ? `${BASE_URL}${path}` : `${BASE_URL}/${locale}${path}`,
     lastModified: new Date(),
     changeFrequency,
     priority,

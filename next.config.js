@@ -42,6 +42,7 @@ const nextConfig = {
             value: 'camera=(), microphone=(), geolocation=()',
           },
           { key: 'X-XSS-Protection', value: '1; mode=block' },
+          { key: 'X-DNS-Prefetch-Control', value: 'on' },
         ],
       },
       {

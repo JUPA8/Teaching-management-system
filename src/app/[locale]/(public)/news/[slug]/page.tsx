@@ -40,7 +40,7 @@ export async function generateMetadata({
   return {
     title: loc.title,
     description: loc.excerpt ?? undefined,
-    alternates: { canonical: `https://salam-institut.com/${locale}/news/${loc.slug}` },
+    alternates: { canonical: locale === 'en' ? `https://salam-institut.com/news/${loc.slug}` : `https://salam-institut.com/${locale}/news/${loc.slug}` },
     openGraph: {
       title: loc.title,
       description: loc.excerpt ?? undefined,

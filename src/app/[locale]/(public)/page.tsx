@@ -8,12 +8,22 @@ import IslamicDivider from '@/components/IslamicDivider';
 import NewsSection from '@/components/NewsSection';
 import AnnouncementBanner from '@/components/AnnouncementBanner';
 
-export const metadata: Metadata = {
-  title: 'Salam Institut — Online Quran, Arabisch & Islamische Studien',
-  description:
-    'Lernen Sie Quran, Tajweed, Arabisch und Islamische Studien online mit qualifizierten Lehrern. Kostenlose Probestunde verfügbar.',
-  alternates: { canonical: 'https://salam-institut.com/de' },
-};
+const BASE_URL = 'https://salam-institut.com';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const canonical = locale === 'en' ? BASE_URL : `${BASE_URL}/${locale}`;
+  return {
+    title: 'Salam Institut — Online Quran, Arabisch & Islamische Studien',
+    description:
+      'Lernen Sie Quran, Tajweed, Arabisch und Islamische Studien online mit qualifizierten Lehrern. Kostenlose Probestunde verfügbar.',
+    alternates: { canonical },
+  };
+}
 
 export default async function HomePage({
   params,
