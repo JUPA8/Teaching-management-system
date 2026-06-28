@@ -24,6 +24,15 @@
 
 const { execSync } = require('child_process');
 
+// Only run migration deployment on Vercel or explicit CI environments.
+// Local `npm run build` skips this step — developers use `npm run db:migrate` instead.
+const isVercel = !!process.env.VERCEL;
+const isCI = !!process.env.CI;
+if (!isVercel && !isCI) {
+  console.log('[prisma-deploy] Not running on Vercel/CI — skipping migration deploy (use npm run db:migrate locally).');
+  process.exit(0);
+}
+
 // All migrations in chronological order.
 // Add new migration directory names here as the project grows.
 const MIGRATIONS = [

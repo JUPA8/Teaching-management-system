@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic';
 
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import type { Post } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
@@ -32,6 +33,17 @@ async function getAllPosts(type?: string): Promise<Post[]> {
     where,
     orderBy: [{ sortOrder: 'asc' }, { publishedAt: 'desc' }, { createdAt: 'desc' }],
   });
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const copy = PAGE_COPY[locale] ?? PAGE_COPY.en;
+  return {
+    title: copy.heading,
+    description: copy.subheading,
+    alternates: { canonical: `https://salam-institut.com/${locale}/news` },
+    openGraph: { title: copy.heading, description: copy.subheading, type: 'website' },
+  };
 }
 
 export default async function NewsPage({

@@ -5,19 +5,63 @@ import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import AuthProvider from '@/components/AuthProvider';
 
+const BASE_URL = 'https://salam-institut.com';
+
 export const metadata: Metadata = {
-  title: 'Salam Institute - Learn Quran Online',
+  metadataBase: new URL(BASE_URL),
+  title: {
+    default: 'Salam Institut — Quran, Arabisch & Islamische Studien Online',
+    template: '%s — Salam Institut',
+  },
   description:
-    'Salam Institute offers online lessons in Quran, Arabic, and Islamic studies for all ages with qualified teachers.',
+    'Salam Institut bietet qualifizierte Online-Unterricht in Quran, Tajweed, Arabisch und Islamische Studien für Kinder und Erwachsene weltweit.',
   keywords: [
-    'Quran',
-    'Learn Quran',
-    'Online Quran',
+    'Quran lernen',
+    'Quran Online',
     'Tajweed',
-    'Arabic',
-    'Islamic Studies',
+    'Arabisch lernen',
+    'Islamische Studien',
+    'Quran Kinder',
+    'Salam Institut',
+    'Islamic Education',
+    'Learn Quran Online',
     'Hifz',
+    'Arabic Language',
   ],
+  authors: [{ name: 'Salam Institut', url: BASE_URL }],
+  creator: 'Salam Institut',
+  publisher: 'Salam Institut',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, 'max-image-preview': 'large' },
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'de_DE',
+    alternateLocale: ['en_US', 'ar_SA'],
+    url: BASE_URL,
+    siteName: 'Salam Institut',
+    title: 'Salam Institut — Quran, Arabisch & Islamische Studien Online',
+    description:
+      'Qualifizierte Lehrer für Quran, Tajweed, Arabisch und Islamische Studien. Online-Unterricht weltweit.',
+    images: [{ url: '/salam-institute-logo.png', width: 512, height: 512, alt: 'Salam Institut Logo' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Salam Institut — Quran & Arabisch Online lernen',
+    description:
+      'Qualifizierter Online-Unterricht in Quran, Tajweed, Arabisch und Islamischen Studien weltweit.',
+    images: ['/salam-institute-logo.png'],
+  },
+  alternates: {
+    canonical: BASE_URL,
+    languages: {
+      'de': `${BASE_URL}/de`,
+      'en': `${BASE_URL}/en`,
+      'ar': `${BASE_URL}/ar`,
+    },
+  },
 };
 
 // Generate static paths for all locales

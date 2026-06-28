@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic';
 
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
@@ -24,6 +25,30 @@ const NAV_COPY: Record<string, { back: string; allNews: string; bookTrial: strin
   de: { back: 'Zurück zu Neuigkeiten', allNews: '← Alle Neuigkeiten & Ankündigungen', bookTrial: 'Kostenlose Probestunde buchen →', featured: 'Featured' },
   ar: { back: 'العودة إلى الأخبار', allNews: '← جميع الأخبار والإعلانات', bookTrial: 'احجز حصة تجريبية مجانية →', featured: 'مميز' },
 };
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+}): Promise<Metadata> {
+  const { locale, slug } = await params;
+  const post = await prisma.post.findFirst({
+    where: { OR: slugLookup(slug), isPublished: true },
+  });
+  if (!post) return { title: 'Post Not Found' };
+  const loc = localizePost(post, locale);
+  return {
+    title: loc.title,
+    description: loc.excerpt ?? undefined,
+    alternates: { canonical: `https://salam-institut.com/${locale}/news/${loc.slug}` },
+    openGraph: {
+      title: loc.title,
+      description: loc.excerpt ?? undefined,
+      images: post.image ? [{ url: post.image }] : [],
+      type: 'article',
+    },
+  };
+}
 
 export default async function NewsPostPage({
   params,
